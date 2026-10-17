@@ -6,9 +6,15 @@
 <title>LubDubAPP Guide</title>
 <meta name="description" content="A beating 3D heart for cardiology teaching: anatomy, the cardiac cycle with pressures and heart sounds, valve disease graded mild to severe, and simulated TTE and TEE views with colour and spectral Doppler.">
 <meta property="og:title" content="LubDubAPP Guide">
-<meta property="og:description" content="A beating 3D heart for cardiology teaching: cardiac cycle, pressures, valve disease and simulated TTE/TEE with Doppler.">
+<meta property="og:description" content="Interactive 3D heart for cardiovascular APP training: the cardiac cycle with pressures and heart sounds, valve disease, coronary territories with the 12-lead ECG, and simulated TTE/TEE with Doppler. Free for non-commercial education.">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://lubdubappguide.com/">
+<meta property="og:image" content="https://lubdubappguide.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LubDubAPP Guide: a 3D heart with coronary territories, pressure tracings and a simulated echo">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lubdubappguide.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <style>
@@ -52,6 +58,8 @@ header{display:flex;flex-direction:column;gap:10px}
 .btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .btn:focus-visible,.lbl:focus-visible,.item:focus-visible,.zoom button:focus-visible,summary:focus-visible,.link:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sep{width:1px;height:24px;background:var(--line);margin:0 2px}
+.cathv{display:contents}
+.cathv[hidden]{display:none}
 .stage{position:relative;height:clamp(420px,70vh,780px);border-radius:16px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(120% 90% at 50% 35%,var(--stage-2),var(--stage))}
 .stage canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 .stage canvas.pointing{cursor:pointer}
@@ -134,11 +142,10 @@ footer a,.link{color:var(--fg)}
 .vdetail h3{margin:0;font-size:18px;line-height:1.25}
 .vdetail dt{font:600 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .vdetail dd{margin:2px 0 0}
-.cycle-on .stage{height:clamp(340px,58vh,640px)}
 .stagerow>.cyclepanel{flex:1 1 380px}
 .cycinfo{background:#05080C;border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;color:#DCE4EC;min-width:0}
 .cycinfo .scencard{border-top:0;padding-top:0}
-@media (min-width:1000px){.stagecard.cycle-on{position:static}.cycle-on .stagerow>.stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:flex-start}}
+@media (min-width:1000px){.cycle-on .stagerow>.stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:flex-start}}
 .cyclepanel{background:#05080C;border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;color:#DCE4EC;min-width:0;max-width:100%}
 .cychead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
 .cychead .eyebrow{color:#C9D3DE}
@@ -311,6 +318,12 @@ footer a,.link{color:var(--fg)}
         <span class="sep" aria-hidden="true"></span>
         <button class="btn" data-view="rao" aria-pressed="false">RAO 30°</button>
         <button class="btn" data-view="lao" aria-pressed="false">LAO 45°</button>
+        <span class="cathv" id="cathv" hidden><span class="sep" aria-hidden="true"></span>
+          <button class="btn" data-view="spider" aria-pressed="false" title="LAO 40° caudal 25°: left main, proximal LAD and circumflex">Spider</button>
+          <button class="btn" data-view="laocra" aria-pressed="false" title="LAO 40° cranial 25°: mid–distal LAD and diagonals; distal RCA">LAO cranial</button>
+          <button class="btn" data-view="raocau" aria-pressed="false" title="RAO 30° caudal 25°: circumflex and obtuse marginals">RAO caudal</button>
+          <button class="btn" data-view="raocra" aria-pressed="false" title="RAO 30° cranial 25°: mid–distal LAD, septals vs diagonals">RAO cranial</button>
+        </span>
         <button class="btn" data-sview="coplanar" aria-pressed="false" title="TAVR coplanar view: the aortic annulus edge-on with all three cusps in line">3-cusp coplanar</button>
         <button class="btn" data-sview="surgeon" aria-pressed="false" title="The mitral valve seen from the left atrium, aortic valve at 12 o’clock">Surgeon’s mitral</button>
         <span class="sep" aria-hidden="true"></span>
@@ -783,6 +796,9 @@ footer a,.link{color:var(--fg)}
     pulmonary_vein_R_inf: 'pvRI', pulmonary_vein_R_sup: 'pvRS', pulmonary_vein_L_inf: 'pvLI', pulmonary_vein_L_sup: 'pvLS',
     brachiocephalic_vein_L: 'lbcv', brachiocephalic_vein_R: 'rbcv', superior_vena_cava: 'svc', inferior_vena_cava: 'ivc'
   };
+  /* C-arm angles → view direction (LAO positive, cranial positive), the inverse of carmText */
+  function carmDir(lao, cra) { var a = lao * Math.PI / 180, c = cra * Math.PI / 180; return [Math.sin(a) * Math.cos(c), Math.sin(c), Math.cos(a) * Math.cos(c)]; }
+  var CATH_NOTE = 'Standard teaching angles; how well they open up each vessel depends on where this heart sits, so compare with the live C-arm readout.';
   var VIEWS = {
     ant: { d: [0, 0, 1], note: 'Anterior view — the patient’s right is on your left.' },
     post: { d: [0, 0, -1], note: 'Posterior view — the patient’s right is on your right.' },
@@ -791,6 +807,10 @@ footer a,.link{color:var(--fg)}
     sup: { d: [0, 1, -0.03], note: 'Superior view, looking down — anterior is at the top and the patient’s right is on your right.' },
     inf: { d: [0, -1, 0.03], note: 'Inferior view, looking up — oriented like an axial CT slice: anterior at the top, the patient’s right on your left.' },
     rao: { d: [-0.5, 0, 0.866], note: 'RAO 30° — the right anterior oblique fluoroscopic projection. The LV is seen in profile, as in a ventriculogram, and the septum face-on.' },
+    spider: { d: carmDir(40, -25), note: 'LAO 40° caudal 25° (“spider”) — the left main, its bifurcation and the proximal LAD and circumflex, opened up from below. ' + CATH_NOTE },
+    laocra: { d: carmDir(40, 25), note: 'LAO 40° cranial 25° — the mid and distal LAD with its diagonals splayed off, and the distal RCA where it divides into the PDA and posterolateral branches. ' + CATH_NOTE },
+    raocau: { d: carmDir(-30, -25), note: 'RAO 30° caudal 25° — the circumflex and obtuse marginals, with the left main and proximal LAD. ' + CATH_NOTE },
+    raocra: { d: carmDir(-30, 25), note: 'RAO 30° cranial 25° — the mid and distal LAD, with septal branches running down and diagonals running up. ' + CATH_NOTE },
     lao: { d: [0.707, 0, 0.707], note: 'LAO 45° — the left anterior oblique projection. The septum is seen edge-on, with the RV on your left and the LV on your right.' },
     base: { d: [-0.58, 0.6, -0.51], note: 'Base view — looking from above the valve plane toward the apex, with the atria and great vessels removed.' },
     coplanar: { d: [0, 0, 1], note: '' },   /* both filled in from the valve geometry when chosen */
@@ -1250,6 +1270,7 @@ footer a,.link{color:var(--fg)}
     if (id === 'cycle') { if (state.echo) exitEcho(); enterCycle(); }
     else if (cyc.on) exitCycle();
     $('#tercard').hidden = id !== 'territory';
+    $('#cathv').hidden = !(id === 'coronary' || id === 'territory');
     if (id === 'territory') { terHov = 0; setTer(terSel); }
     if (id === 'echo') { renderInfo(); refresh(); enterEcho(animate); return; }
     if (state.echo) exitEcho();
@@ -1929,7 +1950,7 @@ footer a,.link{color:var(--fg)}
         'Bradycardia and AV block are common because the RCA usually supplies the SA and AV nodes; atropine or temporary pacing may be needed.',
         'Days later: posteromedial papillary muscle rupture (it has a single blood supply) causes sudden severe MR.'],
       pearl: 'ST elevation III > II with depression in I and aVL points to the RCA; ST elevation II ≥ III with I and aVL isoelectric or elevated, and elevation in V5–V6, points to the circumflex. Haemodynamically, RA ≥10 mmHg with an RA/PCWP ratio ≥0.8 supports RV infarction.' },
-    res: { name: 'Restrictive', full: 'Restrictive cardiomyopathy', group: 'myo', win: 6, scales: [140, 70, 40], ecg: { r: 0.55, s: -0.12, t: 0.1 }, hv: { S: 0.55, insp: 3 },
+    res: { name: 'Restrictive', full: 'Restrictive cardiomyopathy', group: 'myo', win: 6, scales: [140, 70, 40], ecg: { r: 0.55, s: -0.12, t: 0.1 }, hv: { S: 0.55, insp: 3 }, dopResp: { mv: -0.03, tv: 0.04 },
       resp: { ra: [-3, 0], rv: [-3, -2], pa: [-3, -2], lv: [-3, -2], ao: [-3, -2], la: [-3, 0], pcwp: 0 },
       snd: { s3: 0.55, p2: 0.85 },
       feat: [['rv', 1, 0.8, 'dip-and-plateau', 13], ['lv', 2, 0.9, 'LVEDP', -10]],
@@ -1943,7 +1964,7 @@ footer a,.link{color:var(--fg)}
         'S3 is common; an S4 is often absent in amyloid because the atria are infiltrated too.',
         'ECG: low voltage despite thick walls (amyloid), shown here in lead II.'],
       pearl: 'Discordance versus concordance is the most reliable invasive discriminator: a systolic area index >1.1 identified constriction with ~97% sensitivity (Talreja et al., JACC 2008). Record simultaneous LV and RV pressures over several breaths, without a breath-hold.' },
-    con: { name: 'Constrictive', full: 'Constrictive pericarditis', group: 'myo', win: 6, scales: [140, 50, 30], ecg: { r: 0.8, t: 0.12 }, hv: { S: 1, exp: 2.5 },
+    con: { name: 'Constrictive', full: 'Constrictive pericarditis', group: 'myo', win: 6, scales: [140, 50, 30], ecg: { r: 0.8, t: 0.12 }, hv: { S: 1, exp: 2.5 }, dopResp: { mv: -0.16, tv: 0.2 },
       resp: { ra: [1.5, 0], rv: [1.5, 2.5], pa: [1.5, 2.5], lv: [0, -6], ao: [-2, -4], la: [0, 0], pcwp: -5 },
       snd: { knock: 0.75 },
       feat: [['rv', 1, 0.8, 'dip-and-plateau', 13], ['ra', 1, 0.42, 'x', 13], ['ra', 1, 0.745, 'y', 13]],
@@ -2710,7 +2731,8 @@ footer a,.link{color:var(--fg)}
     loadRecs(function () {
       if (cur.X.rec !== key) return;
       var c = REC.data.clips[key];
-      $('#recMeta').innerHTML = '<b>' + c.dx + '</b> · ' + c.patient + ' · ' + c.site + ', ' + c.posture + ' · ' + c.rhythm;
+      $('#recMeta').innerHTML = '<b>' + c.dx + '</b> · ' + c.patient + ' · ' + c.site + ', ' + c.posture + ' · ' + c.rhythm +
+        (cur.X.sev && cur.X.sev.gi < 2 ? '<br><em>The recording is the same at every severity; turn Sound on to hear the model murmur at the grade you set.</em>' : '');
       $('#recLic').innerHTML = 'Real patient recording from the <a href="' + REC.data.source + '" target="_blank" rel="noopener">' + REC.data.dataset + '</a>, ' + REC.data.copyright + ', licensed <a href="' + REC.data.licenseUrl + '" target="_blank" rel="noopener">' + REC.data.license + '</a>; original file ' + c.file + ', unmodified. ' + REC.data.citation;
       drawRecWave();
     });
@@ -2760,11 +2782,15 @@ footer a,.link{color:var(--fg)}
       return { ra: ra / N, d: lvedp - rvedp, rvedp: rvedp, lvedp: lvedp, ratio: rvedp / rvsp, pasp: pasp, dRV: dRV, dLV: dLV, sai: sai };
     }
     var c = row('con'), r = row('res'), sg = function (v) { return (v > 0 ? '+' : '') + Math.round(v); };
+    function ePct(X) { var d = Math.abs(X.dopResp.mv); return Math.round(2 * d / (1 + d) * 100); }   /* same formulas as the Doppler readout */
+    function tPct(X) { var d = X.dopResp.tv; return Math.round(2 * d / (1 - d) * 100); }
     return [['LVEDP − RVEDP', fmt(c.d) + ' mmHg', fmt(r.d) + ' mmHg', '≤5 constriction'],
       ['RVEDP / RVSP', c.ratio.toFixed(2), r.ratio.toFixed(2), '>1/3 constriction'],
       ['PASP', fmt(c.pasp) + ' mmHg', fmt(r.pasp) + ' mmHg', '>55 restriction'],
       ['Inspiration: ΔRV / ΔLV systolic', sg(c.dRV) + ' / ' + sg(c.dLV), sg(r.dRV) + ' / ' + sg(r.dLV), 'opposite = discordance'],
       ['Systolic area index', c.sai.toFixed(2), r.sai.toFixed(2), '>1.1 constriction'],
+      ['Mitral E fall with inspiration', ePct(SCX.con) + '%', ePct(SCX.res) + '%', '>25% constriction'],
+      ['Tricuspid inflow rise with inspiration', '+' + tPct(SCX.con) + '%', '+' + tPct(SCX.res) + '%', '>40% constriction'],
       ['Mean RA', fmt(c.ra) + ' mmHg', fmt(r.ra) + ' mmHg', '']];
   }
   function setScenario(key) {
@@ -2802,7 +2828,8 @@ footer a,.link{color:var(--fg)}
     var wm = X.wm || {}; WM.lad = wm.lad || 0; WM.lcx = wm.lcx || 0; WM.rca = wm.rca || 0; WM.rv = wm.rv || 0;
     WM.on = !!(WM.lad || WM.lcx || WM.rca || WM.rv); WM.sig = [WM.lad, WM.lcx, WM.rca, WM.rv].join(',');
     TERU.wm.value.set(WM.lad, WM.lcx, WM.rca, WM.on ? 1 : 0); TERU.rv.value = WM.rv;
-    if (X.group === 'cad' && !echoSegOn) { echoSegOn = true; syncSegBtn(); }
+    if (X.group === 'cad' && !echoSegOn) { echoSegOn = echoSegAuto = true; syncSegBtn(); }   /* switched on for coronary scenarios, off again on leaving them */
+    else if (X.group !== 'cad' && echoSegAuto) { echoSegOn = echoSegAuto = false; syncSegBtn(); }
     var e12 = X.group === 'cad'; $('#ecg12wrap').hidden = !e12;
     if (e12) { $('#e12leg').innerHTML = e12Legend(); $('#e12note').innerHTML = L12_NOTE[curKey]; requestAnimationFrame(function () { draw12($('#ecg12'), curKey); }); }
     terDisplay();
@@ -3530,19 +3557,22 @@ footer a,.link{color:var(--fg)}
      that merges into a taller (or, for depression, flatter) T wave. */
   var L12_BASE = {
     I: [0.08, -0.04, 0.65, -0.08, 0.22], II: [0.15, -0.06, 1.05, -0.2, 0.32],
-    V1: [0.06, 0, 0.2, -0.95, 0.08], V2: [0.08, 0, 0.4, -1.25, 0.45], V3: [0.1, 0, 0.8, -0.85, 0.5], V4: [0.1, -0.03, 1.3, -0.5, 0.45], V5: [0.1, -0.08, 1.35, -0.25, 0.35], V6: [0.1, -0.08, 1.05, -0.12, 0.28] };
+    V1: [0.06, 0, 0.2, -0.95, 0.08], V2: [0.08, 0, 0.4, -1.25, 0.45], V3: [0.1, 0, 0.8, -0.85, 0.5], V4: [0.1, -0.03, 1.3, -0.5, 0.45], V5: [0.1, -0.08, 1.35, -0.25, 0.35], V6: [0.1, -0.08, 1.05, -0.12, 0.28],
+    V4R: [0.05, 0, 0.18, -0.55, 0.1], V7: [0.06, -0.06, 0.55, -0.08, 0.15], V8: [0.05, -0.05, 0.45, -0.06, 0.12], V9: [0.04, -0.04, 0.35, -0.05, 0.1] };
   var L12_ST = {   /* ST deviation (mV, 10 mm = 1 mV); I and II set the frontal plane */
     lad: { I: 0.1, II: -0.05, V1: 0.15, V2: 0.35, V3: 0.4, V4: 0.3, V5: 0.15, V6: 0.05 },
-    lcx: { I: 0.12, II: 0, V1: -0.15, V2: -0.2, V3: -0.12, V4: 0.02, V5: 0.12, V6: 0.15 },
-    rca: { I: -0.08, II: 0.22, V1: 0.1, V2: 0, V3: -0.04, V4: 0, V5: 0.03, V6: 0.06 } };
+    lcx: { I: 0.12, II: 0, V1: -0.15, V2: -0.2, V3: -0.12, V4: 0.02, V5: 0.12, V6: 0.15, V7: 0.08, V8: 0.1, V9: 0.09 },
+    rca: { I: -0.08, II: 0.22, V1: 0.1, V2: 0, V3: -0.04, V4: 0, V5: 0.03, V6: 0.06, V4R: 0.15 } };
+  /* the leads the standard 12 miss: right-sided V4R for the RV, posterior V7–V9 for the back of the LV */
+  var L12_EXTRA = { rca: { leads: ['V4R'], tag: 'Right-sided' }, lcx: { leads: ['V7', 'V8', 'V9'], tag: 'Posterior' } };
   var L12_NOTE = {
     lad: '<b>Anterior STEMI.</b> ST elevation in V1–V4 (septal and anterior leads), reaching I and aVL because the occlusion is proximal to the first diagonal; reciprocal ST depression in III and aVF. Q waves and T-wave inversion follow over hours to days.',
-    lcx: '<b>Lateral STEMI with posterior extension.</b> Modest ST elevation in I, aVL, V5 and V6, and ST depression in V1–V3 — the posterior wall injury seen from the front. Posterior leads V7–V9 would show the elevation.',
-    rca: '<b>Inferior STEMI.</b> ST elevation in II, III and aVF, greater in III than II, with reciprocal depression in I and aVL. ST elevation in V1 hints at RV involvement: record right-sided V4R.' };
+    lcx: '<b>Lateral STEMI with posterior extension.</b> Modest ST elevation in I, aVL, V5 and V6, and ST depression in V1–V3 — the posterior wall injury seen from the front. The posterior leads V7–V9 (bottom row) show the elevation directly: ≥0.5 mm is diagnostic.',
+    rca: '<b>Inferior STEMI.</b> ST elevation in II, III and aVF, greater in III than II, with reciprocal depression in I and aVL. ST elevation in V1 hints at RV involvement: record right-sided V4R — shown in the bottom row, with the ≥1 mm elevation of RV infarction.' };
   var L12_C4 = [['I', 'II', 'III'], ['aVR', 'aVL', 'aVF'], ['V1', 'V2', 'V3'], ['V4', 'V5', 'V6']], L12_C2 = [['I', 'II', 'III', 'aVR', 'aVL', 'aVF'], ['V1', 'V2', 'V3', 'V4', 'V5', 'V6']];
   function l12ST(key) {
     var b = L12_ST[key] || {}, I = b.I || 0, II = b.II || 0, o = { I: I, II: II, III: II - I, aVR: -(I + II) / 2, aVL: I - II / 2, aVF: II - I / 2 };
-    ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (k) { o[k] = b[k] || 0; });
+    ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V4R', 'V7', 'V8', 'V9'].forEach(function (k) { o[k] = b[k] || 0; });
     return o;
   }
   function l12Wave(par, st, x, v1) {   /* x: ms from P-wave onset */
@@ -3555,11 +3585,12 @@ footer a,.link{color:var(--fg)}
     var a = l12Wave(L12_BASE.I, st.I, x, false), b = l12Wave(L12_BASE.II, st.II, x, false);
     return lead === 'I' ? a : lead === 'II' ? b : lead === 'III' ? b - a : lead === 'aVR' ? -(a + b) / 2 : lead === 'aVL' ? a - b / 2 : b - a / 2;
   }
-  function l12Kind(s) { return s >= 0.1 ? 'up' : s <= -0.075 ? 'dn' : ''; }
+  function l12Kind(s, lead) { return s >= (/^V[789]$/.test(lead) ? 0.05 : 0.1) ? 'up' : s <= -0.075 ? 'dn' : ''; }   /* posterior leads: 0.5 mm */
   function draw12(cv, key, compact) {   /* compact: four columns of one beat each (side panel); otherwise 2.5 s per column */
     var dpr = Math.min(window.devicePixelRatio || 1, 2), cw = cv.clientWidth; if (!cw) return;
     if (cw < 600) compact = true;
-    var cols = L12_C4, nr = 3, st = l12ST(key), dur = compact ? 1.25 : 2.5;
+    var ex = L12_EXTRA[key], cols = L12_C4, nr = ex ? 4 : 3, st = l12ST(key), dur = compact ? 1.25 : 2.5;
+    if (ex) cols = cols.map(function (c, i) { return c.concat(ex.leads[i] ? [ex.leads[i]] : []); });
     var W = Math.round(cw * dpr), colW = W / cols.length, pxmm = colW / (dur * 25), rowH = 27 * pxmm, H = Math.round(nr * rowH + 3 * pxmm);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     cv.style.height = Math.round(H / dpr) + 'px';
@@ -3569,6 +3600,13 @@ footer a,.link{color:var(--fg)}
     for (i = 0, y = 0; y <= H + 0.5; y += pxmm, i++) { c.fillStyle = i % 5 ? 'rgba(229,140,128,0.22)' : 'rgba(209,92,80,0.48)'; c.fillRect(0, Math.round(y), W, 1); }
     var fs = Math.max(9, Math.min(12, pxmm * 3.2 / dpr)) * dpr;
     c.font = '600 ' + Math.round(fs) + 'px "IBM Plex Sans", system-ui, sans-serif'; c.textBaseline = 'middle';
+    if (ex) {   /* separate the extra row: dashed rule and a tag in the first free column */
+      var yr = 3 * rowH + 1.5 * pxmm;
+      c.strokeStyle = 'rgba(20,20,20,0.55)'; c.lineWidth = Math.max(1, dpr); c.setLineDash([5 * dpr, 4 * dpr]); c.beginPath(); c.moveTo(0, yr); c.lineTo(W, yr); c.stroke(); c.setLineDash([]);
+      c.save(); c.fillStyle = '#5B1A16'; c.font = '600 ' + Math.round(fs * 0.95) + 'px "IBM Plex Sans", system-ui, sans-serif'; c.textBaseline = 'middle';
+      c.fillText(ex.tag, ex.leads.length * colW + 6 * dpr, yr + rowH * 0.32); c.font = '500 ' + Math.round(fs * 0.8) + 'px "IBM Plex Sans", system-ui, sans-serif';
+      c.fillText('extra leads', ex.leads.length * colW + 6 * dpr, yr + rowH * 0.32 + fs * 1.15); c.restore();
+    }
     cols.forEach(function (col, ci) {
       var x0 = ci * colW;
       col.forEach(function (lead, ri) {
@@ -3580,7 +3618,7 @@ footer a,.link{color:var(--fg)}
         }
         c.stroke();
         if (ci) { c.fillStyle = '#141414'; c.fillRect(Math.round(x0), Math.round(y0 - 3 * pxmm), Math.max(1, dpr), Math.round(6 * pxmm)); }
-        var kind = l12Kind(st[lead]), tw = c.measureText(lead).width + 8 * dpr, lx = x0 + 3 * dpr, ly = ri * rowH + 1.5 * pxmm + 2 * dpr, lh = fs * 1.35;
+        var kind = l12Kind(st[lead], lead), tw = c.measureText(lead).width + 8 * dpr, lx = x0 + 3 * dpr, ly = ri * rowH + 1.5 * pxmm + 2 * dpr, lh = fs * 1.35;
         if (kind) { c.fillStyle = kind === 'up' ? '#C81E1E' : '#1D4ED8'; rrect(c, lx, ly, tw, lh, 4 * dpr); c.fill(); }
         c.fillStyle = kind ? '#FFFFFF' : '#141414'; c.fillText(lead, lx + 4 * dpr, ly + lh / 2 + 0.5 * dpr);
       });
@@ -3671,7 +3709,7 @@ footer a,.link{color:var(--fg)}
     var cv = $('#ter12'); if (cv) draw12(cv, terSel, true);
     var b1 = $('#terSim'), b2 = $('#terEcho'), k = terSel;
     if (b1) b1.addEventListener('click', function () { curKey = k; applyPreset('cycle', true); });
-    if (b2) b2.addEventListener('click', function () { curKey = k; echoSegOn = true; syncSegBtn(); state.echo = state.echo || { mod: 'tte', view: 'plax', look: 'face' }; state.echo.view = TERINFO[k].view; state.echo.mod = 'tte'; applyPreset('echo', true); });
+    if (b2) b2.addEventListener('click', function () { curKey = k; echoSegOn = echoSegAuto = true; syncSegBtn(); state.echo = state.echo || { mod: 'tte', view: 'plax', look: 'face' }; state.echo.view = TERINFO[k].view; state.echo.mod = 'tte'; applyPreset('echo', true); });
   }
   document.querySelectorAll('[data-ter]').forEach(function (b) { b.addEventListener('click', function () { terPin = 0; setTer(b.dataset.ter); }); });
   bullBuild(); bullPaint();
@@ -3695,7 +3733,7 @@ footer a,.link{color:var(--fg)}
     if (b) b.addEventListener('click', function () { curKey = k; applyPreset('cycle', true); });
   }
   /* Echo: colour the LV wall outline by territory; the scenario's akinetic territory is drawn bold. */
-  var echoSegOn = false;
+  var echoSegOn = false, echoSegAuto = false;
   function syncSegBtn() { var b = $('#eSeg'); if (b) b.setAttribute('aria-pressed', String(echoSegOn)); }
   function drawTerOverlay(ctx, sec, v, X, Y, dpr) {
     var tc = [0, 0, 0];
@@ -4581,6 +4619,7 @@ footer a,.link{color:var(--fg)}
     }
     ctx.restore();
     drawCalipers(ctx, sec, key, v, X, Y, dpr, cc, aa);
+    drawDopCursor(ctx, v, X, Y, dpr, cc, aa, ox, oy, R);
     if (roi) { ctx.strokeStyle = 'rgba(220,226,232,0.55)'; ctx.lineWidth = 1 * dpr; ctx.beginPath(); ctx.arc(ox, oy, roi.r1 * sc, Math.PI / 2 - roi.t1, Math.PI / 2 - roi.t0, false); ctx.arc(ox, oy, roi.r0 * sc, Math.PI / 2 - roi.t0, Math.PI / 2 - roi.t1, true); ctx.closePath(); ctx.stroke(); }
     /* frame, depth scale, grey bar, colour bar, text */
     ctx.strokeStyle = 'rgba(200,210,220,0.18)'; ctx.lineWidth = 1 * dpr; sector(ctx, R); ctx.stroke();
@@ -4633,6 +4672,22 @@ footer a,.link{color:var(--fg)}
       ctx.fillStyle = on ? '#05080C' : '#FFD27A'; ctx.fillText(b.lab, ok.x + ok.w / 2, ok.y + ok.h / 2 + 0.5 * dpr);
       if (b.id) echoLabels.push({ id: b.id, x: ok.x / dpr, y: ok.y / dpr, w: ok.w / dpr, h: ok.h / dpr });
     });
+  }
+  /* The spectral Doppler line of sight: a dashed beam from the transducer through the sampled valve, with the PW sample
+     gate (two bars, ~4 mm apart) at the mitral leaflet tips or in the hepatic vein, and a focus mark for CW. */
+  function drawDopCursor(ctx, v, X, Y, dpr, cc, aa, ox, oy, R) {
+    var D = dopSite && DSITE[dopSite]; if (!D) return;
+    var V = D.valve && VLV[D.valve], p3 = V ? (D.mode === 'pw' ? v3add(V.c, V.n, 7) : V.c) : HEPV.pts[1];
+    var q = projV(v, deform3(p3, cc, aa)), L = Math.hypot(q[0], q[1]); if (L < 2) return;
+    var ux = q[0] / L, uy = q[1] / L, gx = X(q[0]), gy = Y(q[1]), nx = -uy, ny = ux, k = 7 * dpr;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(253,230,138,0.8)'; ctx.lineWidth = 1.2 * dpr; ctx.setLineDash([6 * dpr, 5 * dpr]);
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + ux * R, oy + uy * R); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgba(253,230,138,0.95)'; ctx.lineWidth = 2 * dpr; ctx.beginPath();
+    if (D.mode === 'pw') {
+      [-2, 2].forEach(function (s) { var cx = X(q[0] + ux * s), cy = Y(q[1] + uy * s); ctx.moveTo(cx - nx * k, cy - ny * k); ctx.lineTo(cx + nx * k, cy + ny * k); });
+    } else { ctx.moveTo(gx - k * 0.7, gy); ctx.lineTo(gx, gy - k * 0.7); ctx.lineTo(gx + k * 0.7, gy); ctx.lineTo(gx, gy + k * 0.7); ctx.closePath(); }
+    ctx.stroke(); ctx.restore();
   }
   function drawEcho() { drawEchoFrame(echoState()); }
   function echoState() { if (!TL) return null; var i = tlIdx(TL, cyc.t); if (i < 0) return null; var p = i & MASK; return { p: p, tau: TL.tau[p], b: beatById(TL, TL.bi[p]) || { atrial: true }, vb: TL.vb[p], k: TL.k[p] }; }
@@ -4739,7 +4794,7 @@ footer a,.link{color:var(--fg)}
     sel.addEventListener('change', function () { setScenario(sel.value); });
     $('#eColor').addEventListener('click', function () { colorOn = !colorOn; echoDirty = true; this.setAttribute('aria-pressed', String(colorOn)); });
     $('#eCal').addEventListener('click', function () { calOn = !calOn; echoDirty = true; this.setAttribute('aria-pressed', String(calOn)); });
-    $('#eSeg').addEventListener('click', function () { echoSegOn = !echoSegOn; echoDirty = true; syncSegBtn(); });
+    $('#eSeg').addEventListener('click', function () { echoSegOn = !echoSegOn; echoSegAuto = false; echoDirty = true; syncSegBtn(); });
     $('#eSnd').addEventListener('click', function () { setSound(!AUD.on); });
     $('#eGain').addEventListener('input', function () { echoGain = Number(this.value); echoDirty = true; });
   })();

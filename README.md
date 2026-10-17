@@ -8,15 +8,15 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 
 ## Use it
 
-- **Online:** <https://kencyk1.github.io/lubdubAPPguide/>
+- **Online:** <https://lubdubappguide.com/>
 
 ## What is in it
 
-- **Anatomy:** rotate the heart, peel back the wall, and select any chamber, valve, vessel, coronary branch or conduction structure for its function and a clinical pearl. C-arm angles (LAO/RAO, CRA/CAU) update live as you rotate, with RAO, LAO, 3-cusp coplanar and surgeon's mitral views.
+- **Anatomy:** rotate the heart, peel back the wall, and select any chamber, valve, vessel, coronary branch or conduction structure for its function and a clinical pearl. C-arm angles (LAO/RAO, CRA/CAU) update live as you rotate, with RAO, LAO, 3-cusp coplanar and surgeon's mitral views, plus four standard angiographic projections (spider, LAO cranial, RAO caudal, RAO cranial) in the coronary scenes.
 - **Coronary territories:** the LV seen from its apex with the 17 AHA segments coloured by the LAD, circumflex and RCA, a matching bull's-eye, the echo views that show each wall, the ECG leads that face it, and septal perforators drawn from the LAD into the septum.
 - **Cardiac cycle:** 70 bpm with Lead II ECG, phonocardiogram, and Ao, LV, LA, PCWP, PA, RV and RA pressures. Pause and drag the phase bar or any tracing to scrub through the beat. Filters show the left heart, the right heart, or LV and RV together (constriction versus restriction).
-- **Scenarios:** MR, TR, AS and chronic AR on a mild-to-severe slider graded to ASE and ACC/AHA cut-offs; acute AR; MS in sinus rhythm and in AF; TS; obstructive HCM; restrictive cardiomyopathy; constrictive pericarditis. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement). Acute proximal LAD, circumflex and proximal RCA occlusion (with RV infarction) make their territory akinetic in the 3D model and on echo, raise filling pressures, and show a 12-lead ECG with ST elevation and reciprocal changes.
-- **Echo:** 23 TTE and TEE views with simulated B-mode, colour Doppler (flow convergence, PISA, aliasing), PW and CW Doppler with live measurements, end-diastolic calipers, a TEE omniplane angle indicator, and a territories overlay that colours the LV wall by coronary artery.
+- **Scenarios:** MR, TR, AS and chronic AR on a mild-to-severe slider graded to ASE and ACC/AHA cut-offs; acute AR; MS in sinus rhythm and in AF; TS; obstructive HCM; restrictive cardiomyopathy; constrictive pericarditis. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement). Acute proximal LAD, circumflex and proximal RCA occlusion (with RV infarction) make their territory akinetic in the 3D model and on echo, raise filling pressures, and show a 12-lead ECG with ST elevation and reciprocal changes, plus right-sided V4R (RCA) or posterior V7–V9 (circumflex). Constrictive and restrictive physiology include the respiratory variation of mitral and tricuspid inflow.
+- **Echo:** 23 TTE and TEE views with simulated B-mode, colour Doppler (flow convergence, PISA, aliasing), PW and CW Doppler with live measurements, end-diastolic calipers, a TEE omniplane angle indicator, a Doppler cursor that shows the beam and sample gate on the 2D image, and a territories overlay that colours the LV wall by coronary artery.
 - **Sounds:** synthesized heart sounds in sync with the model, plus real patient recordings.
 
 ## Terms of use
@@ -66,6 +66,7 @@ The conduction system, chordae, moderator band, septal perforator arteries, valv
 | `heart-sounds.json` | Patient heart-sound recordings |
 | `vendor/three/` | three.js r147, served locally so the site works where CDNs are blocked |
 | `LubDubAPP-Guide.html` | Offline single-file edition |
-| `_headers` | Caching rules for Cloudflare Pages |
+| `og.png` | Link-preview image (1200 × 630) |
+| `_headers` | Caching rules for Cloudflare |
 
 To run it locally, serve the folder with any static web server (for example `python3 -m http.server`) and open `http://localhost:8000`. Opening `index.html` directly from disk will not load the model; use the offline file for that.
