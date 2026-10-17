@@ -10,7 +10,7 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 
 ## Use it
 
-- **Online:** <https://kenhkcyk.github.io/lubdubAPPguide/>
+- **Online:** <https://kencyk1.github.io/lubdubAPPguide/>
 - **Offline or on a shared drive:** download [`LubDubAPP-Guide.html`](LubDubAPP-Guide.html). It is a single self-contained file (about 6 MB) that opens in any modern browser without internet.
 
 It runs entirely in the browser: no sign-in, no analytics, nothing to install. It needs a browser with WebGL (current desktop and mobile browsers).
