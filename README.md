@@ -2,8 +2,6 @@
 
 An interactive guide for cardiovascular advanced practice provider (APP) training, from introductory anatomy to in-depth hemodynamics and echocardiography: a beating 3D model of a real adult heart with the cardiac cycle, pressure tracings and heart sounds, valve disease graded from mild to severe with chamber remodeling, and simulated transthoracic (TTE) and transesophageal (TEE) echo views with colour and spectral Doppler.
 
-**Designed and created by Ken Chan, ACNPC-AG, CCK, RCIS, AACC | Structural Heart APP | Program Director - Cardiovascular Advanced Practice Provider Fellowship at UTHealth Houston**, built with the help of AI (Claude, Anthropic).
-
 > **For non-commercial education only.** This is a simulated teaching model. Pressures, velocities and measurements are typical adult values produced by the model, not patient data. Nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training; do not use it for diagnosis or patient care.
 
 **Further learning:** for ultrasound physics and in-depth echocardiography, continue with [The Heart by Ultrasound (intro2echo.com)](https://intro2echo.com/).
@@ -11,9 +9,6 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 ## Use it
 
 - **Online:** <https://kencyk1.github.io/lubdubAPPguide/>
-- **Offline or on a shared drive:** download [`LubDubAPP-Guide.html`](LubDubAPP-Guide.html). It is a single self-contained file (about 6 MB) that opens in any modern browser without internet.
-
-It runs entirely in the browser: no sign-in, no analytics, nothing to install. It needs a browser with WebGL (current desktop and mobile browsers).
 
 ## What is in it
 
@@ -25,7 +20,7 @@ It runs entirely in the browser: no sign-in, no analytics, nothing to install. I
 
 ## Terms of use
 
-Free for non-commercial education. Commercial use is not permitted, in part because the patient heart-sound recordings are licensed for non-commercial use only (CC BY-NC-ND 4.0). Please credit the creator when you use or share it.
+Free for non-commercial education. Commercial use is not permitted, in part because the patient heart-sound recordings are licensed for non-commercial use only. Please credit the creator when you use or share it.
 
 The creator's affiliation is listed for identification only. This is an independent educational project, not an official UTHealth Houston publication.
 
