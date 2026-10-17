@@ -1,6 +1,6 @@
 # LubDubAPP Guide
 
-An interactive guide for cardiovascular advanced practice provider (APP) training, from introductory anatomy to in-depth hemodynamics and echocardiography: a beating 3D model of a real adult heart with the cardiac cycle, pressure tracings and heart sounds, valve disease graded from mild to severe with chamber remodeling, and simulated transthoracic (TTE) and transesophageal (TEE) echo views with colour and spectral Doppler.
+An interactive guide for cardiovascular advanced practice provider (APP) training, from introductory anatomy to in-depth hemodynamics and echocardiography: a beating 3D model of a real adult heart with the cardiac cycle, pressure tracings and heart sounds, valve disease graded from mild to severe with chamber remodeling, coronary territories with acute occlusion scenarios (regional wall motion and the 12-lead ECG), and simulated transthoracic (TTE) and transesophageal (TEE) echo views with colour and spectral Doppler.
 
 > **For non-commercial education only.** This is a simulated teaching model. Pressures, velocities and measurements are typical adult values produced by the model, not patient data. Nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training; do not use it for diagnosis or patient care.
 
@@ -13,9 +13,10 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 ## What is in it
 
 - **Anatomy:** rotate the heart, peel back the wall, and select any chamber, valve, vessel, coronary branch or conduction structure for its function and a clinical pearl. C-arm angles (LAO/RAO, CRA/CAU) update live as you rotate, with RAO, LAO, 3-cusp coplanar and surgeon's mitral views.
+- **Coronary territories:** the LV seen from its apex with the 17 AHA segments coloured by the LAD, circumflex and RCA, a matching bull's-eye, the echo views that show each wall, the ECG leads that face it, and septal perforators drawn from the LAD into the septum.
 - **Cardiac cycle:** 70 bpm with Lead II ECG, phonocardiogram, and Ao, LV, LA, PCWP, PA, RV and RA pressures. Pause and drag the phase bar or any tracing to scrub through the beat. Filters show the left heart, the right heart, or LV and RV together (constriction versus restriction).
-- **Scenarios:** MR, TR, AS and chronic AR on a mild-to-severe slider graded to ASE and ACC/AHA cut-offs; acute AR; MS in sinus rhythm and in AF; TS; obstructive HCM; restrictive cardiomyopathy; constrictive pericarditis. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement).
-- **Echo:** 23 TTE and TEE views with simulated B-mode, colour Doppler (flow convergence, PISA, aliasing), PW and CW Doppler with live measurements, end-diastolic calipers, and a TEE omniplane angle indicator.
+- **Scenarios:** MR, TR, AS and chronic AR on a mild-to-severe slider graded to ASE and ACC/AHA cut-offs; acute AR; MS in sinus rhythm and in AF; TS; obstructive HCM; restrictive cardiomyopathy; constrictive pericarditis. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement). Acute proximal LAD, circumflex and proximal RCA occlusion (with RV infarction) make their territory akinetic in the 3D model and on echo, raise filling pressures, and show a 12-lead ECG with ST elevation and reciprocal changes.
+- **Echo:** 23 TTE and TEE views with simulated B-mode, colour Doppler (flow convergence, PISA, aliasing), PW and CW Doppler with live measurements, end-diastolic calipers, a TEE omniplane angle indicator, and a territories overlay that colours the LV wall by coronary artery.
 - **Sounds:** synthesized heart sounds in sync with the model, plus real patient recordings.
 
 ## Terms of use
@@ -38,8 +39,13 @@ Grading thresholds, normal values, view definitions and waveform physiology foll
 8. Welch TD, Ling LH, Espinosa RE, et al. Echocardiographic diagnosis of constrictive pericarditis: Mayo Clinic criteria. *Circ Cardiovasc Imaging*. 2014;7(3):526-534.
 9. Ommen SR, Ho CY, Asif IM, et al. 2024 AHA/ACC/AMSSM/HRS/PACES/SCMR guideline for the management of hypertrophic cardiomyopathy. *J Am Coll Cardiol*. 2024;83(23):2324-2405.
 10. Blanke P, Weir-McCall JR, Achenbach S, et al. Computed tomography imaging in the context of transcatheter aortic valve implantation (TAVI)/transcatheter aortic valve replacement (TAVR): an expert consensus document of the Society of Cardiovascular Computed Tomography. *JACC Cardiovasc Imaging*. 2019;12(1):1-24.
-11. Kern MJ, Lim MJ, Goldstein JA, eds. *Hemodynamic Rounds: Interpretation of Cardiac Pathophysiology from Pressure Waveform Analysis*. 3rd ed. Wiley-Blackwell; 2009.
-12. Hall JE, Hall ME. *Guyton and Hall Textbook of Medical Physiology*. 14th ed. Elsevier; 2021.
+11. Cerqueira MD, Weissman NJ, Dilsizian V, et al. Standardized myocardial segmentation and nomenclature for tomographic imaging of the heart: a statement for healthcare professionals from the Cardiac Imaging Committee of the Council on Clinical Cardiology of the American Heart Association. *Circulation*. 2002;105(4):539-542.
+12. Thygesen K, Alpert JS, Jaffe AS, et al. Fourth universal definition of myocardial infarction (2018). *Circulation*. 2018;138(20):e618-e651.
+13. Zimetbaum PJ, Josephson ME. Use of the electrocardiogram in acute myocardial infarction. *N Engl J Med*. 2003;348(10):933-940.
+14. Lopez-Sendon J, Coma-Canella I, Gamallo C. Sensitivity and specificity of hemodynamic criteria in the diagnosis of acute right ventricular infarction. *Circulation*. 1981;64(3):515-525.
+15. Rao SV, O'Donoghue ML, Ruel M, et al. 2025 ACC/AHA/ACEP/NAEMSP/SCAI guideline for the management of patients with acute coronary syndromes. *Circulation* and *J Am Coll Cardiol*. 2025.
+16. Kern MJ, Lim MJ, Goldstein JA, eds. *Hemodynamic Rounds: Interpretation of Cardiac Pathophysiology from Pressure Waveform Analysis*. 3rd ed. Wiley-Blackwell; 2009.
+17. Hall JE, Hall ME. *Guyton and Hall Textbook of Medical Physiology*. 14th ed. Elsevier; 2021.
 
 ### Third-party content
 
@@ -49,7 +55,7 @@ Grading thresholds, normal values, view definitions and waveform physiology foll
 - **Fonts:** IBM Plex Sans and IBM Plex Mono via Google Fonts (SIL Open Font License).
 - **The Heart by Ultrasound** ([intro2echo.com](https://intro2echo.com/)): its flow-convergence colour Doppler display informed the approach used here. No code or images were used.
 
-The conduction system, chordae, moderator band, valve leaflets, left atrial appendage lumen and fossa ovalis are drawn by the app because the source model lacks them. Echo images, Doppler and pressures are simulated from the model.
+The conduction system, chordae, moderator band, septal perforator arteries, valve leaflets, left atrial appendage lumen and fossa ovalis are drawn by the app because the source model lacks them. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this heart using its own interventricular grooves; the 12-lead ECGs are model tracings built to show the typical patterns. Echo images, Doppler and pressures are simulated from the model.
 
 ## Files
 

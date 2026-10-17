@@ -237,6 +237,40 @@ footer a,.link{color:var(--fg)}
 .esev b{font:600 12.5px/1 var(--sans);letter-spacing:0;text-transform:none;color:#F2B63C;min-width:4.6em}
 .sevrow input{flex:0 1 220px;min-width:140px;accent-color:#F2B63C}
 .sevrow .sevg{font:600 13px/1.2 var(--sans);color:#F2B63C;min-width:4.6em}
+.ecg12wrap{display:flex;flex-direction:column;gap:6px;border-top:1px solid #1E2833;padding-top:10px}
+.e12head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.e12head .gname{font:600 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#93A1B0}
+.e12leg{display:flex;flex-wrap:wrap;gap:4px 12px;font:500 12px/1.3 var(--mono);color:#C9D3DE}
+.e12leg i,.bullkey i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;flex:none}
+#ecg12{display:block;width:100%;border-radius:8px}
+.e12note{margin:0;font-size:12.5px;line-height:1.5;color:#B8C4D0}
+.e12note b{color:#E2E8F0}
+.tercard .seg{margin-top:10px}
+.bullwrap{display:flex;gap:14px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.bull{width:min(230px,100%);height:auto;flex:none;touch-action:manipulation}
+.bull path,.bull circle{stroke:var(--surface);stroke-width:1.5;cursor:pointer;transition:opacity .15s}
+.bull .dim{opacity:.22}
+.bull .hi{stroke:var(--fg);stroke-width:3}
+.bull text{font:600 12px var(--mono);fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.bull .bax text{font:600 9.5px var(--mono);fill:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.bullkey{display:flex;flex-direction:column;gap:7px;font-size:13px;min-width:130px;flex:1}
+.bullkey span{display:flex;align-items:center}
+.terseg{margin:8px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+.terseg b{color:var(--fg)}
+.terdetail{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.terdetail h3{margin:0;font-size:18px;line-height:1.25}
+.terdetail p{margin:0}
+.terdetail dl{margin:0}
+.terdetail dt{font:600 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.terdetail dd{margin:2px 0 0}
+#ter12{display:block;width:100%;border-radius:8px;margin-top:8px}
+.leadmap{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.leadmap th,.leadmap td{padding:5px 6px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.leadmap th{font:600 11px/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-top:0}
+.leadmap tr.on td{background:var(--sunken);font-weight:600}
+.terinfo{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.terinfo .eyebrow{display:block;margin-bottom:4px}
+.terinfo p{margin:0}
 .sevrow .sevtxt{font:500 12px/1.3 var(--mono);color:#C9D3DE;font-variant-numeric:tabular-nums}
 .dopwrap{display:flex;flex-direction:column;gap:6px}
 .dophead{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
@@ -314,6 +348,7 @@ footer a,.link{color:var(--fg)}
           </div>
           <button class="btn" type="button" id="eColor" aria-pressed="true" title="Colour Doppler overlay">Color</button>
           <button class="btn" type="button" id="eCal" aria-pressed="true" title="Calipers: 2D measurements on the current frame (PLAX and A4C)">Calipers</button>
+          <button class="btn" type="button" id="eSeg" aria-pressed="false" title="Colour the LV wall by coronary territory (AHA 17 segments)">Territories</button>
           <button class="btn" type="button" id="eSnd" aria-pressed="false" title="Synthesized heart sounds">Sound off</button>
           <label class="egain"><span>Gain</span><input type="range" id="eGain" min="0.5" max="1.7" step="0.05" value="1" aria-label="2D gain"></label>
         </div>
@@ -357,6 +392,12 @@ footer a,.link{color:var(--fg)}
             <button class="btn" type="button" data-scen="res" aria-pressed="false" title="Restrictive cardiomyopathy">Restrictive</button>
             <button class="btn" type="button" data-scen="con" aria-pressed="false" title="Constrictive pericarditis">Constrictive</button>
           </div>
+          <span class="gname">Coronary occlusion</span>
+          <div class="seg scenseg">
+            <button class="btn" type="button" data-scen="lad" aria-pressed="false" title="Acute proximal LAD occlusion: anterior STEMI">LAD</button>
+            <button class="btn" type="button" data-scen="lcx" aria-pressed="false" title="Acute circumflex occlusion: lateral and posterior MI">LCx</button>
+            <button class="btn" type="button" data-scen="rca" aria-pressed="false" title="Acute proximal RCA occlusion: inferior STEMI with RV infarction">RCA</button>
+          </div>
         </div>
         <div class="scenrow" id="varrow" role="group" aria-label="Variant" hidden>
           <span class="gname" id="varname">AR</span>
@@ -368,6 +409,11 @@ footer a,.link{color:var(--fg)}
           <span class="sevg" id="sevG">Severe</span><span class="sevtxt" id="sevTxt"></span>
         </div>
         <canvas id="ecg" role="img" aria-label="Lead II ECG sweeping at 70 beats per minute, in time with the 3D heart"></canvas>
+        <div class="ecg12wrap" id="ecg12wrap" hidden>
+          <div class="e12head"><span class="gname">12-lead ECG · 25 mm/s · 10 mm/mV</span><span class="e12leg" id="e12leg"></span></div>
+          <canvas id="ecg12" role="img" aria-label="12-lead ECG of the selected coronary occlusion"></canvas>
+          <p class="e12note" id="e12note"></p>
+        </div>
         <canvas id="phono" role="img" aria-label="Phonocardiogram: heart sounds and murmurs in time with the ECG"></canvas>
         <div class="hfrow"><span class="gname">Show</span><div class="seg" id="hfilt" role="group" aria-label="Pressure traces to show"><button class="btn" type="button" data-hf="all" aria-pressed="true">All</button><button class="btn" type="button" data-hf="left" aria-pressed="false" title="Ao, LV, LA and wedge">Left heart</button><button class="btn" type="button" data-hf="right" aria-pressed="false" title="PA, RV and RA">Right heart</button><button class="btn" type="button" data-hf="lvrv" aria-pressed="false" title="LV and RV on one scale: systolic discordance and diastolic equalization (constriction vs restriction)">LV + RV</button></div></div>
         <canvas id="hemo" role="img" aria-label="Pressure waveforms in time with the ECG"></canvas>
@@ -416,7 +462,7 @@ footer a,.link{color:var(--fg)}
           <table class="sccmp" id="scCmp" hidden></table>
           <p class="scpearl" id="scPearl"></p>
         </div>
-        <p class="cycnote">Motion is a smooth deformation of the static model. Valves turn green while open, amber while regurgitant and orange while open but obstructed; the cone in 3D marks the abnormal jet. Pressures are illustrative composites built so every valve event falls where the pressures cross, then played out beat by beat (AF, PVCs, respiration) — teaching curves, not patient recordings. Model sounds are synthesized from the same timeline; the patient recordings are real and come from the open BMD-HS dataset.</p>
+        <p class="cycnote">Motion is a smooth deformation of the static model; the LV wall thickens as it contracts, and in a coronary occlusion the shaded territory neither moves inward nor thickens. Valves turn green while open, amber while regurgitant and orange while open but obstructed; the cone in 3D marks the abnormal jet. Pressures are illustrative composites built so every valve event falls where the pressures cross, then played out beat by beat (AF, PVCs, respiration) — teaching curves, not patient recordings. Model sounds are synthesized from the same timeline; the patient recordings are real and come from the open BMD-HS dataset.</p>
       </div>
     </section>
 
@@ -437,6 +483,19 @@ footer a,.link{color:var(--fg)}
         </div>
         <div id="vlist"></div>
         <div class="vdetail" id="vdetail"></div>
+      </section>
+
+      <section class="card tercard" id="tercard" hidden>
+        <span class="eyebrow">Coronary territories · 17 segments</span>
+        <div class="seg" role="group" aria-label="Territory to show">
+          <button class="btn" type="button" data-ter="all" aria-pressed="true">All</button>
+          <button class="btn" type="button" data-ter="lad" aria-pressed="false">LAD</button>
+          <button class="btn" type="button" data-ter="lcx" aria-pressed="false">LCx</button>
+          <button class="btn" type="button" data-ter="rca" aria-pressed="false">RCA</button>
+        </div>
+        <div class="bullwrap"><svg class="bull" id="bull" viewBox="-124 -124 248 248" role="img" aria-label="Bull's-eye map of the 17 LV segments coloured by coronary territory"></svg><div class="bullkey" id="bullkey"></div></div>
+        <p class="terseg" id="terSegTxt"></p>
+        <div class="terdetail" id="terDetail"></div>
       </section>
 
       <section class="card" id="info" aria-live="polite"></section>
@@ -488,6 +547,11 @@ footer a,.link{color:var(--fg)}
         <li>Welch TD, Ling LH, Espinosa RE, et al. Echocardiographic diagnosis of constrictive pericarditis: Mayo Clinic criteria. <i>Circ Cardiovasc Imaging</i>. 2014;7(3):526-534.</li>
         <li>Ommen SR, Ho CY, Asif IM, et al. 2024 AHA/ACC/AMSSM/HRS/PACES/SCMR guideline for the management of hypertrophic cardiomyopathy. <i>J Am Coll Cardiol</i>. 2024;83(23):2324-2405.</li>
         <li>Blanke P, Weir-McCall JR, Achenbach S, et al. Computed tomography imaging in the context of transcatheter aortic valve implantation (TAVI)/transcatheter aortic valve replacement (TAVR): an expert consensus document of the Society of Cardiovascular Computed Tomography. <i>JACC Cardiovasc Imaging</i>. 2019;12(1):1-24.</li>
+        <li>Cerqueira MD, Weissman NJ, Dilsizian V, et al. Standardized myocardial segmentation and nomenclature for tomographic imaging of the heart: a statement for healthcare professionals from the Cardiac Imaging Committee of the Council on Clinical Cardiology of the American Heart Association. <i>Circulation</i>. 2002;105(4):539-542.</li>
+        <li>Thygesen K, Alpert JS, Jaffe AS, et al. Fourth universal definition of myocardial infarction (2018). <i>Circulation</i>. 2018;138(20):e618-e651.</li>
+        <li>Zimetbaum PJ, Josephson ME. Use of the electrocardiogram in acute myocardial infarction. <i>N Engl J Med</i>. 2003;348(10):933-940.</li>
+        <li>Lopez-Sendon J, Coma-Canella I, Gamallo C. Sensitivity and specificity of hemodynamic criteria in the diagnosis of acute right ventricular infarction. <i>Circulation</i>. 1981;64(3):515-525.</li>
+        <li>Rao SV, O’Donoghue ML, Ruel M, et al. 2025 ACC/AHA/ACEP/NAEMSP/SCAI guideline for the management of patients with acute coronary syndromes. <i>Circulation</i> and <i>J Am Coll Cardiol</i>. 2025.</li>
         <li>Kern MJ, Lim MJ, Goldstein JA, eds. <i>Hemodynamic Rounds: Interpretation of Cardiac Pathophysiology from Pressure Waveform Analysis</i>. 3rd ed. Wiley-Blackwell; 2009.</li>
         <li>Hall JE, Hall ME. <i>Guyton and Hall Textbook of Medical Physiology</i>. 14th ed. Elsevier; 2021.</li>
         <li>Human Reference Atlas. <a href="https://github.com/hubmapconsortium/ccf-3d-reference-object-library" target="_blank" rel="noopener">CCF 3D Reference Object Library</a> (HuBMAP): Visible Human Male heart and heart vasculature, v1.2. CC BY 4.0.</li>
@@ -496,7 +560,7 @@ footer a,.link{color:var(--fg)}
       </ol>
     </details>
     <span><strong>3D model:</strong> Human Reference Atlas, <a href="https://github.com/hubmapconsortium/ccf-3d-reference-object-library" target="_blank" rel="noopener">CCF 3D Reference Object Library</a> (HuBMAP) — Visible Human Male heart and heart vasculature, v1.2. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>; merged, simplified and recolored here for teaching.</span>
-    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae and moderator band are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. Pressures and percentages are typical adult values; not for diagnosis.</span>
+    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band and septal perforator arteries are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. Pressures and percentages are typical adult values; not for diagnosis.</span>
   </footer>
 </div>
 
@@ -5619,6 +5683,9 @@ footer a,.link{color:var(--fg)}
     pda: { n: 'Posterior descending artery', ab: 'PDA', l: 'coronary', c: 'cor', g: 'Coronary artery',
       d: 'Runs in the posterior interventricular groove on the inferior (diaphragmatic) surface. Supplies the inferior septum and inferior LV wall. Rotate to the inferior view to follow it.',
       p: 'The artery giving rise to the PDA defines dominance: the RCA in about 80% of people (right-dominant), the circumflex in roughly 5–10% (left-dominant), both in the rest.' },
+    sept: { n: 'Septal perforator arteries', ab: 'S1–S5', l: 'coronary', c: 'cor', g: 'Coronary artery', x: 1,
+      d: 'Branches that leave the underside of the LAD at right angles and dive into the interventricular septum. They supply the anterior two-thirds of the septum, including the bundle of His, the right bundle branch and the left anterior fascicle. They run inside the muscle, so the wall turns see-through when you select them.',
+      p: 'The first septal perforator (S1) feeds the basal septum where the mitral leaflet meets it in obstructive HCM: alcohol septal ablation injects ethanol into it to create a small, controlled septal infarct. A proximal LAD occlusion that takes out the septals can cause new right bundle branch block or left anterior fascicular block.' },
     gcv: { n: 'Great cardiac vein', ab: 'GCV', l: 'cveins', c: 'cvn', g: 'Cardiac vein',
       d: 'Runs beside the LAD, then turns into the left AV groove to become the coronary sinus.', p: '' },
     mcv: { n: 'Middle cardiac vein', ab: 'MCV', l: 'cveins', c: 'cvn', g: 'Cardiac vein',
@@ -5723,10 +5790,12 @@ footer a,.link{color:var(--fg)}
       labels: ['tv', 'mv', 'av', 'pv', 'lm', 'rca'],
       desc: 'Atria and great vessels removed. The aortic valve sits wedged between the mitral and tricuspid valves, with the coronary origins just above it — the relationship that matters for TAVR.' },
     { id: 'coronary', name: 'Coronary circulation', view: 'ant', wall: 100, layers: ['chambers', 'arteries', 'veins', 'coronary', 'cveins'], hide: [],
-      labels: ['lm', 'lad', 'diag', 'lcx', 'om', 'rca', 'am', 'pda', 'gcv', 'cs'],
-      desc: 'Coronary arteries and cardiac veins on an opaque heart. Use the LAO and RAO views to compare with angiography, and the inferior view to follow the PDA.' },
+      labels: ['lm', 'lad', 'diag', 'sept', 'lcx', 'om', 'rca', 'am', 'pda', 'gcv', 'cs'],
+      desc: 'Coronary arteries and cardiac veins on an opaque heart. Use the LAO and RAO views to compare with angiography, and the inferior view to follow the PDA. Select the septal perforators to see them inside the septum.' },
+    { id: 'territory', name: 'Coronary territories', view: 'apexlv', wall: 100, layers: ['chambers', 'coronary'], hide: ['ra', 'la'], ghost: ['rv'], labels: ['lad', 'diag', 'lcx', 'om', 'rca', 'pda'],
+      desc: 'The LV seen from its apex, turned like the bull’s-eye, with each of the 17 segments coloured by the artery that usually supplies it (the RV faded, the atria hidden). Pick a territory for its wall-motion pattern on echo, the ECG leads that face it and a simulated occlusion; hover a segment to name it.' },
     { id: 'cycle', name: 'Cardiac cycle', view: 'ant', wall: 55, layers: ['chambers', 'valves', 'pap', 'chordae', 'cond', 'arteries', 'veins', 'coronary'], hide: [], labels: ['mv', 'tv', 'av', 'pv'],
-      desc: 'The heart beating at 70 bpm in step with a Lead II ECG. Watch the conduction system fire before each contraction, the AV plane descend toward the apex in systole, and the valves turn green while open. Slow motion adds a caption for each phase. Pick a valve lesion (with acute vs chronic AR and MS in AF), HOCM with a Brockenbrough response, or restrictive vs constrictive physiology; turn Sound on to hear it, or play a real patient recording.' },
+      desc: 'The heart beating at 70 bpm in step with a Lead II ECG. Watch the conduction system fire before each contraction, the AV plane descend toward the apex in systole, and the valves turn green while open. Slow motion adds a caption for each phase. Pick a valve lesion (with acute vs chronic AR and MS in AF), HOCM with a Brockenbrough response, restrictive vs constrictive physiology, or an acute LAD, circumflex or RCA occlusion with its akinetic territory and 12-lead ECG; turn Sound on to hear it, or play a real patient recording.' },
     { id: 'echo', name: 'Echo views', view: 'ant', wall: 35, layers: ['chambers', 'valves', 'pap', 'chordae', 'arteries', 'veins'], hide: [], labels: [],
       desc: 'Standard TTE and TEE views, now beating in time with the ECG. Pick a view to see the probe, the plane and the image; choose a scenario to see its colour Doppler and a spectral Doppler trace calculated from the pressure model. “Match image” turns the 3D cut to the same orientation as the echo screen.' },
     { id: 'vessels', name: 'Great vessels', view: 'ant', wall: 30, layers: ['chambers', 'arteries', 'veins'], hide: [],
@@ -5788,6 +5857,7 @@ footer a,.link{color:var(--fg)}
     var html = '<div class="chips"><span class="chip">' + s.g + '</span><span class="chip mono">' + s.ab + '</span>' + (s.x ? '<span class="chip">Drawn schematically</span>' : '') + '</div>' +
       '<h2>' + s.n + '</h2><p>' + s.d + '</p>';
     if (s.p) html += '<div class="pearl"><span class="eyebrow">Clinical pearl</span>' + s.p + '</div>';
+    if (TER_OF[id]) html += terInfoHTML(id);
     html += '<div class="actions"><button class="btn" type="button" id="focusBtn">Center on it</button>' +
       '<button class="btn" type="button" id="isoBtn" aria-pressed="' + state.isolate + '">' + (state.isolate ? 'Show everything' : 'Isolate') + '</button>' +
       '<button class="btn" type="button" id="clearBtn">Clear</button></div>';
@@ -5795,6 +5865,7 @@ footer a,.link{color:var(--fg)}
     $('#focusBtn').addEventListener('click', function () { focusOn(id); });
     $('#isoBtn').addEventListener('click', function () { state.isolate = !state.isolate; renderInfo(); refresh(); });
     $('#clearBtn').addEventListener('click', function () { select(null); });
+    if (TER_OF[id]) terInfoWire(id);
   }
 
   /* ---------- Three.js scene ---------- */
@@ -5869,6 +5940,7 @@ footer a,.link{color:var(--fg)}
       if (!id) { o.visible = false; return; }
       if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();
       o.material = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0, side: THREE.DoubleSide }); heartMats.push(o.material);
+      if (id === 'lv' || id === 'ivs') o.material.userData.terr = true;
       o.userData.id = id;
       (S[id].meshes = S[id].meshes || []).push(o);
       meshes.push(o);
@@ -5901,6 +5973,7 @@ footer a,.link{color:var(--fg)}
   /* Schematic structures (conduction system, chordae, moderator band): curves fitted to the model's landmarks, drawn as tubes. */
   var hits = [], HIT_MAT = new THREE.MeshBasicMaterial({ visible: false });
   function buildExtras() {
+    buildSeptals();
     Object.keys(EXTRAS.structs).forEach(function (id) {
       var s = S[id]; if (!s) return;
       s.meshes = []; s.hits = [];
@@ -5926,11 +5999,13 @@ footer a,.link{color:var(--fg)}
   /* ---------- Appearance ---------- */
   function refresh() {
     if (!ready) return;
-    var pal = COLORS[state.scheme];
+    var pal = COLORS[state.scheme], pr = PRESETS.filter(function (x) { return x.id === state.preset; })[0], ghost = {};
+    ((pr && pr.ghost) || []).forEach(function (g) { ghost[g] = true; });
     Object.keys(S).forEach(function (id) {
       var s = S[id]; if (!s.meshes) return;
       var vis = !!state.layers[s.l] && !state.hide[id];
       var op = s.l === 'chambers' ? state.wall : 1;
+      if (ghost[id]) op = Math.min(op, 0.13);
       if (state.isolate && state.sel && id !== state.sel) op = Math.min(op, 0.08);
       s.meshes.forEach(function (m) {
         var mat = m.material;
@@ -5951,7 +6026,7 @@ footer a,.link{color:var(--fg)}
     document.querySelectorAll('[data-preset]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.preset === state.preset)); });
     document.querySelectorAll('[data-scheme]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.scheme === state.scheme)); });
     $('#wall').value = Math.round(state.wall * 100); $('#wallv').textContent = Math.round(state.wall * 100) + '%';
-    updateLabelSet();
+    updateLabelSet(); terDisplay();
   }
 
   /* ---------- Labels ---------- */
@@ -5959,7 +6034,7 @@ footer a,.link{color:var(--fg)}
   var SHORT = { san: 'SA node', avn: 'AV node', his: 'Bundle of His', inter: 'Internodal pathways', bach: 'Bachmann’s bundle', rbb: 'Right bundle branch', lbb: 'Left bundle branch',
     laf: 'Left anterior fascicle', lpf: 'Left posterior fascicle', purk: 'Purkinje fibers', chMV: 'Mitral chordae', chTV: 'Tricuspid chordae', mod: 'Moderator band',
     papAL: 'Anterolateral papillary m.', papPM: 'Posteromedial papillary m.', papRA: 'RV anterior papillary m.', papRP: 'RV posterior papillary m.', papRS: 'RV septal papillary m.',
-    lad: 'LAD', lcx: 'Circumflex', lm: 'Left main', rca: 'RCA', pda: 'PDA', om: 'Obtuse marginal', diag: 'Diagonal', am: 'Acute marginal', ivs: 'Septum' };
+    lad: 'LAD', lcx: 'Circumflex', lm: 'Left main', sept: 'Septal perforators', rca: 'RCA', pda: 'PDA', om: 'Obtuse marginal', diag: 'Diagonal', am: 'Acute marginal', ivs: 'Septum' };
   function buildLabels() {
     Object.keys(S).forEach(function (id) {
       var b = document.createElement('button');
@@ -5975,7 +6050,8 @@ footer a,.link{color:var(--fg)}
   function updateLabelSet() {
     var p = PRESETS.filter(function (x) { return x.id === state.preset; })[0];
     var want = state.labels ? p.labels.slice() : [];
-    if (state.labels && state.preset === 'cycle' && cur && cur.X.flow) want = [cur.X.flow.valve];  /* lesion scenario: label only the diseased valve so the jet stays visible */
+    if (state.labels && state.preset === 'cycle' && cur && cur.X.flow) want = [cur.X.flow.valve];
+    if (state.labels && state.preset === 'cycle' && cur && cur.X.group === 'cad') want = [cur.key];  /* lesion scenario: label only the diseased valve so the jet stays visible */
     if (state.sel && want.indexOf(state.sel) < 0) want.push(state.sel);
     activeLabels = want.filter(function (id) { return S[id].anchor && state.layers[S[id].l] && !state.hide[id] && !(state.isolate && state.sel && id !== state.sel); });
     Object.keys(labelEls).forEach(function (id) {
@@ -6076,6 +6152,7 @@ footer a,.link{color:var(--fg)}
   function setView(v, animate) {
     if (state.echo && state.echo.look === 'face') setLook('probe', false);
     if (v === 'coplanar' || v === 'surgeon') structView(v);
+    if (v === 'apexlv') terView();
     var V = VIEWS[v], up = V.up || [0, 1, 0];
     if (Math.abs(camera.up.x - up[0]) + Math.abs(camera.up.y - up[1]) + Math.abs(camera.up.z - up[2]) > 1e-3) { camera.up.set(up[0], up[1], up[2]); makeControls(); }
     state.view = v; liveAng = false;
@@ -6143,6 +6220,8 @@ footer a,.link{color:var(--fg)}
     $('#pdesc').textContent = p.desc;
     if (id === 'cycle') { if (state.echo) exitEcho(); enterCycle(); }
     else if (cyc.on) exitCycle();
+    $('#tercard').hidden = id !== 'territory';
+    if (id === 'territory') { terHov = 0; setTer(terSel); }
     if (id === 'echo') { renderInfo(); refresh(); enterEcho(animate); return; }
     if (state.echo) exitEcho();
     renderInfo(); refresh(); setView(p.view, animate);
@@ -6152,6 +6231,7 @@ footer a,.link{color:var(--fg)}
     if (id) {
       var s = S[id];
       if (!state.layers[s.l] || state.hide[id]) { state.layers[s.l] = true; delete state.hide[id]; }
+      if (id === 'sept' && state.wall > 0.45 && !state.echo) state.wall = 0.35;   /* septal branches run inside the muscle */
     }
     renderInfo(); refresh();
     if (state.echo) drawEcho();
@@ -6159,7 +6239,7 @@ footer a,.link{color:var(--fg)}
   }
 
   /* ---------- Picking ---------- */
-  var ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), tip = $('#tip'), down = null, pendingHover = null;
+  var ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), tip = $('#tip'), down = null, pendingHover = null, lastHit = null;
   function pick(clientX, clientY) {
     var r = canvas.getBoundingClientRect();
     ndc.set((clientX - r.left) / r.width * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
@@ -6167,24 +6247,30 @@ footer a,.link{color:var(--fg)}
     var cands = meshes.filter(function (m) { return m.visible && m.material.opacity >= 0.35; }).concat(hits.filter(function (h) { return h.visible; }));
     var all = ray.intersectObjects(cands, false), hit = null;
     for (var i = 0; i < all.length; i++) { if (!clipOn || clipPlane.distanceToPoint(all[i].point) >= 0) { hit = all[i]; break; } }
+    lastHit = hit ? hit.point : null;
     return hit ? hit.object.userData.id : null;
   }
   canvas.addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY, t: performance.now() }; tip.hidden = true; });
   canvas.addEventListener('pointerup', function (e) {
     if (!down || !ready) return;
     var moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t; down = null;
-    if (moved < 6 && dt < 700) { var id = pick(e.clientX, e.clientY); if (id) select(id, false); }
+    if (moved < 6 && dt < 700) {
+      var id = pick(e.clientX, e.clientY), sg = state.preset === 'territory' && !cyc.on && !state.echo && (id === 'lv' || id === 'ivs') ? segAtHit() : 0;
+      if (sg) { terPin = sg; setTer(SEG[sg][1]); } else if (id) select(id, false);
+    }
   });
   canvas.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse' && !down) pendingHover = { x: e.clientX, y: e.clientY }; });
-  canvas.addEventListener('pointerleave', function () { pendingHover = null; setHover(null); tip.hidden = true; });
+  canvas.addEventListener('pointerleave', function () { pendingHover = null; setHover(null); tip.hidden = true; if (terHov) terHover(0); });
   function setHover(id) { if (id === state.hover) return; state.hover = id; canvas.classList.toggle('pointing', !!id); refresh(); }
   function doHover() {
     if (!pendingHover || !ready) return;
     var p = pendingHover; pendingHover = null;
-    var id = pick(p.x, p.y); setHover(id);
+    var id = pick(p.x, p.y), sg = state.preset === 'territory' && !cyc.on && !state.echo && (id === 'lv' || id === 'ivs') ? segAtHit() : 0;
+    if (state.preset === 'territory' && sg !== terHov) terHover(sg);
+    setHover(sg ? null : id);
     if (id) {
       var r = stage.getBoundingClientRect();
-      tip.innerHTML = S[id].n + '<small>' + S[id].g + '</small>'; tip.hidden = false;
+      tip.innerHTML = sg ? 'Segment ' + sg + ' · ' + SEG[sg][0] + '<small>' + TER_NAME[SEG[sg][1]] + ' territory</small>' : S[id].n + '<small>' + S[id].g + '</small>'; tip.hidden = false;
       var x = Math.min(p.x - r.left + 14, r.width - tip.offsetWidth - 8), y = Math.max(p.y - r.top - tip.offsetHeight - 10, 8);
       tip.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
     } else tip.hidden = true;
@@ -6529,7 +6615,8 @@ footer a,.link{color:var(--fg)}
     '  vec3 rel = p - bApex; float h = dot(rel, u); float s = h / L; vec3 q = rel - h * u; float qr = length(q);',
     '  float wRad = 1.0 - smoothstep(0.055, 0.09, qr);',
     '  float wV = smoothstep(-0.15, 0.2, s) * (1.0 - smoothstep(0.85, 1.05, s)) * wRad;',
-    '  vec3 d = -q * (0.11 * uCyc * wV);',
+    '  float kR = (uWm.w > 0.5 && wV > 0.0) ? wmFactor(p * 1000.0) : 1.0;',   /* regional wall motion (coronary scenarios) */
+    '  vec3 d = -q * (0.11 * uCyc * wV * kR);',
     '  float wL = (s <= 1.0 ? clamp(s, 0.0, 1.0) : 1.0 - smoothstep(1.0, 1.7, s)) * (1.0 - smoothstep(0.06, 0.1, qr));',
     '  vec3 cv = bSVC - bIVC; float tc = clamp(dot(p - bIVC, cv) / dot(cv, cv), 0.0, 1.0);',
     '  wL *= 1.0 - (1.0 - smoothstep(0.012, 0.032, length(p - bIVC - cv * tc))) * smoothstep(0.95, 1.15, s);',   /* the venous pole of the RA is held by the cavae */
@@ -6537,19 +6624,29 @@ footer a,.link{color:var(--fg)}
     '  float wa = smoothstep(0.85, 1.05, s);',
     '  float r1 = length(p - bRA) / 0.04; float r2 = length(p - bLA) / 0.04;',
     '  d += (bRA - p) * (0.10 * uAtr * wa * exp(-r1 * r1)) + (bLA - p) * (0.10 * uAtr * wa * exp(-r2 * r2));',
+    '  d += thickDisp(p * 1000.0, uCyc * kR) * 0.001;',   /* LV wall thickening (inner layers move in more than outer) */
     '  return d;',
     '}'].join('\n');
   var BEAT_PROJECT = [
     'vec4 bWorld = modelMatrix * vec4(transformed, 1.0);',
     'bWorld.xyz += mix(aRemA, aRemB, uRemT);',
+    '#ifdef TERR', 'vTerP = bWorld.xyz * 1000.0;', '#endif',
     'bWorld.xyz += beatField(bWorld.xyz);',
     'vec4 mvPosition = viewMatrix * bWorld;',
     'gl_Position = projectionMatrix * mvPosition;'].join('\n');
   function patchBeat(m) {
+    var terr = !!m.userData.terr;
     m.onBeforeCompile = function (sh) {
-      sh.uniforms.uCyc = CYC.c; sh.uniforms.uAtr = CYC.a; sh.uniforms.uRemT = REM_T;
-      sh.vertexShader = 'attribute vec3 aRemA;\nattribute vec3 aRemB;\nuniform float uRemT;\n' + BEAT_GLSL + '\n' + sh.vertexShader.replace('#include <project_vertex>', BEAT_PROJECT);
+      sh.uniforms.uCyc = CYC.c; sh.uniforms.uAtr = CYC.a; sh.uniforms.uRemT = REM_T; sh.uniforms.uWm = TERU.wm; sh.uniforms.uWmRv = TERU.rv;
+      var beat = BEAT_GLSL.replace('vec3 beatField(vec3 p) {', terGLSL(true) + '\nvec3 beatField(vec3 p) {');
+      sh.vertexShader = (terr ? '#define TERR\nvarying vec3 vTerP;\n' : '') + 'attribute vec3 aRemA;\nattribute vec3 aRemB;\nuniform float uRemT;\n' + beat + '\n' + sh.vertexShader.replace('#include <project_vertex>', BEAT_PROJECT);
+      if (terr) {
+        sh.uniforms.uTerOn = TERU.on; sh.uniforms.uTerSel = TERU.sel; sh.uniforms.uTerDim = TERU.dim; sh.uniforms.uSegHi = TERU.hi;
+        sh.fragmentShader = '#define TERR\nvarying vec3 vTerP;\nuniform float uTerOn; uniform vec3 uTerSel; uniform float uTerDim; uniform float uSegHi;\n' + terGLSL(false) + '\n' +
+          sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n' + TER_FRAG);
+      }
     };
+    m.customProgramCacheKey = function () { return terr ? 'beat-terr' : 'beat'; };
     m.needsUpdate = true;
   }
   /* Template beat (857 ms, P-wave onset = 0) keypoints for every pressure, as fractions of the beat. */
@@ -6565,6 +6662,9 @@ footer a,.link{color:var(--fg)}
      shared by RA, RV and PA (keeps every right-heart crossing in place); base: no-a-wave base curves for AF. */
   var HSC = {
    normal:{},
+   lad:{lmap:[[0,5],[9,16],[80,74],[121,112]]},
+   lcx:{lmap:[[0,4],[9,13],[80,76],[121,115]]},
+   rca:{lmap:[[0,3.5],[9,10.5],[80,72],[121,107]],rmap:[[0,8],[6.5,13],[25.5,25]]},
    mr:{curves:{
      la:[[0,16],[0.06,16.5],[0.11,18],[0.15,20],[0.2,18],[0.225,17.4],[0.25,20],[0.3,25],[0.38,31],[0.46,36],[0.54,40],[0.62,44],[0.69,46],[0.705,40],[0.72,32],[0.745,24],[0.76,20.5],[0.8,17],[0.86,16],[0.93,15.8]],
      lv:[[0,12],[0.08,12.3],[0.13,14],[0.17,15.5],[0.2,15.3],[0.215,15.6],[0.225,16.4],[0.245,30],[0.265,52],[0.285,66],[0.3,73],[0.33,92],[0.37,108],[0.42,116],[0.47,114],[0.52,108],[0.57,101],[0.61,96],[0.63,93],[0.645,76],[0.665,50],[0.685,36],[0.705,28],[0.72,21],[0.745,14],[0.78,10],[0.82,9.8],[0.88,10.5],[0.95,11.5]],
@@ -6767,6 +6867,39 @@ footer a,.link{color:var(--fg)}
         'Louder with Valsalva and on standing; softer with squatting, handgrip and leg raise.',
         'Bifid carotid pulse; S4; brisk upstroke unlike AS.'],
       pearl: 'A resting or provoked LVOT gradient ≥30 mmHg defines obstruction; ≥50 mmHg with symptoms despite beta-blockers or verapamil is the threshold for septal reduction (myectomy or alcohol septal ablation) or a cardiac myosin inhibitor such as mavacamten. Avoid vasodilators, aggressive diuresis and inotropes.' },
+    lad: { name: 'LAD', full: 'Acute proximal LAD occlusion (anterior STEMI)', group: 'cad', scales: [140, 30, 30], ecg: { st: -0.05, t: 0.26 }, wm: { lad: 1 }, snd: { s4: 0.45 },
+      cap: { 3: 'Ejection: the LAD territory (shaded) neither moves inward nor thickens, while the inferior and lateral walls contract.', 1: 'The ischemic LV is stiffer: atrial contraction meets a higher LVEDP (S4).' },
+      sub: 'Thrombotic occlusion of the proximal LAD, before the first diagonal and septal branches. The shaded LAD territory has stopped contracting.',
+      trace: ['<b>12-lead:</b> ST elevation in V1–V4, plus I and aVL because the occlusion is proximal to the first diagonal; reciprocal ST depression in III and aVF.',
+        '<b>Lead II</b> shows only slight reciprocal ST depression: a single monitoring lead can miss a STEMI.',
+        '<b>Filling pressures rise:</b> the ischemic LV is stiffer and has less working muscle, so LVEDP and mean LA (wedge) pressure climb while systolic pressure falls slightly.',
+        '<b>Wall motion</b> (3D model and echo): the anterior wall, anterior septum and apex are akinetic — no inward motion, no thickening — while the inferior and lateral walls keep contracting.'],
+      bed: ['Pressure-like chest pain with diaphoresis; an S4 from the stiff, ischemic ventricle.',
+        'Watch for pump failure (Killip class), ventricular arrhythmias and new MR; days later, septal or free-wall rupture, apical aneurysm or LV thrombus.',
+        'Echo: anteroseptal akinesis in PLAX, apical akinesis in A4C and A2C; in PSAX at the papillary muscles, the anterior and anteroseptal segments stop thickening.'],
+      pearl: 'Primary PCI aims for first medical contact to device within 90 minutes (120 minutes when the patient is transferred). Anterior MI is the largest and carries the highest risk of LV thrombus, so look closely at the apex on echo (use contrast if needed). Deep or biphasic T waves in V2–V3 after the pain settles (Wellens pattern) warn of a critical proximal LAD stenosis.' },
+    lcx: { name: 'LCx', full: 'Acute circumflex occlusion (lateral and posterior MI)', group: 'cad', scales: [140, 30, 30], ecg: {}, wm: { lcx: 1 }, snd: { s4: 0.3 },
+      cap: { 3: 'Ejection: the lateral wall (shaded) stays still while the septum and anterior wall contract.' },
+      sub: 'Occlusion of the mid circumflex. The shaded lateral wall is akinetic, yet the ECG changes are subtle.',
+      trace: ['<b>12-lead:</b> ST elevation in I, aVL, V5 and V6 — often 1 mm or less — and <b>ST depression in V1–V3</b>, the mirror image of posterior injury.',
+        '<b>Lead II</b> is almost normal: circumflex occlusion is the classic “electrically silent” infarct and the one most often missed.',
+        'A modest rise in LVEDP and mean LA (wedge) pressure.',
+        '<b>Wall motion:</b> the anterolateral and inferolateral walls are akinetic (A4C lateral wall; PLAX and A3C inferolateral wall; PSAX lateral segments).'],
+      bed: ['Chest pain with a near-normal ECG: record posterior leads V7–V9 and get an early echo.',
+        'Treat ST depression that is maximal in V1–V4 as a possible posterior STEMI, not as NSTEMI.',
+        'In a left-dominant heart the circumflex also feeds the PDA, the inferior wall and the posteromedial papillary muscle.'],
+      pearl: 'Many acute circumflex occlusions do not meet STEMI criteria on the standard 12 leads. ST elevation of 0.5 mm or more in V7–V9 is diagnostic of posterior infarction; tall R waves in V1–V2 develop later.' },
+    rca: { name: 'RCA', full: 'Acute proximal RCA occlusion (inferior STEMI with RV infarction)', group: 'cad', scales: [140, 30, 30], ecg: { st: 0.24, t: 0.5 }, wm: { rca: 1, rv: 0.75 }, snd: {},
+      cap: { 3: 'Ejection: the inferior wall and inferior septum (shaded) stay still; the RV free wall barely moves.' },
+      sub: 'Occlusion of the proximal RCA in a right-dominant heart, before its RV branches. The shaded inferior wall and inferior septum are akinetic, and the RV free wall is hypokinetic.',
+      trace: ['<b>12-lead:</b> ST elevation in II, III and aVF, greater in III than in II (RCA rather than circumflex), with reciprocal ST depression in I and aVL.',
+        '<b>RV involvement:</b> ST elevation in V1, and ≥1 mm in right-sided V4R. V4R is not part of the standard 12 leads, so record it in every inferior STEMI.',
+        '<b>RV infarct pressures:</b> RA rises to the level of the wedge (RA/PCWP ratio above 0.8) while LV filling pressure stays near normal; the ischemic RV pumps less, so systemic pressure falls.',
+        '<b>Wall motion:</b> the basal and mid inferior wall and inferior septum are akinetic (A2C inferior wall, PSAX inferior segments, A4C basal septum); the RV free wall is hypokinetic.'],
+      bed: ['Hypotension with clear lungs and a raised JVP (sometimes a Kussmaul sign) suggests RV infarction: give fluid, and avoid nitrates and diuretics.',
+        'Bradycardia and AV block are common because the RCA usually supplies the SA and AV nodes; atropine or temporary pacing may be needed.',
+        'Days later: posteromedial papillary muscle rupture (it has a single blood supply) causes sudden severe MR.'],
+      pearl: 'ST elevation III > II with depression in I and aVL points to the RCA; ST elevation II ≥ III with I and aVL isoelectric or elevated, and elevation in V5–V6, points to the circumflex. Haemodynamically, RA ≥10 mmHg with an RA/PCWP ratio ≥0.8 supports RV infarction.' },
     res: { name: 'Restrictive', full: 'Restrictive cardiomyopathy', group: 'myo', win: 6, scales: [140, 70, 40], ecg: { r: 0.55, s: -0.12, t: 0.1 }, hv: { S: 0.55, insp: 3 },
       resp: { ra: [-3, 0], rv: [-3, -2], pa: [-3, -2], lv: [-3, -2], ao: [-3, -2], la: [-3, 0], pcwp: 0 },
       snd: { s3: 0.55, p2: 0.85 },
@@ -6796,7 +6929,8 @@ footer a,.link{color:var(--fg)}
         'Pulsus paradoxus in about a third.'],
       pearl: 'Causes: prior cardiac surgery, radiation, recurrent or tuberculous pericarditis. Echo clues: septal bounce, >25% respiratory variation in mitral E, annulus reversus (septal e′ > lateral e′), expiratory hepatic-vein diastolic flow reversal. Pericardiectomy is definitive; CMR pericardial enhancement suggests transient inflammatory constriction worth a trial of anti-inflammatories first.' }
   };
-  var SC_ORDER = ['normal', 'mr', 'tr', 'as', 'ar', 'ara', 'ms', 'msaf', 'ts', 'hocm', 'res', 'con'];
+  var SC_ORDER = ['normal', 'mr', 'tr', 'as', 'ar', 'ara', 'ms', 'msaf', 'ts', 'hocm', 'res', 'con', 'lad', 'lcx', 'rca'];
+  ['lad', 'lcx', 'rca'].forEach(function (k) { SCX[k].feat = SCX.normal.feat.filter(function (f) { return f[0] !== 'ao'; }); });
   /* ---------- Hemodynamic engine ----------
      1. Template beat: each pressure is a periodic monotone-cubic curve through keypoints over one 857 ms beat that starts
         at P-wave onset. Keypoints are placed so the valve events fall where the pressures cross.
@@ -6857,6 +6991,8 @@ footer a,.link{color:var(--fg)}
     Object.keys(HBASE).forEach(function (k) { B[k] = (sc.base && sc.base[k]) || HBASE[k]; T[k] = monoCurve((sc.curves && sc.curves[k]) || B[k]); });
     if (sc.xf) Object.keys(sc.xf).forEach(function (k) { var x = sc.xf[k], b = monoCurve(B[k]); for (i = 0; i < N; i++) T[k][i] = b[i] * x[0] + x[1]; });
     if (sc.rmap) ['ra', 'rv', 'pa'].forEach(function (k) { if (sc.curves && sc.curves[k]) return; var b = monoCurve(B[k]); for (i = 0; i < N; i++) T[k][i] = pmap(b[i], sc.rmap); });
+    /* lmap: one monotone map shared by LV, LA and Ao (raises filling pressure, lowers systolic, keeps every crossing in place) */
+    if (sc.lmap) ['lv', 'la', 'ao'].forEach(function (k) { if (sc.curves && sc.curves[k]) return; var b = monoCurve(B[k]); for (i = 0; i < N; i++) T[k][i] = pmap(b[i], sc.lmap); });
     return finishScen(key, X, T);
   }
   function finishScen(key, X, T) {
@@ -7578,6 +7714,9 @@ footer a,.link{color:var(--fg)}
       case 'hocm': st = o.stats();
         return [['Resting peak LVOT gradient', mm(A(st.n, function (q) { return q.grad; }))], ['Post-PVC gradient', mm(A(st.post, function (q) { return q.grad; }))], ['Ao pulse pressure, rest → post-PVC', fmt(A(st.n, function (q) { return q.pp; })) + ' → ' + fmt(A(st.post, function (q) { return q.pp; })) + ' mmHg'], ['LVEDP', mm(tabAt(T.lv, 0.215))]];
       case 'con': case 'res': return cmpRows(key).map(function (q) { return [q[0], key === 'con' ? q[1] : q[2]]; });
+      case 'lad': case 'lcx': case 'rca': n = TERINFO[key].segs.length;
+        return [['Akinetic segments', TERINFO[key].segs.join(', ') + (key === 'rca' ? ' + RV free wall' : '')], ['Ao', fmt(mx(T.ao)) + '/' + fmt(mn(T.ao)) + ' mmHg'], ['LVEDP', mm(lvedp)], ['Mean LA ≈ PCWP', mm(mLA)], ['Mean RA', mm(avg(T.ra))]]
+          .concat(key === 'rca' ? [['RA / PCWP', (avg(T.ra) / mLA).toFixed(2)]] : []);
     }
     return [];
   }
@@ -7631,6 +7770,13 @@ footer a,.link{color:var(--fg)}
     if (!cmp.hidden) cmp.innerHTML = '<caption>Constriction vs restriction in this model</caption><thead><tr><th scope="col">Criterion</th><th scope="col"' + (key === 'con' ? ' class="hl"' : '') + '>Constrictive</th><th scope="col"' + (key === 'res' ? ' class="hl"' : '') + '>Restrictive</th><th scope="col">Favours</th></tr></thead><tbody>' +
       cmpRows().map(function (q) { return '<tr><th scope="row">' + q[0] + '</th><td' + (key === 'con' ? ' class="hl"' : '') + '>' + q[1] + '</td><td' + (key === 'res' ? ' class="hl"' : '') + '>' + q[2] + '</td><td>' + q[3] + '</td></tr>'; }).join('') + '</tbody>';
     hemoCv.setAttribute('aria-label', X.full + ': pressure waveforms in time with the ECG. Aorta and LV on 0–' + X.scales[0] + ' mmHg; RA, RV and PA on 0–' + X.scales[1] + '; LA, wedge and LV on 0–' + X.scales[2] + '.');
+    var wm = X.wm || {}; WM.lad = wm.lad || 0; WM.lcx = wm.lcx || 0; WM.rca = wm.rca || 0; WM.rv = wm.rv || 0;
+    WM.on = !!(WM.lad || WM.lcx || WM.rca || WM.rv); WM.sig = [WM.lad, WM.lcx, WM.rca, WM.rv].join(',');
+    TERU.wm.value.set(WM.lad, WM.lcx, WM.rca, WM.on ? 1 : 0); TERU.rv.value = WM.rv;
+    if (X.group === 'cad' && !echoSegOn) { echoSegOn = true; syncSegBtn(); }
+    var e12 = X.group === 'cad'; $('#ecg12wrap').hidden = !e12;
+    if (e12) { $('#e12leg').innerHTML = e12Legend(); $('#e12note').innerHTML = L12_NOTE[curKey]; requestAnimationFrame(function () { draw12($('#ecg12'), curKey); }); }
+    terDisplay();
     hideJets(); audioStopModel(); resetTL(); lastPh = -1; lastCapKey = ''; updateLabelSet(); if (cyc.on) renderListen(); echoSyncScenario();
     sevUI(); applyRemodel();
   }
@@ -8048,7 +8194,7 @@ footer a,.link{color:var(--fg)}
     try { gl = glCv.getContext('webgl', { antialias: false, preserveDrawingBuffer: true, premultipliedAlpha: false }) || glCv.getContext('experimental-webgl'); } catch (e) { gl = null; }
     if (!gl) return (GLE = false);
     function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn('echo shader:', gl.getShaderInfoLog(s)); return null; } return s; }
-    var vs = sh(gl.VERTEX_SHADER, 'attribute vec2 aP; varying vec2 vUv; void main() { vUv = aP * 0.5 + 0.5; gl_Position = vec4(aP, 0.0, 1.0); }'), fs = sh(gl.FRAGMENT_SHADER, ECHO_FS);
+    var vs = sh(gl.VERTEX_SHADER, 'attribute vec2 aP; varying vec2 vUv; void main() { vUv = aP * 0.5 + 0.5; gl_Position = vec4(aP, 0.0, 1.0); }'), fs = sh(gl.FRAGMENT_SHADER, ECHO_FS.replace('vec3 beatField(vec3 p) {', terGLSL(true) + '\nvec3 beatField(vec3 p) {'));
     if (!vs || !fs) return (GLE = false);
     var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
     if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { console.warn('echo program:', gl.getProgramInfoLog(pr)); return (GLE = false); }
@@ -8059,7 +8205,7 @@ footer a,.link{color:var(--fg)}
     var tex2 = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex2);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    var loc = {}; ['uMask', 'uIns', 'uRes', 'uO', 'uSc', 'uHalf', 'uDepth', 'uTime', 'uNear', 'uLiver', 'uFirst4', 'uHV', 'uHVn', 'uGain', 'uCalc', 'uPeri', 'uTee', 'uSpark', 'uSh4', 'uT', 'uR', 'uD', 'uCyc', 'uAtr'].forEach(function (n) { loc[n] = gl.getUniformLocation(pr, n); });
+    var loc = {}; ['uMask', 'uIns', 'uRes', 'uO', 'uSc', 'uHalf', 'uDepth', 'uTime', 'uNear', 'uLiver', 'uFirst4', 'uHV', 'uHVn', 'uGain', 'uCalc', 'uPeri', 'uTee', 'uSpark', 'uSh4', 'uT', 'uR', 'uD', 'uCyc', 'uAtr', 'uWm', 'uWmRv'].forEach(function (n) { loc[n] = gl.getUniformLocation(pr, n); });
     GLE = { gl: gl, pr: pr, buf: buf, tex: tex, tex2: tex2, insVer: -1, loc: loc, aP: gl.getAttribLocation(pr, 'aP') };
     return GLE;
   }
@@ -8078,7 +8224,7 @@ footer a,.link{color:var(--fg)}
     gl.uniform1f(L.uHalf, half); gl.uniform1f(L.uDepth, depth); gl.uniform1f(L.uTime, cyc.t % 1000); gl.uniform1f(L.uNear, echoNearR); gl.uniform1f(L.uLiver, v.near === 'Liver' ? 1 : 0); gl.uniform4fv(L.uFirst4, insFirst); var hv = hepVein(v); gl.uniform1f(L.uHVn, hv ? 1 : 0); if (hv) gl.uniform4fv(L.uHV, hv);
     gl.uniform1f(L.uGain, Math.pow(10, (echoGain - 1) * 1.2)); gl.uniform1f(L.uCalc, calc); gl.uniform1f(L.uPeri, peri); gl.uniform1f(L.uSpark, spark || 0); gl.uniform4fv(L.uSh4, shBins); gl.uniform1f(L.uTee, v.mod === 'tee' ? 1 : 0);
     gl.uniform3f(L.uT, v.T[0] * 0.001, v.T[1] * 0.001, v.T[2] * 0.001); gl.uniform3f(L.uR, v.r[0], v.r[1], v.r[2]); gl.uniform3f(L.uD, v.d[0], v.d[1], v.d[2]);
-    gl.uniform1f(L.uCyc, cc); gl.uniform1f(L.uAtr, aa);
+    gl.uniform1f(L.uCyc, cc); gl.uniform1f(L.uAtr, aa); gl.uniform4f(L.uWm, WM.lad, WM.lcx, WM.rca, WM.on ? 1 : 0); gl.uniform1f(L.uWmRv, WM.rv);
     gl.bindBuffer(gl.ARRAY_BUFFER, E.buf); gl.enableVertexAttribArray(E.aP); gl.vertexAttribPointer(E.aP, 2, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     return true;
@@ -8175,10 +8321,389 @@ footer a,.link{color:var(--fg)}
   var BA = [0.0745, 0.4345, 0.0805], BB = [0.0126, 0.4848, 0.0330], BRA = [-0.017, 0.481, 0.034], BLA = [0.004, 0.493, 0.008], BSV = [-0.0275, 0.508, 0.0205], BIV = [-0.0255, 0.452, 0.009];
   var BL = Math.hypot(BB[0] - BA[0], BB[1] - BA[1], BB[2] - BA[2]), BU = [(BB[0] - BA[0]) / BL, (BB[1] - BA[1]) / BL, (BB[2] - BA[2]) / BL];
   function sst(e0, e1, x) { var t = (x - e0) / (e1 - e0); t = t < 0 ? 0 : t > 1 ? 1 : t; return t * t * (3 - 2 * t); }
+  /* ---------- Coronary territories, regional wall motion and the 12-lead ECG ----------
+     The AHA 17-segment model is laid out in the LV cavity frame of the remodeling field (REM: apex A → base B, angle φ
+     about the long axis). Level t runs from 0 at the apex through 0.5 (a sphere about the apical centre C) to 1 at the
+     mitral base. The septum lies between the two RV insertion points, measured on this heart from the LAD (anterior
+     interventricular groove) and the PDA (posterior groove): the anterior insertion turns from about −18° near the
+     apex to +61° at the base; the inferior one stays near −90°. Basal and mid levels split the septum in two and the
+     free wall in four; the apical level has one septal and three free-wall segments; segment 17 is the apical cap.
+     Territories follow the usual (right-dominant) distribution in Cerqueira et al. 2002 and Lang et al. 2015. */
+  var TER_COL = { lad: '#2F6FDB', lcx: '#E09A2B', rca: '#C2417D' }, TER_IDS = ['lad', 'lcx', 'rca'], TER_NAME = { lad: 'LAD', lcx: 'LCx', rca: 'RCA' };
+  var SEG = [null,
+    ['Basal anterior', 'lad'], ['Basal anteroseptal', 'lad'], ['Basal inferoseptal', 'rca'], ['Basal inferior', 'rca'], ['Basal inferolateral', 'lcx'], ['Basal anterolateral', 'lcx'],
+    ['Mid anterior', 'lad'], ['Mid anteroseptal', 'lad'], ['Mid inferoseptal', 'rca'], ['Mid inferior', 'rca'], ['Mid inferolateral', 'lcx'], ['Mid anterolateral', 'lcx'],
+    ['Apical anterior', 'lad'], ['Apical septal', 'lad'], ['Apical inferior', 'rca'], ['Apical lateral', 'lcx'], ['Apex', 'lad']];
+  function terThA(t) { return Math.max(-18, Math.min(61, -7 + 118 * (t - 0.3))); }   /* anterior RV insertion (LAD groove), degrees */
+  function terThI(t) { return -94 + Math.max(0, t - 0.55) * 24; }                       /* inferior RV insertion (PDA groove) */
+  function terCoord(x, y, z, out) {   /* model mm → [t, φ in degrees, distance from the axis (or from C near the apex)] */
+    var A = REM.A, U = REM.U, C = REM.C, E1 = REM.e1, E2 = REM.e2, rx = x - A[0], ry = y - A[1], rz = z - A[2], h = rx * U[0] + ry * U[1] + rz * U[2], qx, qy, qz, t, d;
+    if (h <= REM.HC) {
+      var wx = x - C[0], wy = y - C[1], wz = z - C[2], dw = Math.sqrt(wx * wx + wy * wy + wz * wz) + 1e-9, wu = wx * U[0] + wy * U[1] + wz * U[2];
+      t = Math.acos(Math.max(-1, Math.min(1, -wu / dw))) / Math.PI; qx = wx - wu * U[0]; qy = wy - wu * U[1]; qz = wz - wu * U[2]; d = dw;
+    } else {
+      t = 0.5 + 0.5 * (h - REM.HC) / (REM.L - REM.HC); qx = rx - h * U[0]; qy = ry - h * U[1]; qz = rz - h * U[2]; d = Math.sqrt(qx * qx + qy * qy + qz * qz);
+    }
+    out[0] = t; out[1] = Math.atan2(qx * E2[0] + qy * E2[1] + qz * E2[2], qx * E1[0] + qy * E1[1] + qz * E1[2]) * 180 / Math.PI; out[2] = d;
+    return out;
+  }
+  function terPt(t, ph, d) {   /* inverse of terCoord */
+    var a = ph * Math.PI / 180, E1 = REM.e1, E2 = REM.e2, U = REM.U, ca = Math.cos(a), sa = Math.sin(a), q = [E1[0] * ca + E2[0] * sa, E1[1] * ca + E2[1] * sa, E1[2] * ca + E2[2] * sa];
+    if (t < 0.5) { var po = t * Math.PI, s = Math.sin(po), c = -Math.cos(po), C = REM.C; return [C[0] + (U[0] * c + q[0] * s) * d, C[1] + (U[1] * c + q[1] * s) * d, C[2] + (U[2] * c + q[2] * s) * d]; }
+    var h = REM.HC + (t - 0.5) * 2 * (REM.L - REM.HC), A = REM.A;
+    return [A[0] + U[0] * h + q[0] * d, A[1] + U[1] * h + q[1] * d, A[2] + U[2] * h + q[2] * d];
+  }
+  function terSeg(t, ph) {   /* AHA segment 1–17 */
+    if (t < 0.1) return 17;
+    var I = terThI(t), A = terThA(t), sp = A - I, f = ((ph - I) % 360 + 360) % 360, g;
+    if (t < 0.48) { if (f <= sp) return 14; g = (f - sp) / (360 - sp); return g < 1 / 3 ? 13 : g < 2 / 3 ? 16 : 15; }
+    var o = t < 0.73 ? 6 : 0;
+    if (f <= sp) return (f / sp < 0.5 ? 3 : 2) + o;
+    g = (f - sp) / (360 - sp); return (g < 0.25 ? 1 : g < 0.5 ? 6 : g < 0.75 ? 5 : 4) + o;
+  }
+  function terArc(f, a0, a1, w) { var m = (a0 + a1) / 2, hw = (a1 - a0) / 2, d = ((f - m) % 360 + 540) % 360 - 180; return sst(-w, w, hw - Math.abs(d)); }
+  /* Wall motion: a coronary scenario sets how much contraction each territory loses (1 = akinetic). The loss scales the
+     radial (inward) part of the beat field inside the LV wall, with soft edges, in the shader and in the echo cut alike. */
+  var WM = { lad: 0, lcx: 0, rca: 0, rv: 0, on: false, sig: '' }, TC3 = [0, 0, 0];
+  function wmFactor(x, y, z) {   /* model mm → factor on the radial squeeze (1 normal, 0 akinetic) */
+    var c = terCoord(x, y, z, TC3), t = c[0], f = c[1]; if (t > 1.12) return 1;
+    var I = terThI(t), A = terThA(t), sp = A - I, fw = 360 - sp, mid = I + sp / 2, W = 7;
+    var lev = sst(0.44, 0.52, t), cap = 1 - sst(0.06, 0.14, t);
+    var wl = (terArc(f, mid, A + 0.25 * fw, W) * lev + terArc(f, I, A + fw / 3, W) * (1 - lev)) * (1 - cap) + cap;
+    var wc = (terArc(f, A + 0.25 * fw, A + 0.75 * fw, W) * lev + terArc(f, A + fw / 3, A + 2 * fw / 3, W) * (1 - lev)) * (1 - cap);
+    var wr = (terArc(f, A + 0.75 * fw, mid + 360, W) * lev + terArc(f, A + 2 * fw / 3, I + 360, W) * (1 - lev)) * (1 - cap);
+    var loss = (WM.lad * wl + WM.lcx * wc + WM.rca * wr) * (1 - sst(38, 48, c[2])) * (1 - sst(1.02, 1.12, t));
+    if (WM.rv) loss += WM.rv * sst(36, 44, c[2]) * terArc(f, I - 10, A + 10, 15) * sst(0.15, 0.3, t) * (1 - sst(0.95, 1.08, t));
+    return 1 - loss;
+  }
+  /* Systolic wall thickening: the endocardium moves toward the cavity axis more than the epicardium, tapering to zero
+     across the wall (about 4.5 mm at the endocardium at peak systole), in proportion to each segment's contraction.
+     The base, the apical cap and everything outside the LV wall are left to the main beat field. */
+  var THK = { A: 4.5, R0: 22, R1: 34 }, TH3 = [0, 0, 0];
+  function thickDisp(x, y, z, k, out) {
+    out[0] = out[1] = out[2] = 0; if (k <= 0) return out;
+    var A = REM.A, U = REM.U, C = REM.C, rx = x - A[0], ry = y - A[1], rz = z - A[2], h = rx * U[0] + ry * U[1] + rz * U[2], qx, qy, qz, t, d;
+    if (h <= REM.HC) { qx = x - C[0]; qy = y - C[1]; qz = z - C[2]; d = Math.sqrt(qx * qx + qy * qy + qz * qz) + 1e-6; t = Math.acos(Math.max(-1, Math.min(1, -(qx * U[0] + qy * U[1] + qz * U[2]) / d))) / Math.PI; }
+    else { t = 0.5 + 0.5 * (h - REM.HC) / (REM.L - REM.HC); qx = rx - h * U[0]; qy = ry - h * U[1]; qz = rz - h * U[2]; d = Math.sqrt(qx * qx + qy * qy + qz * qz) + 1e-6; }
+    var a = THK.A * k * sst(0.03, 0.12, t) * (1 - sst(0.88, 1, t)) * Math.min(d / THK.R0, 1) * (1 - sst(THK.R0, THK.R1, d));
+    out[0] = -qx / d * a; out[1] = -qy / d * a; out[2] = -qz / d * a; return out;
+  }
+  var TERU = { on: { value: 0 }, sel: { value: new THREE.Vector3(1, 1, 1) }, dim: { value: 0.2 }, hi: { value: 0 }, wm: { value: new THREE.Vector4(0, 0, 0, 0) }, rv: { value: 0 } };
+  function terGLSL(withWm) {   /* the same geometry for the shaders (model mm) */
+    function v3s(a) { return 'vec3(' + a.map(function (x) { return x.toFixed(5); }).join(', ') + ')'; }
+    var s = [
+      'const vec3 tA = ' + v3s(REM.A) + '; const vec3 tU = ' + v3s(REM.U) + '; const vec3 tC = ' + v3s(REM.C) + ';',
+      'const vec3 tE1 = ' + v3s(REM.e1) + '; const vec3 tE2 = ' + v3s(REM.e2) + '; const float tHC = ' + REM.HC.toFixed(4) + '; const float tL = ' + REM.L.toFixed(4) + ';',
+      'float tSst(float a, float b, float x) { float k = clamp((x - a) / (b - a), 0.0, 1.0); return k * k * (3.0 - 2.0 * k); }',
+      'vec3 terCoord(vec3 p) {',
+      '  vec3 r = p - tA; float h = dot(r, tU); float t; vec3 q; float d;',
+      '  if (h <= tHC) { vec3 w = p - tC; float dw = length(w) + 1e-6; float wu = dot(w, tU); t = acos(clamp(-wu / dw, -1.0, 1.0)) / 3.14159265; q = w - wu * tU; d = dw; }',
+      '  else { t = 0.5 + 0.5 * (h - tHC) / (tL - tHC); q = r - h * tU; d = length(q); }',
+      '  return vec3(t, degrees(atan(dot(q, tE2), dot(q, tE1))), d);',
+      '}',
+      'float terThA(float t) { return clamp(-7.0 + 118.0 * (t - 0.3), -18.0, 61.0); }',
+      'float terThI(float t) { return -94.0 + max(0.0, t - 0.55) * 24.0; }',
+      'float terArc(float f, float a0, float a1, float w) { float m = 0.5 * (a0 + a1); float hw = 0.5 * (a1 - a0); float d = mod(f - m + 540.0, 360.0) - 180.0; return tSst(-w, w, hw - abs(d)); }'];
+    if (withWm) s = s.concat([
+      'uniform vec4 uWm; uniform float uWmRv;',
+      'float wmFactor(vec3 pm) {',
+      '  vec3 c = terCoord(pm); float t = c.x; if (t > 1.12) return 1.0;',
+      '  float I = terThI(t); float A = terThA(t); float sp = A - I; float fw = 360.0 - sp; float mid = I + 0.5 * sp;',
+      '  float lev = tSst(0.44, 0.52, t); float cap = 1.0 - tSst(0.06, 0.14, t);',
+      '  vec3 b = vec3(terArc(c.y, mid, A + 0.25 * fw, 7.0), terArc(c.y, A + 0.25 * fw, A + 0.75 * fw, 7.0), terArc(c.y, A + 0.75 * fw, mid + 360.0, 7.0));',
+      '  vec3 a = vec3(terArc(c.y, I, A + fw / 3.0, 7.0), terArc(c.y, A + fw / 3.0, A + 2.0 * fw / 3.0, 7.0), terArc(c.y, A + 2.0 * fw / 3.0, I + 360.0, 7.0));',
+      '  vec3 w = mix(a, b, lev) * (1.0 - cap); w.x += cap;',
+      '  float loss = dot(uWm.xyz, w) * (1.0 - tSst(38.0, 48.0, c.z)) * (1.0 - tSst(1.02, 1.12, t));',
+      '  loss += uWmRv * tSst(36.0, 44.0, c.z) * terArc(c.y, I - 10.0, A + 10.0, 15.0) * tSst(0.15, 0.3, t) * (1.0 - tSst(0.95, 1.08, t));',
+      '  return 1.0 - loss;',
+      '}',
+      'vec3 thickDisp(vec3 pm, float k) {',
+      '  vec3 r = pm - tA; float h = dot(r, tU); float t; vec3 q; float d;',
+      '  if (h <= tHC) { q = pm - tC; d = length(q) + 1e-6; t = acos(clamp(-dot(q, tU) / d, -1.0, 1.0)) / 3.14159265; }',
+      '  else { t = 0.5 + 0.5 * (h - tHC) / (tL - tHC); q = r - h * tU; d = length(q) + 1e-6; }',
+      '  float a = ' + THK.A.toFixed(2) + ' * k * tSst(0.03, 0.12, t) * (1.0 - tSst(0.88, 1.0, t)) * min(d / ' + THK.R0.toFixed(1) + ', 1.0) * (1.0 - tSst(' + THK.R0.toFixed(1) + ', ' + THK.R1.toFixed(1) + ', d));',
+      '  return -q / d * a;',
+      '}']);
+    return s.join('\n');
+  }
+  /* LV and septum materials paint the territories in the fragment shader: hard segment edges, a thin dark line on each
+     segment boundary (about 0.7 mm wide on the model), the hovered segment lightened. */
+  var TER_FRAG = [
+    '#ifdef TERR',
+    'if (uTerOn > 0.5) {',
+    '  vec3 terC = terCoord(vTerP); float terT = terC.x;',
+    '  if (terT < 1.14) {',
+    '    float terI = terThI(terT); float terA = terThA(terT); float terSp = terA - terI; float terFw = 360.0 - terSp; float terF = mod(terC.y - terI + 720.0, 360.0);',
+    '    float terSeg = 17.0; float terTr = 0.0; float terBd = 999.0;',
+    '    if (terT >= 0.1) {',
+    '      if (terT < 0.48) {',
+    '        if (terF <= terSp) { terSeg = 14.0; terBd = min(terF, terSp - terF); }',
+    '        else { float g3 = (terF - terSp) / terFw * 3.0; float k3 = min(floor(g3), 2.0); float r3 = g3 - k3; terSeg = k3 < 0.5 ? 13.0 : (k3 < 1.5 ? 16.0 : 15.0); terTr = k3 < 0.5 ? 0.0 : (k3 < 1.5 ? 1.0 : 2.0); terBd = min(r3, 1.0 - r3) * terFw / 3.0; }',
+    '      } else {',
+    '        float terO = terT < 0.73 ? 6.0 : 0.0;',
+    '        if (terF <= terSp) { float hs = terF / terSp; terSeg = (hs < 0.5 ? 3.0 : 2.0) + terO; terTr = hs < 0.5 ? 2.0 : 0.0; terBd = min(min(terF, terSp - terF), abs(terF - 0.5 * terSp)); }',
+    '        else { float g4 = (terF - terSp) / terFw * 4.0; float k4 = min(floor(g4), 3.0); float r4 = g4 - k4; terSeg = (k4 < 0.5 ? 1.0 : (k4 < 1.5 ? 6.0 : (k4 < 2.5 ? 5.0 : 4.0))) + terO; terTr = k4 < 0.5 ? 0.0 : (k4 < 2.5 ? 1.0 : 2.0); terBd = min(r4, 1.0 - r4) * terFw / 4.0; }',
+    '      }',
+    '    }',
+    '    vec3 terCol = terTr < 0.5 ? vec3(0.184, 0.435, 0.859) : (terTr < 1.5 ? vec3(0.878, 0.604, 0.169) : vec3(0.761, 0.255, 0.490));',
+    '    float terSel = terTr < 0.5 ? uTerSel.x : (terTr < 1.5 ? uTerSel.y : uTerSel.z);',
+    '    float terAmt = mix(uTerDim, 0.88, terSel);',
+    '    if (abs(terSeg - uSegHi) < 0.5) { terCol = mix(terCol, vec3(1.0), 0.5); terAmt = 1.0; }',
+    '    float terAx = 2.0 * (tL - tHC); float terSph = 3.14159 * terC.z;',
+    '    float terMm = terBd * 0.0174533 * terC.z;',
+    '    terMm = min(terMm, abs(terT - 0.1) * terSph);',
+    '    terMm = min(terMm, abs(terT - 0.48) * (terT < 0.5 ? terSph : terAx));',
+    '    terMm = min(terMm, abs(terT - 0.73) * terAx);',
+    '    float terLine = (1.0 - smoothstep(0.22, 0.4, terMm)) * step(0.02, terSel + uTerDim);',
+    '    diffuseColor.rgb = mix(diffuseColor.rgb, terCol, terAmt * (1.0 - smoothstep(1.06, 1.14, terT)));',
+    '    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.07, 0.09, 0.12), 0.72 * terLine * (1.0 - smoothstep(1.02, 1.1, terT)));',
+    '  }',
+    '}',
+    '#endif'].join('\n');
+  function terDisplay() {
+    var on = 0, sel = [1, 1, 1], dim = 0.2;
+    if (state.preset === 'territory' && !cyc.on && !state.echo) { on = 1; if (terSel !== 'all') sel = TER_IDS.map(function (k) { return k === terSel ? 1 : 0; }); }
+    else if ((cyc.on || state.echo) && WM.on) { on = 1; dim = 0; sel = [WM.lad ? 1 : 0, WM.lcx ? 1 : 0, WM.rca ? 1 : 0]; }
+    TERU.on.value = on; TERU.sel.value.set(sel[0], sel[1], sel[2]); TERU.dim.value = dim;
+    TERU.hi.value = on && state.preset === 'territory' ? (terHov || terPin) : 0;
+  }
+
+  /* Septal perforators: schematic branches from the underside of the LAD into the septum, placed from the LAD's own
+     centreline and the septal wall radii of this heart. S1 is the largest and feeds the basal septum. */
+  function buildSeptals() {
+    if (!S.lad.meshes || !S.ivs.meshes) return;
+    var bins = {}, tc = [0, 0, 0], v = new THREE.Vector3();
+    S.lad.meshes.forEach(function (m) {
+      var pos = m.geometry.attributes.position;
+      for (var i = 0; i < pos.count; i++) {
+        v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld);
+        var x = v.x * 1000, y = v.y * 1000, z = v.z * 1000, k = Math.round(terCoord(x, y, z, tc)[0] * 50), b = bins[k] || (bins[k] = [0, 0, 0, 0]);
+        b[0] += x; b[1] += y; b[2] += z; b[3]++;
+      }
+    });
+    function ladAt(t) { var k = Math.round(t * 50); for (var d = 0; d < 4; d++) { var b = bins[k - d] && bins[k - d][3] > 10 ? bins[k - d] : bins[k + d] && bins[k + d][3] > 10 ? bins[k + d] : null; if (b) return [b[0] / b[3], b[1] / b[3], b[2] / b[3]]; } return null; }
+    function wallPt(t, ph, frac) { var a = ph * Math.PI / 180, re = remLook(REM.re, t, a), ro = remLook(REM.ro, t, a); return terPt(t, ph, re + (ro - re) * frac); }
+    var list = [];
+    [[0.94, 0.95, 0.82], [0.85, 0.8, 0.76], [0.76, 0.7, 0.7], [0.66, 0.6, 0.62], [0.56, 0.5, 0.52]].forEach(function (q) {   /* [t at the LAD, radius mm, reach across the septum] */
+      var t0 = q[0], p0 = ladAt(t0); if (!p0) return;
+      var pts = [p0];
+      [[0.06, 0.95, 0.008], [0.3, 0.6, 0.03], [0.62, 0.5, 0.055], [1, 0.5, 0.075]].forEach(function (s) {
+        var t = t0 - s[2], A = terThA(t), I = terThI(t), ph = A - s[0] * q[2] * (A - I); pts.push(wallPt(t, ph, s[1]));
+      });
+      list.push({ r: q[1], p: pts });
+    });
+    EXTRAS.structs.sept = list;
+  }
+
+  /* ---------- 12-lead ECG ----------
+     One template beat per lead (P, Q, R, S, T in mV). I and II are built directly; III, aVR, aVL and aVF follow from
+     Einthoven's and Goldberger's equations, so the frontal leads always agree. Injury adds ST deviation from the J point
+     that merges into a taller (or, for depression, flatter) T wave. */
+  var L12_BASE = {
+    I: [0.08, -0.04, 0.65, -0.08, 0.22], II: [0.15, -0.06, 1.05, -0.2, 0.32],
+    V1: [0.06, 0, 0.2, -0.95, 0.08], V2: [0.08, 0, 0.4, -1.25, 0.45], V3: [0.1, 0, 0.8, -0.85, 0.5], V4: [0.1, -0.03, 1.3, -0.5, 0.45], V5: [0.1, -0.08, 1.35, -0.25, 0.35], V6: [0.1, -0.08, 1.05, -0.12, 0.28] };
+  var L12_ST = {   /* ST deviation (mV, 10 mm = 1 mV); I and II set the frontal plane */
+    lad: { I: 0.1, II: -0.05, V1: 0.15, V2: 0.35, V3: 0.4, V4: 0.3, V5: 0.15, V6: 0.05 },
+    lcx: { I: 0.12, II: 0, V1: -0.15, V2: -0.2, V3: -0.12, V4: 0.02, V5: 0.12, V6: 0.15 },
+    rca: { I: -0.08, II: 0.22, V1: 0.1, V2: 0, V3: -0.04, V4: 0, V5: 0.03, V6: 0.06 } };
+  var L12_NOTE = {
+    lad: '<b>Anterior STEMI.</b> ST elevation in V1–V4 (septal and anterior leads), reaching I and aVL because the occlusion is proximal to the first diagonal; reciprocal ST depression in III and aVF. Q waves and T-wave inversion follow over hours to days.',
+    lcx: '<b>Lateral STEMI with posterior extension.</b> Modest ST elevation in I, aVL, V5 and V6, and ST depression in V1–V3 — the posterior wall injury seen from the front. Posterior leads V7–V9 would show the elevation.',
+    rca: '<b>Inferior STEMI.</b> ST elevation in II, III and aVF, greater in III than II, with reciprocal depression in I and aVL. ST elevation in V1 hints at RV involvement: record right-sided V4R.' };
+  var L12_C4 = [['I', 'II', 'III'], ['aVR', 'aVL', 'aVF'], ['V1', 'V2', 'V3'], ['V4', 'V5', 'V6']], L12_C2 = [['I', 'II', 'III', 'aVR', 'aVL', 'aVF'], ['V1', 'V2', 'V3', 'V4', 'V5', 'V6']];
+  function l12ST(key) {
+    var b = L12_ST[key] || {}, I = b.I || 0, II = b.II || 0, o = { I: I, II: II, III: II - I, aVR: -(I + II) / 2, aVL: I - II / 2, aVF: II - I / 2 };
+    ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(function (k) { o[k] = b[k] || 0; });
+    return o;
+  }
+  function l12Wave(par, st, x, v1) {   /* x: ms from P-wave onset */
+    function g(c, sd, a) { var z = (x - c) / sd; return a * Math.exp(-0.5 * z * z); }
+    var P = v1 ? g(42, 14, par[0]) + g(80, 14, -0.6 * par[0]) : g(48, 18, par[0]), T = par[4] + 0.6 * st;
+    return P + g(165, 8, par[1]) + g(185, 10, par[2] * (st > 0.05 ? 0.85 : 1)) + g(207, 10, par[3]) + (x < 440 ? g(440, 55, T) : g(440, 38, T)) + st * sst(198, 226, x) * (1 - sst(360, 520, x));
+  }
+  function l12Val(lead, st, x) {
+    if (lead.charAt(0) === 'V') return l12Wave(L12_BASE[lead], st[lead], x, lead === 'V1');
+    var a = l12Wave(L12_BASE.I, st.I, x, false), b = l12Wave(L12_BASE.II, st.II, x, false);
+    return lead === 'I' ? a : lead === 'II' ? b : lead === 'III' ? b - a : lead === 'aVR' ? -(a + b) / 2 : lead === 'aVL' ? a - b / 2 : b - a / 2;
+  }
+  function l12Kind(s) { return s >= 0.1 ? 'up' : s <= -0.075 ? 'dn' : ''; }
+  function draw12(cv, key, compact) {   /* compact: four columns of one beat each (side panel); otherwise 2.5 s per column */
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), cw = cv.clientWidth; if (!cw) return;
+    if (cw < 600) compact = true;
+    var cols = L12_C4, nr = 3, st = l12ST(key), dur = compact ? 1.25 : 2.5;
+    var W = Math.round(cw * dpr), colW = W / cols.length, pxmm = colW / (dur * 25), rowH = 27 * pxmm, H = Math.round(nr * rowH + 3 * pxmm);
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    cv.style.height = Math.round(H / dpr) + 'px';
+    var c = cv.getContext('2d'), i, x, y;
+    c.fillStyle = '#FFF7F4'; c.fillRect(0, 0, W, H);
+    for (i = 0, x = 0; x <= W + 0.5; x += pxmm, i++) { c.fillStyle = i % 5 ? 'rgba(229,140,128,0.22)' : 'rgba(209,92,80,0.48)'; c.fillRect(Math.round(x), 0, 1, H); }
+    for (i = 0, y = 0; y <= H + 0.5; y += pxmm, i++) { c.fillStyle = i % 5 ? 'rgba(229,140,128,0.22)' : 'rgba(209,92,80,0.48)'; c.fillRect(0, Math.round(y), W, 1); }
+    var fs = Math.max(9, Math.min(12, pxmm * 3.2 / dpr)) * dpr;
+    c.font = '600 ' + Math.round(fs) + 'px "IBM Plex Sans", system-ui, sans-serif'; c.textBaseline = 'middle';
+    cols.forEach(function (col, ci) {
+      var x0 = ci * colW;
+      col.forEach(function (lead, ri) {
+        var y0 = ri * rowH + 1.5 * pxmm + rowH * 0.6;
+        c.strokeStyle = '#141414'; c.lineWidth = Math.max(1, 1.2 * dpr); c.lineJoin = 'round'; c.beginPath();
+        for (var px = 0; px <= colW; px++) {
+          var tau = (compact ? 0 : ci * dur) + px / colW * dur + (compact ? 0.72 : 0.35), k = Math.floor(tau / 0.857), xm = (tau - k * 0.857) * 1000, yy = y0 - l12Val(lead, st, xm) * 10 * pxmm;
+          if (px) c.lineTo(x0 + px, yy); else c.moveTo(x0 + px, yy);
+        }
+        c.stroke();
+        if (ci) { c.fillStyle = '#141414'; c.fillRect(Math.round(x0), Math.round(y0 - 3 * pxmm), Math.max(1, dpr), Math.round(6 * pxmm)); }
+        var kind = l12Kind(st[lead]), tw = c.measureText(lead).width + 8 * dpr, lx = x0 + 3 * dpr, ly = ri * rowH + 1.5 * pxmm + 2 * dpr, lh = fs * 1.35;
+        if (kind) { c.fillStyle = kind === 'up' ? '#C81E1E' : '#1D4ED8'; rrect(c, lx, ly, tw, lh, 4 * dpr); c.fill(); }
+        c.fillStyle = kind ? '#FFFFFF' : '#141414'; c.fillText(lead, lx + 4 * dpr, ly + lh / 2 + 0.5 * dpr);
+      });
+    });
+  }
+  function e12Legend() { return '<span><i style="background:#C81E1E"></i>ST elevation ≥1 mm</span><span><i style="background:#1D4ED8"></i>ST depression (reciprocal or posterior)</span>'; }
+
+  /* ---------- Territory scene: bull's-eye, details, links ---------- */
+  var terSel = 'all', terHov = 0, terPin = 0;
+  var TERINFO = {
+    lad: { n: 'Left anterior descending artery (LAD)', segs: [1, 2, 7, 8, 13, 14, 17],
+      walls: 'Anterior wall, the anterior two-thirds of the septum (septal perforators) and the apex; the diagonals add part of the anterolateral wall.',
+      echo: 'PLAX and A3C: anteroseptum. A2C: anterior wall. A4C: apical septum and apex. PSAX: anterior and anteroseptal segments.',
+      ecg: 'V1–V2 (septal) and V3–V4 (anterior); I and aVL when the first diagonal is involved. Reciprocal changes in II, III and aVF.',
+      note: 'A “wraparound” LAD that curls round the apex also supplies the apical inferior segment, so an anterior MI can include segment 15.', view: 'psax_pm' },
+    lcx: { n: 'Left circumflex artery (LCx)', segs: [5, 6, 11, 12, 16],
+      walls: 'Lateral wall: the anterolateral and inferolateral (posterior) segments and the apical lateral segment.',
+      echo: 'A4C: lateral wall. PLAX and A3C: inferolateral (posterior) wall. PSAX: lateral segments.',
+      ecg: 'I, aVL, V5–V6 (lateral); the posterior wall shows in V7–V9 and is mirrored as ST depression in V1–V3.',
+      note: 'The ECG is often unremarkable. In a left-dominant heart (about 5–10%) the circumflex also gives the PDA and supplies the inferior wall.', view: 'psax_pm' },
+    rca: { n: 'Right coronary artery (RCA)', segs: [3, 4, 9, 10, 15],
+      walls: 'Inferior wall and inferior third of the septum (through the PDA), plus the RV free wall, the SA node (~60%) and the AV node (~80–90%).',
+      echo: 'A2C: inferior wall. PSAX: inferior and inferoseptal segments. A4C: basal–mid inferoseptum and the RV free wall.',
+      ecg: 'II, III and aVF (inferior); V1 and right-sided V4R for the RV. Reciprocal changes in I and aVL.',
+      note: 'The artery that gives the PDA defines dominance: the RCA in about 80%, the circumflex in 5–10%, both in the rest.', view: 'psax_pm' }
+  };
+  var LEADMAP = [['Septal', 'V1–V2', 'LAD (septal branches)', ['lad']], ['Anterior', 'V3–V4', 'LAD', ['lad']], ['Lateral', 'I, aVL, V5–V6', 'LCx; diagonal for I/aVL', ['lcx']],
+    ['Inferior', 'II, III, aVF', 'RCA (PDA) in most', ['rca']], ['Posterior', 'V7–V9 (mirror: ST↓ V1–V3)', 'LCx or RCA', ['lcx', 'rca']], ['Right ventricle', 'V1, V4R', 'Proximal RCA', ['rca']]];
+  function leadMapHTML(k) {
+    return '<table class="leadmap"><thead><tr><th scope="col">Wall</th><th scope="col">Leads</th><th scope="col">Usual artery</th></tr></thead><tbody>' +
+      LEADMAP.map(function (r) { return '<tr' + (k && r[3].indexOf(k) >= 0 ? ' class="on"' : '') + '><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join('') + '</tbody></table>';
+  }
+  function hexA(h, a) { var n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')'; }
+  var BULL = (function () {   /* math-angle ranges: anterior at the top, septum left, lateral right, inferior bottom */
+    var r = [20, 46, 73, 100], o = [];
+    for (var i = 0; i < 6; i++) { var a0 = [60, 120, 180, 240, 300, 0][i]; o[i + 1] = [r[2], r[3], a0, a0 + 60]; o[i + 7] = [r[1], r[2], a0, a0 + 60]; }
+    [45, 135, 225, 315].forEach(function (a0, i) { o[13 + i] = [r[0], r[1], a0, a0 + 90]; });
+    return o;
+  })();
+  function bullBuild() {
+    function P(rr, a) { var t = a * Math.PI / 180; return (rr * Math.cos(t)).toFixed(2) + ' ' + (-rr * Math.sin(t)).toFixed(2); }
+    var h = '';
+    for (var n = 1; n <= 16; n++) {
+      var b = BULL[n], lg = b[3] - b[2] > 180 ? 1 : 0, am = (b[2] + b[3]) / 2, rm = (b[0] + b[1]) / 2;
+      h += '<path data-seg="' + n + '" d="M' + P(b[1], b[2]) + ' A' + b[1] + ' ' + b[1] + ' 0 ' + lg + ' 0 ' + P(b[1], b[3]) + ' L' + P(b[0], b[3]) + ' A' + b[0] + ' ' + b[0] + ' 0 ' + lg + ' 1 ' + P(b[0], b[2]) + ' Z"><title>Segment ' + n + ' · ' + SEG[n][0] + ' · ' + TER_NAME[SEG[n][1]] + '</title></path>' +
+        '<text x="' + (rm * Math.cos(am * Math.PI / 180)).toFixed(1) + '" y="' + (-rm * Math.sin(am * Math.PI / 180)).toFixed(1) + '">' + n + '</text>';
+    }
+    h += '<circle data-seg="17" r="20"><title>Segment 17 · Apex · LAD</title></circle><text x="0" y="0">17</text>';
+    h += '<g class="bax"><text x="0" y="-111">Anterior</text><text x="0" y="112">Inferior</text><text x="-112" y="0" transform="rotate(-90 -112 0)">Septal</text><text x="112" y="0" transform="rotate(90 112 0)">Lateral</text></g>';
+    var svg = $('#bull'); svg.innerHTML = h;
+    svg.querySelectorAll('[data-seg]').forEach(function (el) {
+      var n = Number(el.dataset.seg);
+      el.addEventListener('pointerenter', function () { terHover(n); });
+      el.addEventListener('pointerleave', function () { terHover(0); });
+      el.addEventListener('click', function () { terPin = terPin === n ? 0 : n; setTer(SEG[n][1]); });
+    });
+    $('#bullkey').innerHTML = TER_IDS.map(function (k) { return '<span><i style="background:' + TER_COL[k] + '"></i>' + TER_NAME[k] + ' · ' + TERINFO[k].segs.length + ' segments</span>'; }).join('');
+  }
+  function bullPaint() {
+    var cur0 = terHov || terPin;
+    $('#bull').querySelectorAll('[data-seg]').forEach(function (el) {
+      var n = Number(el.dataset.seg), k = SEG[n][1];
+      el.setAttribute('fill', TER_COL[k]); el.classList.toggle('dim', terSel !== 'all' && k !== terSel); el.classList.toggle('hi', n === cur0);
+    });
+    $('#terSegTxt').innerHTML = cur0 ? '<b>Segment ' + cur0 + '</b> · ' + SEG[cur0][0] + ' · ' + TER_NAME[SEG[cur0][1]] + ' territory' : 'Hover or tap a segment, on the bull’s-eye or on the heart.';
+  }
+  function terHover(n) { terHov = n; bullPaint(); terDisplay(); }
+  function setTer(k) {
+    terSel = k;
+    document.querySelectorAll('[data-ter]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.ter === k)); });
+    if (k !== 'all') { if (state.sel !== k) select(k, false); }
+    else if (state.sel && TER_OF[state.sel]) select(null);
+    bullPaint(); renderTer(); terDisplay();
+  }
+  function renderTer() {
+    var el = $('#terDetail'), h;
+    if (terSel === 'all') {
+      h = '<h3>Which artery feeds which wall</h3><p>The ASE and AHA divide the LV into 17 segments: six basal, six mid, four apical and the apical cap. The colours show the usual distribution in a right-dominant heart; real territories vary, especially at the apex and the inferolateral wall.</p>' + leadMapHTML(null);
+    } else {
+      var T = TERINFO[terSel];
+      h = '<h3>' + T.n + '</h3><dl><dt>Segments</dt><dd>' + T.segs.join(', ') + ' (' + T.segs.length + ' of 17)</dd><dt>Walls</dt><dd>' + T.walls + '</dd>' +
+        '<dt>Wall motion on echo</dt><dd>' + T.echo + '</dd><dt>ECG leads</dt><dd>' + T.ecg + '</dd></dl>' +
+        '<canvas id="ter12" role="img" aria-label="12-lead ECG of an acute ' + TER_NAME[terSel] + ' occlusion"></canvas><p class="terseg">' + L12_NOTE[terSel] + '</p>' +
+        leadMapHTML(terSel) + '<p class="terseg">' + T.note + '</p>' +
+        '<div class="actions"><button class="btn" type="button" id="terSim">Simulate occlusion</button><button class="btn" type="button" id="terEcho">See it on echo</button></div>';
+    }
+    el.innerHTML = h;
+    var cv = $('#ter12'); if (cv) draw12(cv, terSel, true);
+    var b1 = $('#terSim'), b2 = $('#terEcho'), k = terSel;
+    if (b1) b1.addEventListener('click', function () { curKey = k; applyPreset('cycle', true); });
+    if (b2) b2.addEventListener('click', function () { curKey = k; echoSegOn = true; syncSegBtn(); state.echo = state.echo || { mod: 'tte', view: 'plax', look: 'face' }; state.echo.view = TERINFO[k].view; state.echo.mod = 'tte'; applyPreset('echo', true); });
+  }
+  document.querySelectorAll('[data-ter]').forEach(function (b) { b.addEventListener('click', function () { terPin = 0; setTer(b.dataset.ter); }); });
+  bullBuild(); bullPaint();
+  /* Coronary branches in the structure panel: their territory and a way into the scene and the occlusion scenario. */
+  var TER_OF = { lm: 'lm', lad: 'lad', diag: 'lad', sept: 'lad', lcx: 'lcx', om: 'lcx', rca: 'rca', am: 'rca', pda: 'rca' };
+  var TER_BR = {
+    lm: 'The LAD and circumflex territories together: 12 of the 17 segments (all but 3, 4, 9, 10 and 15), roughly three-quarters of the LV.',
+    diag: 'Part of the LAD territory: the anterior and anterolateral wall (segments 1, 7 and 13, often sharing 6 and 12 with the obtuse marginals).',
+    sept: 'Part of the LAD territory: the anterior two-thirds of the septum (segments 2, 8 and 14). The inferior third comes from small septal branches of the PDA.',
+    om: 'Part of the circumflex territory: the lateral wall (segments 5, 6, 11, 12 and 16).',
+    am: 'The RV free wall, which lies outside the 17 LV segments.',
+    pda: 'In a right-dominant heart: the inferior wall and inferior third of the septum (segments 3, 4, 9, 10 and 15).' };
+  function terInfoHTML(id) {
+    var k = TER_OF[id], T = TERINFO[k], txt = TER_BR[id] || ('Segments ' + T.segs.join(', ') + '. ' + T.walls + ' <b>ECG:</b> ' + T.ecg + ' <b>Echo:</b> ' + T.echo);
+    return '<div class="terinfo"><span class="eyebrow">Territory</span><p>' + txt + '</p><div class="actions"><button class="btn" type="button" id="terShow">Show territory</button>' +
+      (T ? '<button class="btn" type="button" id="terSimI">Simulate occlusion</button>' : '') + '</div></div>';
+  }
+  function terInfoWire(id) {
+    var k = TER_OF[id], a = $('#terShow'), b = $('#terSimI');
+    if (a) a.addEventListener('click', function () { terPin = 0; terSel = k === 'lm' ? 'all' : k; applyPreset('territory', true); });
+    if (b) b.addEventListener('click', function () { curKey = k; applyPreset('cycle', true); });
+  }
+  /* Echo: colour the LV wall outline by territory; the scenario's akinetic territory is drawn bold. */
+  var echoSegOn = false;
+  function syncSegBtn() { var b = $('#eSeg'); if (b) b.setAttribute('aria-pressed', String(echoSegOn)); }
+  function drawTerOverlay(ctx, sec, v, X, Y, dpr) {
+    var tc = [0, 0, 0];
+    sec.items.forEach(function (it) {
+      if (it.id !== 'lv' && it.id !== 'ivs') return;
+      it.loops2.forEach(function (l) {
+        var n = l.length, prev = null, path = null;
+        function flush() { if (path) { ctx.strokeStyle = path.c; ctx.lineWidth = path.w; ctx.stroke(path.p); } path = null; prev = null; }
+        for (var i = 0; i < n; i++) {
+          var a = l[i], b = l[(i + 1) % n], u = (a[0] + b[0]) / 2, w = (a[1] + b[1]) / 2;
+          terCoord(v.T[0] + v.r[0] * u + v.d[0] * w, v.T[1] + v.r[1] * u + v.d[1] * w, v.T[2] + v.r[2] * u + v.d[2] * w, tc);
+          if (tc[0] > 1.06) { flush(); continue; }
+          var k = SEG[terSeg(tc[0], tc[1])][1], hot = WM.on ? (WM[k] > 0 ? 2 : 0) : 1, key = k + hot;
+          if (key !== prev) { flush(); path = { p: new Path2D(), c: hexA(TER_COL[k], hot === 2 ? 0.95 : hot ? 0.8 : 0.42), w: (hot === 2 ? 3.2 : hot ? 2.2 : 1.6) * dpr }; path.p.moveTo(X(a[0]), Y(a[1])); prev = key; }
+          path.p.lineTo(X(b[0]), Y(b[1]));
+        }
+        flush();
+      });
+    });
+  }
+  function drawTerLegend(ctx, W, H, dpr) {
+    ctx.font = '600 ' + Math.round(11 * dpr) + 'px "IBM Plex Mono", ui-monospace, monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    var x = 10 * dpr, y = H * 0.865 - 34 * dpr;
+    TER_IDS.forEach(function (k) { ctx.fillStyle = TER_COL[k]; ctx.fillRect(x, y - 4 * dpr, 9 * dpr, 9 * dpr); ctx.fillStyle = WM.on && !WM[k] ? 'rgba(200,210,220,0.55)' : '#E2E8F0'; ctx.fillText(TER_NAME[k] + (WM[k] ? ' · akinetic' : ''), x + 13 * dpr, y + 0.5 * dpr); x += ctx.measureText(TER_NAME[k] + (WM[k] ? ' · akinetic' : '')).width + 26 * dpr; });
+  }
+  /* The territory scene's camera: up the LV long axis from the apex, turned so the anterior wall is at the top. */
+  function terView() {
+    var U = REM.U, a = 58 * Math.PI / 180, up = v3unit(v3add(v3add([0, 0, 0], REM.e1, Math.cos(a)), REM.e2, Math.sin(a))), C = v3add(REM.A, U, REM.L * 0.55);
+    VIEWS.apexlv = { d: [-U[0], -U[1], -U[2]], up: up, target: new THREE.Vector3(C[0] * 0.001, C[1] * 0.001, C[2] * 0.001), dist: viewDistance() * 0.5,
+      note: 'Looking up the LV long axis from the apex, turned like the bull’s-eye: anterior wall at the top, septum on your left, lateral wall on your right, inferior wall at the bottom. The RV is faded and the atria are hidden.' };
+  }
+  function segAtHit() { if (!lastHit) return 0; var q = terCoord(lastHit.x * 1000, lastHit.y * 1000, lastHit.z * 1000, [0, 0, 0]); return q[0] > 1.1 ? 0 : terSeg(q[0], q[1]); }
   function beatDisp(x, y, z, c, a, out) {   /* metres in, displacement in metres — mirrors BEAT_GLSL */
     var rx = x - BA[0], ry = y - BA[1], rz = z - BA[2], h = rx * BU[0] + ry * BU[1] + rz * BU[2], s = h / BL;
     var qx = rx - h * BU[0], qy = ry - h * BU[1], qz = rz - h * BU[2], qr = Math.sqrt(qx * qx + qy * qy + qz * qz);
     var wV = sst(-0.15, 0.2, s) * (1 - sst(0.85, 1.05, s)) * (1 - sst(0.055, 0.09, qr)), k1 = -0.11 * c * wV;
+    var kreg = WM.on && wV > 0 ? wmFactor(x * 1000, y * 1000, z * 1000) : 1; k1 *= kreg;
     var wL = (s <= 1 ? Math.min(1, Math.max(0, s)) : 1 - sst(1, 1.7, s)) * (1 - sst(0.06, 0.1, qr));
     if (s > 0.95) {   /* the venous pole of the RA is held by the cavae */
       var cx = BSV[0] - BIV[0], cy = BSV[1] - BIV[1], cz = BSV[2] - BIV[2], tc = ((x - BIV[0]) * cx + (y - BIV[1]) * cy + (z - BIV[2]) * cz) / (cx * cx + cy * cy + cz * cz);
@@ -8187,6 +8712,7 @@ footer a,.link{color:var(--fg)}
     }
     var k2 = -0.12 * BL * c * wL;
     var dx = qx * k1 + BU[0] * k2, dy = qy * k1 + BU[1] * k2, dz = qz * k1 + BU[2] * k2;
+    if (c > 0) { thickDisp(x * 1000, y * 1000, z * 1000, c * kreg, TH3); dx += TH3[0] * 0.001; dy += TH3[1] * 0.001; dz += TH3[2] * 0.001; }
     if (a > 0) {
       var wa = sst(0.85, 1.05, s);
       if (wa > 0) {
@@ -8526,7 +9052,7 @@ footer a,.link{color:var(--fg)}
   /* Sections are cached by quantized contraction (c in steps of 0.05, a in steps of 0.25); at most one new one per frame. */
   function sectionAt(key, c, a, mayCompute) {
     var ci = Math.round(c * 20), ai = Math.round(a * 4), id = ci * 10 + ai;
-    if (!echoDyn || echoDyn.key !== key) echoDyn = { key: key, cache: {} };
+    if (!echoDyn || echoDyn.key !== key || echoDyn.wm !== WM.sig) echoDyn = { key: key, wm: WM.sig, cache: {} };
     if (echoDyn.cache[id]) return echoDyn.cache[id];
     if (mayCompute) return (echoDyn.cache[id] = sectionDeformed(key, ci / 20, ai / 4));
     var best = null, bd = 1e9;
@@ -9017,6 +9543,7 @@ footer a,.link{color:var(--fg)}
       if (!speck) speck = makeSpeckle();
       ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(speck, 'repeat'); ctx.fillRect(0, 0, W, H); ctx.globalCompositeOperation = 'source-over';
     }
+    if (echoSegOn) drawTerOverlay(ctx, sec, v, X, Y, dpr);
     if (state.sel) sec.items.forEach(function (it) { if (it.id === state.sel) { ctx.strokeStyle = 'rgba(242,182,60,0.85)'; ctx.lineWidth = 1.6 * dpr; ctx.stroke(it.path); } });
     var roi = colorOn ? colorROI(v) : null, pisaTxt = null;
     if (colorOn && stt && TL) {
@@ -9053,6 +9580,7 @@ footer a,.link{color:var(--fg)}
     ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillStyle = 'rgba(200,210,220,0.75)';
     ctx.fillText('Depth ' + (depth / 10) + ' cm', 10 * dpr, H * 0.865);
     if (pisaTxt) { ctx.fillStyle = 'rgba(253,230,138,0.92)'; ctx.fillText(pisaTxt, 10 * dpr, H * 0.865 - 15 * dpr); ctx.fillStyle = 'rgba(200,210,220,0.75)'; }
+    if (echoSegOn) { ctx.save(); drawTerLegend(ctx, W, H, dpr); ctx.restore(); ctx.textBaseline = 'bottom'; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(200,210,220,0.75)'; ctx.font = '500 ' + Math.round(11 * dpr) + 'px "IBM Plex Mono", ui-monospace, monospace'; }
     if (state.labels && echoNearR * sc > 26 * dpr) { ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'rgba(226,232,240,0.55)'; ctx.font = 'italic 500 ' + Math.round(11 * dpr) + 'px "IBM Plex Sans", system-ui, sans-serif'; ctx.fillText(v.near, ox, oy + echoNearR * sc * 0.55); }
     if (v.mod === 'tee' && OMNI[key] != null) drawOmni(ctx, W, dpr, OMNI[key]);
     if (stt && TL) drawEchoECG(ctx, W, H, dpr);
@@ -9177,14 +9705,16 @@ footer a,.link{color:var(--fg)}
 
   /* ---------- Echo playback controls ---------- */
   (function () {
-    var sel = $('#eScen'), groups = [['Valves', 'valve'], ['Myocardium · pericardium', 'myo']];
+    var sel = $('#eScen'), groups = [['Valves', 'valve'], ['Myocardium · pericardium', 'myo'], ['Coronary occlusion', 'cad']];
     sel.innerHTML = groups.map(function (g) { return '<optgroup label="' + g[0] + '">' + SC_ORDER.filter(function (k) { return SCX[k].group === g[1]; }).map(function (k) { var X = SCX[k], n = X.variantOf ? X.name + ' — ' + (X.variant === 'AF' ? 'AF' : X.variant.toLowerCase()) : SEV[k] ? SEV[k].noun.charAt(0).toUpperCase() + SEV[k].noun.slice(1) : X.full; return '<option value="' + k + '">' + n + '</option>'; }).join('') + '</optgroup>'; }).join('');
     sel.addEventListener('change', function () { setScenario(sel.value); });
     $('#eColor').addEventListener('click', function () { colorOn = !colorOn; echoDirty = true; this.setAttribute('aria-pressed', String(colorOn)); });
     $('#eCal').addEventListener('click', function () { calOn = !calOn; echoDirty = true; this.setAttribute('aria-pressed', String(calOn)); });
+    $('#eSeg').addEventListener('click', function () { echoSegOn = !echoSegOn; echoDirty = true; syncSegBtn(); });
     $('#eSnd').addEventListener('click', function () { setSound(!AUD.on); });
     $('#eGain').addEventListener('input', function () { echoGain = Number(this.value); echoDirty = true; });
   })();
+  if (window.ResizeObserver) { var ro12 = new ResizeObserver(function () { if (!$('#ecg12wrap').hidden) draw12($('#ecg12'), curKey); var t12 = $('#ter12'); if (t12 && !$('#tercard').hidden) draw12(t12, terSel, true); }); ro12.observe($('#cyclepanel')); ro12.observe($('#tercard')); }
   function echoSyncScenario() {
     if (!state.echo) return;
     $('#eScen').value = curKey; echoLastT = -1; echoDirty = true; setDopSite(dopSite);
