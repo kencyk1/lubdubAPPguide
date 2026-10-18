@@ -338,6 +338,7 @@ footer a,.link{color:var(--fg)}
 .cycinfo.proc-on:not(.open) .sccols li:not(.lead),.cycinfo.proc-on:not(.open) .sccols>div+div{display:none}
 }
 @media (max-width:560px){.cycle-on .stage{height:clamp(280px,40vh,420px)}.cycle-on .carm{display:none}.scmore{margin-top:4px}}
+@media (max-width:560px){.impcap{top:8px;bottom:auto;left:8px;right:8px;transform:none;max-width:none;gap:8px;padding:5px 10px;border-radius:10px;font-size:12.5px;line-height:1.3}.impcap .ph{font-size:10px;padding:3px 6px}}
 /* ---- atlas plate ---- */
 .mast{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start}
 .logo{width:52px;height:48px;margin-top:2px}
@@ -522,6 +523,7 @@ footer a,.link{color:var(--ven)}
             </div>
             <button class="btn" type="button" id="cycPlay" aria-pressed="false">Pause</button>
             <button class="btn" type="button" id="sndBtn" aria-pressed="false" title="Synthesized heart sounds in sync with the traces">Sound off</button>
+            <button class="btn" type="button" id="capBtn" aria-pressed="true" title="Show the cardiac phase over the 3D view">Phase caption</button>
             <button class="btn" type="button" id="pvcBtn" title="The next beat becomes a premature ventricular contraction">Insert PVC</button>
             <button class="btn" type="button" id="ablBtn" aria-pressed="false" hidden>Ablate</button>
           </div>
@@ -6543,6 +6545,7 @@ footer a,.link{color:var(--ven)}
       if (state.echo) exitEcho();
       if (id !== 'rhythm') rhySet(false); if (id !== 'struct') procMode(false);
       if (id === 'rhythm') rhySet(true); if (id === 'struct') procMode(true);
+      capSet(id !== 'struct' && !matchMedia('(max-width:560px)').matches);
       enterCycle();
     }
     else if (cyc.on) exitCycle();
@@ -8531,6 +8534,9 @@ footer a,.link{color:var(--ven)}
     ['#sndBtn', '#eSnd'].forEach(function (sel) { var b = $(sel); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Sound on' : 'Sound off'; });
     $('#sndNote').hidden = !on;
   }
+  var capOn = true;
+  function capSet(on) { capOn = on; $('#capBtn').setAttribute('aria-pressed', String(on)); if (cyc.on) $('#impcap').hidden = !on; }
+  $('#capBtn').addEventListener('click', function () { capSet(!capOn); });
   $('#sndBtn').addEventListener('click', function () { setSound(!AUD.on); });
 
   /* Open-licensed recordings (BMD-HS), loaded on demand from heart-sounds.json and played unmodified. */
@@ -8795,7 +8801,7 @@ footer a,.link{color:var(--ven)}
   function enterCycle() {
     if (state.impulse) setImpulse(false);
     cyc.on = true; cyc.playing = true; lastPh = -1; lastCapKey = '';
-    $('#cyclepanel').hidden = false; $('#cycinfo').hidden = false; $('#impcap').hidden = false; $('#impulse').hidden = true;
+    $('#cyclepanel').hidden = false; $('#cycinfo').hidden = false; $('#impcap').hidden = !capOn; $('#impulse').hidden = true;
     document.querySelector('.stagecard').classList.add('cycle-on');
     syncPlayButtons();
     setScenario(curKey);
