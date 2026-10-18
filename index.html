@@ -17,20 +17,23 @@
 <link rel="canonical" href="https://lubdubappguide.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,400&display=swap" media="print" onload="this.media='all'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 44'%3E%3CclipPath id='l'%3E%3Crect width='24' height='44'/%3E%3C/clipPath%3E%3Cpath d='M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z' fill='%23B01F2E'/%3E%3Cpath clip-path='url(%23l)' d='M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z' fill='%231F4F8F'/%3E%3Cpolyline points='3,23 14,23 17,17.5 20.5,29 24.5,9.5 28,31 31,23 45,23' fill='none' stroke='white' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 /* Layout: a teaching atlas — header, then the 3D stage beside a control panel (stacks on phones), attribution footer. */
 :root{
-  --bg:#EEF1F5; --surface:#FFFFFF; --sunken:#F3F5F8; --line:#D8DEE6; --fg:#13202D; --muted:#4B5866;
-  --stage:#E2E7EE; --stage-2:#F4F6F9; --pearl:#FBF0F0; --pearl-fg:#8A1C27; --focus:#2F64C9; --hl:#E8A317;
+  --bg:#EFF3F6; --surface:#FFFFFF; --sunken:#F3F6F9; --line:#D3DBE3; --fg:#17212C; --muted:#53606E;
+  --stage:#E2E9EF; --stage-2:#FBFCFD; --pearl:#FAEFF0; --pearl-fg:#8E1B27; --focus:#1F4F8F; --hl:#E8A317;
+  --art:#B01F2E; --ven:#1F4F8F; --on-ven:#FFFFFF; --serif:'Source Serif 4','Source Serif Pro',Georgia,'Times New Roman',serif;
   --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0B1119; --surface:#121B26; --sunken:#0F1721; --line:#243142; --fg:#E6ECF2; --muted:#9AA8B8;
-  --stage:#0E1722; --stage-2:#16212F; --pearl:#2A1619; --pearl-fg:#F2A7AE; --focus:#7AA2F0; --hl:#F2B63C; color-scheme:dark}}
+  --bg:#0D131A; --surface:#141C26; --sunken:#101821; --line:#26313F; --fg:#E7EDF3; --muted:#9BA9B8;
+  --stage:#101924; --stage-2:#18232F; --pearl:#2B171A; --pearl-fg:#F2A7AE; --focus:#86AEEB; --hl:#F2B63C; --art:#EE6B76; --ven:#86AEEB; --on-ven:#0D131A; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0B1119; --surface:#121B26; --sunken:#0F1721; --line:#243142; --fg:#E6ECF2; --muted:#9AA8B8;
-  --stage:#0E1722; --stage-2:#16212F; --pearl:#2A1619; --pearl-fg:#F2A7AE; --focus:#7AA2F0; --hl:#F2B63C; color-scheme:dark}
+  --bg:#0D131A; --surface:#141C26; --sunken:#101821; --line:#26313F; --fg:#E7EDF3; --muted:#9BA9B8;
+  --stage:#101924; --stage-2:#18232F; --pearl:#2B171A; --pearl-fg:#F2A7AE; --focus:#86AEEB; --hl:#F2B63C; --art:#EE6B76; --ven:#86AEEB; --on-ven:#0D131A; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55}
@@ -320,16 +323,96 @@ footer a,.link{color:var(--fg)}
 .measread i{font:500 11px/1.25 var(--mono);font-style:normal;color:#6B7A8A}
 .measread span.hi{border-color:#B45309;background:#1C1406}
 .measread span.hi b{color:#FCD34D}
+.stagerow>.stagecol{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.stagecol>.stage{flex:none}
+@media (min-width:1000px){
+.cycle-on .stagerow>.stagecol{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:flex-start;max-height:calc(100vh - 32px)}
+.cycle-on .stagecol>.cycinfo{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#2B3644 transparent}
+}
+.scnav{display:inline-flex;gap:6px;margin-left:auto}
+.scnav[hidden]{display:none}
+.scnav .btn{min-height:32px;padding:0 12px;font-size:13px}
+.scmore{display:none;align-self:flex-start;min-height:30px;font-size:12.5px}
+@media (max-width:999px){
+.scmore{display:inline-flex}
+.cycinfo:not(.open):not(.proc-on) .sccols li:nth-child(n+3),.cycinfo:not(.open) #scCmp,.cycinfo:not(.open) .cycnote{display:none}
+.cycinfo.proc-on:not(.open) .sccols li:not(.lead),.cycinfo.proc-on:not(.open) .sccols>div+div{display:none}
+}
+@media (max-width:560px){.cycle-on .stage{height:clamp(280px,40vh,420px)}.cycle-on .carm{display:none}.scmore{margin-top:4px}}
+/* ---- atlas plate ---- */
+.mast{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start}
+.logo{width:52px;height:48px;margin-top:2px}
+.mastxt{display:flex;flex-direction:column;gap:6px;min-width:0}
+h1{font:600 clamp(28px,3.4vw,38px)/1.08 var(--serif);letter-spacing:-.01em}
+.lead{font-size:15px;line-height:1.55;max-width:96ch}
+.lead a{color:var(--ven)}
+.notice{font:500 12.5px/1.45 var(--sans);color:var(--pearl-fg);background:none;border:0;padding:0}
+.wrap{padding-top:22px;gap:20px}
+.leadmore{display:none;align-self:flex-start;border:0;background:none;padding:0;font:600 13.5px/1.4 var(--sans);color:var(--ven);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.scmore{margin-top:6px}
+@media (max-width:560px){.mast{grid-template-columns:auto 1fr;column-gap:12px}.mast h1{align-self:center}.logo{width:40px;height:37px}.lead{font-size:14px}
+.lead:not(.open){display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.leadmore{display:inline-block}
+.toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:2px 20px 4px}.toolbar::-webkit-scrollbar{display:none}.toolbar .btn{flex:none}}
+.eyebrow{font:600 17px/1.25 var(--serif);letter-spacing:0;text-transform:none;color:var(--fg)}
+.pearl .eyebrow{font-size:14.5px;color:var(--pearl-fg)}
+.card{border-radius:12px}
+.btn{border-radius:8px}
+.seg{border-radius:10px}
+.btn[aria-pressed="true"],.item[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
+.btn:hover{border-color:var(--ven)}
+.range,.check input{accent-color:var(--ven)}
+footer a,.link{color:var(--ven)}
+.stage{border-radius:12px}
+.viewnote{font:italic 400 15px/1.45 var(--serif);color:var(--muted)}
+.refs summary{font:600 17px/1.3 var(--serif)}
+/* the monitor insets: same dark glass, quieter labels */
+.cyclepanel,.echopanel{border-radius:12px;background:#0A1119;border-color:#1D2733}
+.cychead .eyebrow,.echohead .eyebrow{color:#E7EDF3}
+.vgroup .gname,.hfrow .gname,.hemolegend .gname,.scenrow .gname,.cyclepanel .gname{font:600 12px/1.2 var(--sans);letter-spacing:0;text-transform:none;color:#97A6B6}
+/* the teaching legend: a light plate under the figure */
+.cycinfo{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.scencard{border-top:0}
+.schead h3{font:600 20px/1.25 var(--serif);color:var(--fg)}
+.schead span{font-size:13px;color:var(--muted)}
+.scmet span{background:var(--sunken);border-color:var(--line);color:var(--muted)}
+.scmet em{color:var(--muted)}
+.scmet b{color:var(--fg)}
+.sccols h4{font:600 13px/1.3 var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
+.sccols ul{font-size:13.5px;line-height:1.55;color:var(--fg)}
+.sccols b{color:var(--fg)}
+#scTrace li.lead b{font:600 17px/1.35 var(--serif)}
+.scpearl{background:var(--pearl);color:var(--fg);border-left:3px solid var(--art);font-size:13.5px;border-radius:4px 8px 8px 4px}
+.scpearl b{color:var(--art)}
+.listen{background:var(--sunken);border-color:var(--line)}
+.listen h4{font:600 13px/1.3 var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
+.lnote,.cycnote{color:var(--muted)}
+.recinfo p{color:var(--muted)}
+.recinfo b{color:var(--fg)}
+.reclic{color:var(--muted)!important}
+.reclic a{color:var(--ven)}
+.sccmp{color:var(--fg)}
+.sccmp caption{font:600 13px/1.3 var(--sans);letter-spacing:0;text-transform:none;color:var(--muted)}
+.sccmp th,.sccmp td{border-top-color:var(--line)}
+.sccmp thead th,.sccmp td:last-child{color:var(--muted)}
+.sccmp tbody th{color:var(--fg)}
+.sccmp .hl{color:var(--fg);background:rgba(176,31,46,.07)}
+.cycinfo .seg{border-color:var(--line)}
+.cycinfo .btn{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.cycinfo .btn[aria-pressed="true"]{background:var(--ven);color:var(--on-ven);border-color:var(--ven)}
+.cycinfo{scrollbar-color:var(--line) transparent}
 </style>
 
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <span class="eyebrow">The heart in three dimensions · anatomy, physiology, echo</span>
+  <header class="mast">
+    <svg class="logo" viewBox="0 0 48 44" aria-hidden="true"><defs><clipPath id="lgL"><rect x="0" y="0" width="24" height="44"/></clipPath><clipPath id="lgR"><rect x="24" y="0" width="24" height="44"/></clipPath></defs><path d="M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z" fill="var(--ven)" clip-path="url(#lgL)"/><path d="M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z" fill="var(--art)" clip-path="url(#lgR)"/><polyline points="3,23 14,23 17,17.5 20.5,29 24.5,9.5 28,31 31,23 45,23" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    <div class="mastxt">
     <h1>LubDubAPP Guide</h1>
     <p class="lead">An interactive guide for cardiovascular advanced practice provider (APP) training, from introductory anatomy to in-depth hemodynamics, rhythm and pacing, structural interventions and echocardiography. It is built on a segmented model of a real adult heart from the Visible Human dataset: rotate it, peel back the wall, and select any chamber, valve, vessel or coronary branch to see what it does and why it matters clinically. For ultrasound physics and in-depth echo learning, continue with <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</p>
+    <button class="leadmore" id="leadMore" type="button" aria-expanded="false">More about this guide</button>
     <p class="notice">For non-commercial education only. A simulated teaching model, not medical advice; not for diagnosis or patient care.</p>
+    </div>
   </header>
 
   <div class="main">
@@ -358,6 +441,7 @@ footer a,.link{color:var(--fg)}
         <button class="btn" id="impulse" aria-pressed="false">Play impulse</button>
       </div>
       <div class="stagerow">
+      <div class="stagecol" id="stagecol">
       <div class="stage" id="stage">
         <canvas id="c" role="img" aria-label="Rotatable 3D model of the heart and great vessels"></canvas>
         <svg class="leaders" id="leaders" aria-hidden="true"></svg>
@@ -372,6 +456,30 @@ footer a,.link{color:var(--fg)}
         <p class="hint">Drag to rotate · scroll or pinch to zoom · right-drag or two fingers to pan</p>
         <div class="impcap" id="impcap" hidden aria-live="off"><span class="ph" id="impph">P wave</span><span id="imptx"></span></div>
         <div class="loading" id="loading">Loading 3D heart… <span id="pct">&nbsp;0%</span></div>
+      </div>
+      <div class="cycinfo" id="cycinfo" hidden>
+        <div class="scencard" id="scencard" aria-live="polite">
+          <div class="schead"><h3 id="scTitle">Normal adult</h3><span id="scSub"></span><span class="scnav" id="scNav" hidden><button class="btn" type="button" id="scPrev" aria-label="Previous step">‹ Back</button><button class="btn" type="button" id="scNext" aria-label="Next step">Next ›</button></span></div>
+          <div class="scmet" id="scMet"></div>
+          <div class="sccols">
+            <div><h4 id="scTraceH">On the traces</h4><ul id="scTrace"></ul></div>
+            <div><h4 id="scBedH">At the bedside</h4><ul id="scBed"></ul></div>
+          </div>
+          <button class="btn scmore" type="button" id="scMore" aria-expanded="false" aria-controls="scencard">Show all</button>
+          <table class="sccmp" id="scCmp" hidden></table>
+          <p class="scpearl" id="scPearl"></p>
+          <div class="listen" id="listen">
+            <h4>Listen</h4>
+            <p class="lnote" id="sndNote" hidden>Model sound is synthesized from these traces and plays in sync at real-time speed (it pauses in slow motion). Headphones help: most heart-sound energy is below 200 Hz.</p>
+            <div class="recrow" id="recRow" hidden>
+              <button class="btn" type="button" id="recBtn" aria-pressed="false">Play recording</button>
+              <div class="recinfo"><p id="recMeta"></p><canvas id="recWave" role="img" aria-label="Waveform of the patient recording"></canvas><p class="reclic" id="recLic"></p></div>
+            </div>
+            <p class="lnote" id="recNone" hidden>No openly licensed patient recording of this condition was found, so only the model sound (Sound on) is available here.</p>
+          </div>
+        </div>
+        <p class="cycnote">Motion is a smooth deformation of the static model; the LV wall thickens as it contracts, and in a coronary occlusion the shaded territory neither moves inward nor thickens. Valves turn green while open, amber while regurgitant and orange while open but obstructed; the cone in 3D marks the abnormal jet. Pressures are illustrative composites built so every valve event falls where the pressures cross, then played out beat by beat (AF, PVCs, respiration) — teaching curves, not patient recordings. Model sounds are synthesized from the same timeline; the patient recordings are real and come from the open BMD-HS dataset.</p>
+      </div>
       </div>
       <div class="echopanel" id="echopanel" hidden>
         <div class="echohead">
@@ -548,28 +656,6 @@ footer a,.link{color:var(--fg)}
       </div>
       </div>
       <p class="viewnote" id="viewnote">Anterior view — the patient’s right is on your left.</p>
-      <div class="cycinfo" id="cycinfo" hidden>
-        <div class="scencard" id="scencard" aria-live="polite">
-          <div class="schead"><h3 id="scTitle">Normal adult</h3><span id="scSub"></span></div>
-          <div class="scmet" id="scMet"></div>
-          <div class="listen" id="listen">
-            <h4>Listen</h4>
-            <p class="lnote" id="sndNote" hidden>Model sound is synthesized from these traces and plays in sync at real-time speed (it pauses in slow motion). Headphones help: most heart-sound energy is below 200 Hz.</p>
-            <div class="recrow" id="recRow" hidden>
-              <button class="btn" type="button" id="recBtn" aria-pressed="false">Play recording</button>
-              <div class="recinfo"><p id="recMeta"></p><canvas id="recWave" role="img" aria-label="Waveform of the patient recording"></canvas><p class="reclic" id="recLic"></p></div>
-            </div>
-            <p class="lnote" id="recNone" hidden>No openly licensed patient recording of this condition was found, so only the model sound (Sound on) is available here.</p>
-          </div>
-          <div class="sccols">
-            <div><h4 id="scTraceH">On the traces</h4><ul id="scTrace"></ul></div>
-            <div><h4 id="scBedH">At the bedside</h4><ul id="scBed"></ul></div>
-          </div>
-          <table class="sccmp" id="scCmp" hidden></table>
-          <p class="scpearl" id="scPearl"></p>
-        </div>
-        <p class="cycnote">Motion is a smooth deformation of the static model; the LV wall thickens as it contracts, and in a coronary occlusion the shaded territory neither moves inward nor thickens. Valves turn green while open, amber while regurgitant and orange while open but obstructed; the cone in 3D marks the abnormal jet. Pressures are illustrative composites built so every valve event falls where the pressures cross, then played out beat by beat (AF, PVCs, respiration) — teaching curves, not patient recordings. Model sounds are synthesized from the same timeline; the patient recordings are real and come from the open BMD-HS dataset.</p>
-      </div>
     </section>
 
     <aside class="panel">
@@ -7313,6 +7399,7 @@ footer a,.link{color:var(--fg)}
     document.querySelectorAll('[data-pcomp]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.pcomp === PROCX.comp)); });
     $('#procPrev').disabled = PROCX.step === 0 && !PROCX.comp; $('#procNext').disabled = PROCX.step === last && !PROCX.comp;
     $('#procAuto').textContent = PROCX.auto ? 'Stop' : 'Play all'; $('#procAuto').setAttribute('aria-pressed', String(PROCX.auto));
+    $('#scPrev').disabled = $('#procPrev').disabled; $('#scNext').disabled = $('#procNext').disabled;
   }
   /* switch the cycle panel into and out of the procedures scene (like the rhythm scene) */
   function procMode(on) {
@@ -7323,6 +7410,7 @@ footer a,.link{color:var(--fg)}
     $('#cyclepanel').classList.toggle('proc-on', on); $('#cycinfo').classList.toggle('proc-on', on);
     if (on) { $('#cycEyebrow').textContent = 'Structural interventions'; procBuild(); var c = procCur(); curKey = procScen(); cur = scen(curKey); procLayers(); procUI(); }
     else { $('#scTraceH').textContent = 'On the traces'; $('#scBedH').textContent = 'At the bedside'; if (PX) PX.root.visible = false; }
+    $('#scNav').hidden = !on;
   }
   document.querySelectorAll('[data-proc]').forEach(function (b) { b.addEventListener('click', function () { procSelect(b.dataset.proc); }); });
   $('#procVar').addEventListener('click', function (e) { var b = e.target.closest('[data-pvar]'); if (b) procSelect(PROCX.key, b.dataset.pvar); });
@@ -7332,7 +7420,11 @@ footer a,.link{color:var(--fg)}
   $('#procNext').addEventListener('click', function () { PROCX.auto = false; if (PROCX.comp) { PROCX.comp = null; procGo(PROCX.step); } else procGo(PROCX.step + 1); });
   $('#procReplay').addEventListener('click', function () { procGo(PROCX.step); });
   $('#procAuto').addEventListener('click', function () { PROCX.auto = !PROCX.auto; if (PROCX.auto) { if (PROCX.step === procCur().steps.length - 1) procGo(0); } procUIstate(); });
+  $('#scPrev').addEventListener('click', function () { $('#procPrev').click(); });
+  $('#scNext').addEventListener('click', function () { $('#procNext').click(); });
+  $('#scMore').addEventListener('click', function () { var o = $('#cycinfo').classList.toggle('open'); this.textContent = o ? 'Show less' : 'Show all'; this.setAttribute('aria-expanded', String(o)); });
 
+  $('#leadMore').addEventListener('click', function () { var l = document.querySelector('.lead'), o = l.classList.toggle('open'); this.textContent = o ? 'Show less' : 'More about this guide'; this.setAttribute('aria-expanded', String(o)); });
   /* ---------- Loop ---------- */
   function loop(now) {
     requestAnimationFrame(loop);
