@@ -755,7 +755,7 @@ footer a,.link{color:var(--ven)}
   </div>
 
   <footer>
-    <span><strong>Web edition</strong> · updated 18 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Web edition</strong> · updated 19 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
@@ -811,7 +811,7 @@ footer a,.link{color:var(--ven)}
       </ol>
     </details>
     <span><strong>3D model:</strong> Human Reference Atlas, <a href="https://github.com/hubmapconsortium/ccf-3d-reference-object-library" target="_blank" rel="noopener">CCF 3D Reference Object Library</a> (HuBMAP) — Visible Human Male heart and heart vasculature, v1.2. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>; merged, simplified and recolored here for teaching.</span>
-    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
+    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. In the 3D model the valve leaflets and cusps are built on each annulus and open and close with the same pressure model (the mitral and tricuspid leaflets follow inflow, with E and A waves), with the chordae taut when the valve is shut. The aortic and pulmonary roots (the sinuses of Valsalva between the cusps and the artery) are drawn by the simulator, since the source model leaves a gap there. In the structural procedures the devices act on the leaflets: an expanded frame or balloon holds them open, a clip holds the edges it grasped, and the leaflets of the transcatheter valves open and close with the cycle. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
   </footer>
 </div>
 
@@ -1305,7 +1305,7 @@ footer a,.link{color:var(--ven)}
       (S[id].meshes = S[id].meshes || []).push(o);
       meshes.push(o);
     });
-    buildExtras();
+    buildExtras(); valvesBuild();
     var cb = new THREE.Box3();
     ['san', 'avn', 'his', 'rbb', 'lbb', 'laf', 'lpf', 'purk'].forEach(function (id) { (S[id].meshes || []).forEach(function (m) { cb.expandByObject(m); }); });
     if (!cb.isEmpty()) condCenter = cb.getCenter(new THREE.Vector3());
@@ -1325,6 +1325,7 @@ footer a,.link{color:var(--ven)}
     });
     Object.keys(EXTRAS.anchors).forEach(function (id) { if (S[id]) S[id].anchor = new THREE.Vector3().fromArray(EXTRAS.anchors[id]).multiplyScalar(0.001); });
     Object.keys(S).forEach(function (id) { if (S[id].tipAnchor) S[id].anchor = S[id].tipAnchor; });
+    valvesRoots();
     heartMats.forEach(patchBeat); meshes.forEach(remEnsure);
     buildLabels();
     ready = true; loadingEl.hidden = true; applyRemodel(true);
@@ -1404,6 +1405,7 @@ footer a,.link{color:var(--ven)}
       });
       (s.hits || []).forEach(function (h) { h.visible = vis && op >= 0.35; });
     });
+    rootsRefresh();
     LAYERS.forEach(function (L) { var cb = $('#layer-' + L.id); if (cb) cb.checked = !!state.layers[L.id]; });
     document.querySelectorAll('.item').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.id === state.sel)); });
     document.querySelectorAll('[data-preset]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.preset === state.preset)); });
@@ -3804,6 +3806,7 @@ footer a,.link{color:var(--ven)}
     var RG = X.rg ? rGlow(cyc.t) : null; if (RV) RV._g = RG || {};
     CYC.c.value = cycC(tau); CYC.a.value = RG ? st.act : b.atrial ? cycA(tau) : 0;
     var open = { mv: !!(vb & 1), tv: !!(vb & 2), av: !!(vb & 4), pv: !!(vb & 8) };
+    valvesTick(st);
     ['mv', 'tv', 'av', 'pv'].forEach(function (v) {
       var st = F && !F.noJet && F.valve === v && k > 0.02 ? (F.kind === 'regurg' ? 'leak' : 'sten') : open[v] ? 'open' : 'closed', s = S[v];
       if (s.meshes) s.meshes.forEach(function (m) {
@@ -3811,7 +3814,7 @@ footer a,.link{color:var(--ven)}
         else if (RG || PROCX.on) { m.material.emissive.copy(BLACK); m.material.emissiveIntensity = 0; }
         else if (st === 'leak') { m.material.emissive.set('#F59E0B'); m.material.emissiveIntensity = 0.35 + 0.5 * Math.min(1, k); }
         else if (st === 'sten') { m.material.emissive.set('#F97316'); m.material.emissiveIntensity = 0.45 + 0.4 * Math.min(1, k); }
-        else if (st === 'open') { m.material.emissive.set('#16A34A'); m.material.emissiveIntensity = 0.6; }
+        else if (st === 'open' && !VALV.on) { m.material.emissive.set('#16A34A'); m.material.emissiveIntensity = 0.6; }
         else { m.material.emissive.copy(BLACK); m.material.emissiveIntensity = 0; }
       });
       if (!chips) return;
@@ -3874,6 +3877,7 @@ footer a,.link{color:var(--ven)}
     requestAnimationFrame(resize);
   }
   function exitCycle() {
+    valvesRest();
     cyc.on = false; CYC.c.value = 0; CYC.a.value = 0; hideJets(); audioStopModel(); recStop();
     $('#cyclepanel').hidden = true; $('#cycinfo').hidden = true; $('#impcap').hidden = true; $('#impulse').hidden = false;
     document.querySelector('.stagecard').classList.remove('cycle-on');
@@ -4931,7 +4935,7 @@ footer a,.link{color:var(--ven)}
     remSig = sig; remCur = R;
     var t0 = instant ? 1 : REM_T.value, o = [0, 0, 0];
     meshes.forEach(function (m) {
-      remEnsure(m);
+      remEnsure(m); if (m.userData.dyn) return;
       var ud = m.userData, g = m.geometry, w0 = ud.w0, D = ud.remD, a = g.attributes.aRemA.array, b = g.attributes.aRemB.array;
       for (var i = 0; i < w0.length; i += 3) {
         a[i] += (b[i] - a[i]) * t0; a[i + 1] += (b[i + 1] - a[i + 1]) * t0; a[i + 2] += (b[i + 2] - a[i + 2]) * t0;
@@ -6570,10 +6574,9 @@ footer a,.link{color:var(--ven)}
     var sk = new THREE.CylinderGeometry(1, 1, se ? 12 : 10, 40, 6, true); sk.translate(0, y0 + (se ? 6 : 5), 0);
     var skp = sk.attributes.position; for (var i = 0; i < skp.count; i++) { var r0 = plin(prof, skp.getY(i) - y0) - 0.25, xx = skp.getX(i), zz = skp.getZ(i), l = Math.hypot(xx, zz) || 1; skp.setX(i, xx / l * r0); skp.setZ(i, zz / l * r0); }
     o.skirt = radialPrep(pMesh(sk, PX.M.skirt, g));
-    var ly = se ? 17 : 10, lr = plin(prof, ly - y0) - 0.4, lf = new THREE.ConeGeometry(lr, 4, 48, 1, true); lf.rotateX(Math.PI); lf.translate(0, y0 + ly, 0);
-    o.leaf = radialPrep(pMesh(lf, PX.M.leaf, g));
-    var cl = []; for (var k = 0; k < 3; k++) { var a = k * 2 * Math.PI / 3 + 0.5; cl.push([new THREE.Vector3(Math.cos(a) * lr, y0 + ly + 2, Math.sin(a) * lr), new THREE.Vector3(0, y0 + ly - 2, 0)]); }
-    o.coapt = radialPrep(pMesh(strutGeo(cl, 0.18), PX.M.leafLine, g));
+    var ly = se ? 17 : 10;   /* leaflets: intra-annular (balloon-expandable) or supra-annular (self-expanding) */
+    o.leaf = pLeaflets(o, g, function (y) { return plin(prof, y - y0) - 0.45; }, y0 + ly, 1, y0, y0 + H);
+    o.vid = 'av'; o.yLo = y0; o.yHi = y0 + H; o.rAt = function (y) { return plin(prof, y - y0) * (o.sOf ? o.sOf(y) : 1); };
     if (!se) {
       o.bal = pMesh(lathe([[0, -17], [0.55, -16.5], [0.85, -14], [1, -10], [1, 10], [0.85, 14], [0.55, 16.5], [0, 17]], 32), PX.M.balloon, g); o.bal.position.y = y0 + H / 2;
       o.tip = pMesh(new THREE.ConeGeometry(2.2, 7, 18), PX.M.cath, g); o.tip.rotation.x = Math.PI; o.tip.position.y = y0 + H / 2 - 20;
@@ -6587,7 +6590,7 @@ footer a,.link{color:var(--ven)}
       var cr = se ? 0.3 : 0.38, sOf;
       if (se) { var front = exp * (H + 6) - 3; sOf = function (y) { var t = y - y0; return cr + (1 - cr) * (1 - pss(t, front - 4, front + 1)); }; }
       else { var s = cr + (1 - cr) * exp; sOf = function () { return s; }; }
-      [o.frame, o.skirt, o.leaf, o.coapt].forEach(function (m) { radialSet(m, sOf); });
+      [o.frame, o.skirt].forEach(function (m) { radialSet(m, sOf); }); o.sOf = sOf; o.sk = exp.toFixed(4); o.ex = exp; o.balk = se ? 0 : bal;
       if (!se) {
         var b = Math.max(bal, exp < 0.999 ? 0 : 0), r = 0.3 * (1 - bal) + 10.6 * bal; o.bal.visible = exp < 0.999 || bal > 0.01; o.bal.scale.set(Math.max(3.6, r), 1, Math.max(3.6, r));
         o.tip.visible = exp < 0.999 || bal > 0.01;
@@ -6600,7 +6603,7 @@ footer a,.link{color:var(--ven)}
   /* edge-to-edge clip, local +Y toward its delivery catheter: arms hinge at the distal end (y = 0) and close up along
      the body; the coupling at y = 9–12 is where the catheter attaches until release */
   function mkClip() {
-    var g = new THREE.Group(), o = { g: g }, M = PX.M; g.scale.setScalar(0.001); g.visible = false; PX.g.add(g);
+    var g = new THREE.Group(), o = { g: g, isClip: true, k: 0 }, M = PX.M; g.scale.setScalar(0.001); g.visible = false; PX.g.add(g);
     var body = new THREE.CylinderGeometry(2, 2, 9, 18); body.translate(0, 4.5, 0); pMesh(body, M.clip, g);
     var cap = new THREE.SphereGeometry(2, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2); pMesh(cap, M.clip, g);
     o.arms = []; o.grips = [];
@@ -6616,6 +6619,7 @@ footer a,.link{color:var(--ven)}
     o.pose = function (pos, Y, X) { qY.copy(Y).normalize(); qX.copy(X).addScaledVector(qY, -qX.dot(qY)).normalize(); qZ.crossVectors(qX, qY); g.quaternion.setFromRotationMatrix(mt.makeBasis(qX, qY, qZ)); g.position.copy(pos); };
     /* arm: angle of each arm from the body in degrees (0 closed, 90 = arms at 180°, 60 = arms at 120°); grip 0–1 lowers the grippers */
     o.set = function (vis, arm, grip, rel, slda) {
+      o.k = vis > 0 ? (grip || 0) * Math.max(0, Math.min(1, (62 - arm) / 50)) : 0; o.slda = !!slda;
       g.visible = vis > 0; if (!g.visible) return;
       var phi = arm * Math.PI / 180, psi = (4 + (arm - 4) * grip) * Math.PI / 180;
       o.arms.forEach(function (q) { q[0].rotation.z = -q[1] * (slda && q[1] > 0 ? 62 * Math.PI / 180 : phi); });
@@ -6644,7 +6648,7 @@ footer a,.link{color:var(--ven)}
     o.frame = radialPrep(pMesh(lattice([-hv, -hv * 0.5, 0, hf * 0.5, hf], 16, function () { return R; }, 0.32), M.frame, g));
     o.flange = radialPrep(pMesh(lathe([[R - 0.5, hf - 0.4], [Rf * 0.85, hf + 0.6], [Rf, hf + 1.4], [Rf, hf + 2], [Rf * 0.85, hf + 1.4], [R - 0.5, hf + 0.4]], 48), M.skirt2, g));
     var sk = new THREE.CylinderGeometry(R - 0.3, R - 0.3, hv, 40, 2, true); sk.translate(0, -hv / 2, 0); o.skirt = radialPrep(pMesh(sk, M.skirt, g));
-    var lf = new THREE.ConeGeometry(R - 0.6, 4.5, 48, 1, true); lf.rotateX(Math.PI); lf.translate(0, -2, 0); o.leaf = radialPrep(pMesh(lf, M.leaf, g));
+    o.leaf = pLeaflets(o, g, function () { return R - 0.6; }, 1.5, -1, -hv, hf); o.yLo = -hv; o.yHi = hf; o.rAt = function () { return R * (o.sc || 1); };
     var cp = new THREE.CylinderGeometry(R * 0.26, R * 0.26, hv + hf + 6, 24, 1, false); cp.translate(0, (hf - hv) / 2, 0); o.cap = pMesh(cp, M.capsule, g);
     var tp = new THREE.ConeGeometry(R * 0.26, 7, 20); tp.rotateX(Math.PI); tp.translate(0, -hv - 6.5, 0); o.tip = pMesh(tp, M.capsule, g);
     g.scale.set(0.001 * sx, 0.001, 0.001 * sz);
@@ -6653,19 +6657,20 @@ footer a,.link{color:var(--ven)}
       g.position.copy(g.userData.home).addScaledVector(new THREE.Vector3().fromArray(Y), (1 - pos) * travel * 0.001); g.quaternion.copy(g.userData.q0);
       o.cap.visible = o.tip.visible = exp < 0.04;
       var s = 0.22 + 0.78 * exp, sf = function (y) { return y > hf - 0.5 ? 0.15 + 0.85 * pss(exp, 0.35, 1) : s; };
-      [o.frame, o.skirt, o.leaf].forEach(function (m) { radialSet(m, function () { return s; }); }); radialSet(o.flange, sf);
+      o.sc = s; o.sOf = function () { return s; }; o.sk = s.toFixed(4); o.ex = exp; [o.frame, o.skirt].forEach(function (m) { radialSet(m, o.sOf); }); radialSet(o.flange, sf);
     };
     return o;
   }
   function mkInoue() {
-    var A = VL.mv, g = pDev(A.c, A.n), o = { g: g };
+    var A = VL.mv, g = pDev(A.c, A.n), o = { g: g, vid: 'mv', yLo: -20, yHi: 20 };
     var cy = new THREE.CylinderGeometry(1, 1, 40, 30, 48, true); o.b = radialPrep(pMesh(cy, PX.M.balloon2, g));
     var c1 = new THREE.SphereGeometry(1.3, 12, 8); c1.translate(0, 20, 0); pMesh(c1, PX.M.cath, g);
     o.set = function (vis, pos, bD, bP, bW) {
       g.visible = vis > 0; if (!g.visible) return;
       g.position.copy(g.userData.home).addScaledVector(new THREE.Vector3().fromArray(A.n), -(1 - pos) * 0.03); g.quaternion.copy(g.userData.q0);
       function bump(x, w) { return Math.exp(-Math.pow(x / w, 4)); }
-      radialSet(o.b, function (y) { return 2.4 + Math.max(bD * 11 * bump(y - 10.5, 8.5), bP * 11 * bump(y + 10.5, 8.5), (3 + 8.5 * bW) * Math.min(bD, bP) * bump(y, 6)) * (1 - pss(Math.abs(y), 18, 20.5)); });
+      o.rAt = function (y) { return 2.4 + Math.max(bD * 11 * bump(y - 10.5, 8.5), bP * 11 * bump(y + 10.5, 8.5), (3 + 8.5 * bW) * Math.min(bD, bP) * bump(y, 6)) * (1 - pss(Math.abs(y), 18, 20.5)); };
+      radialSet(o.b, o.rAt);
     };
     return o;
   }
@@ -7556,13 +7561,14 @@ footer a,.link{color:var(--ven)}
   }
   function procTick(t) {
     if (!PX) return;
-    PX.root.visible = PROCX.on && state.preset === 'struct' && cyc.on && !!PX.o; if (!PX.root.visible) return;
+    PX.root.visible = PROCX.on && state.preset === 'struct' && cyc.on && !!PX.o; if (!PX.root.visible) { if (VALV.ovSig) valvesProc(null); return; }
     var c = procCur(), st = c.steps[PROCX.step], dur = st.dur || 2400, now = performance.now(), f = PROCX.comp ? 1 : Math.min(1, (now - PROCX.t0) / dur);
     if (st.endScen && f >= 1 && !PROCX.comp && !PROCX.endDone) { PROCX.endDone = true; if (curKey !== st.endScen) setScenario(st.endScen); }
     var V = { comp: PROCX.comp };
     for (var j = 0; j < PROCX.step; j++) c.steps[j].a(1, V);
     st.a(f, V);
     c.P.render(PX.o, V, t);
+    valvesProc(PX.o, V);
     var want = PROCX.comp ? (procComp(c, PROCX.comp).labs || []) : (st.labs || []);
     Object.keys(PX.o.L).forEach(function (k) { var s = PX.o.L[k]; s.visible = state.labels && want.indexOf(k) >= 0; if (s.visible) pFollow(s); });
     if (PROCX.auto && f >= 1 && now - PROCX.t0 > dur + 4000) { if (PROCX.step < c.steps.length - 1) procGo(PROCX.step + 1); else { PROCX.auto = false; procUIstate(); } }
@@ -7607,6 +7613,7 @@ footer a,.link{color:var(--ven)}
     if (on) { $('#cycEyebrow').textContent = 'Structural interventions'; procBuild(); var c = procCur(); curKey = procScen(); cur = scen(curKey); procLayers(); procUI(); }
     else { $('#scTraceH').textContent = 'On the traces'; $('#scBedH').textContent = 'At the bedside'; if (PX) PX.root.visible = false; }
     $('#scNav').hidden = !on;
+    valvesMode(on);
   }
   document.querySelectorAll('[data-proc]').forEach(function (b) { b.addEventListener('click', function () { procSelect(b.dataset.proc); }); });
   $('#procVar').addEventListener('click', function (e) { var b = e.target.closest('[data-pvar]'); if (b) procSelect(PROCX.key, b.dataset.pvar); });
@@ -7621,6 +7628,385 @@ footer a,.link{color:var(--ven)}
   $('#scMore').addEventListener('click', function () { var o = $('#cycinfo').classList.toggle('open'); this.textContent = o ? 'Show less' : 'Show all'; this.setAttribute('aria-expanded', String(o)); });
 
   $('#leadMore').addEventListener('click', function () { var l = document.querySelector('.lead'), o = l.classList.toggle('open'); this.textContent = o ? 'Show less' : 'More about this guide'; this.setAttribute('aria-expanded', String(o)); });
+  /* ---------- Valve leaflets ----------
+     The four valves are drawn as leaflets and cusps hinged on the annulus that open and close with the cycle (the source
+     model's valves are fixed, part-open sleeves and stay hidden). Each leaflet is a grid of columns running from the hinge
+     to the free edge. A column keeps its length and swings about the hinge between its closed direction (free edges
+     meeting on the coaptation line, bellied upstream) and its open direction (along the flow, toward the wall). The
+     atrioventricular leaflets follow inflow as in the echo: wide open in the E wave, drifting toward closure in diastasis,
+     reopening with atrial contraction. Stenotic leaflets open only part way and dome; regurgitant ones stop short of
+     coaptation; in obstructive HCM the anterior mitral leaflet is drawn into the outflow tract in systole. The chordae run
+     from the papillary muscles to the leaflets, taut when the valve is shut and slack when it opens. In the structural
+     procedures the devices act on the leaflets (valvesProc). */
+  var VALV = { on: false, o: { mv: 0.45, tv: 0.45, av: 0, pv: 0 }, pr: { mv: 0, tv: 0, av: 0, pv: 0 }, sam: 0, lastT: -1, sig: '', L: {}, ch: {}, ov: {}, ovSig: '' }, VNU = 20, VNV = 10;
+  var V_REST = { mv: 0.45, tv: 0.45, av: 0, pv: 0 };   /* outside the cycle: mid-diastole */
+  var V_OV0 = { pin: 0, obs: [], ties: [], sig: '' };
+  /* the semilunar cusps and their roots (model mm on the source heart, scaled with the remodeled annulus): hinge radius
+     and height at the nadir (rn, hn) and the commissures (rc, hc), the height where the closed cusps meet (hk), and the
+     outward bulge of the sinuses of Valsalva; sized to the outflow tract below and the artery above */
+  var ROOT_P = { av: { rn: 8.8, rc: 10.2, hn: -0.97, hc: 8.5, hk: 4.5, bulge: 3.0, sid: 'aoAsc' }, pv: { rn: 9.6, rc: 11.2, hn: -1.0, hc: 7.4, hk: 4.0, bulge: 2.6, sid: 'pt' } };
+  /* the open lower end of the source model's ascending aorta and pulmonary trunk, every 10° from −180° around each valve's
+     axis: [radius, height above the annulus centre] (v30/rim.json) */
+  var ROOT_RIM = {"av": [[10.16, 14.89], [10.28, 15.08], [10.55, 15.15], [10.98, 15.38], [11.53, 15.76], [12.08, 16.01], [12.36, 15.99], [12.01, 15.8], [11.13, 15.67], [10.02, 15.48], [9.02, 15.31], [8.27, 15.21], [7.78, 15.08], [7.49, 14.94], [7.37, 14.82], [7.41, 14.74], [7.67, 14.85], [8.08, 15.06], [8.67, 15.24], [9.41, 15.26], [10.12, 15.05], [10.61, 14.78], [10.74, 14.61], [10.6, 14.55], [10.38, 14.52], [10.18, 14.37], [10.11, 14.13], [10.14, 13.88], [10.26, 13.69], [10.43, 13.65], [10.58, 13.8], [10.6, 14.01], [10.52, 14.18], [10.44, 14.26], [10.34, 14.32], [10.2, 14.55]], "pv": [[13.59, 9.35], [13.79, 9.87], [13.55, 10.45], [13.31, 11.09], [13.02, 11.82], [12.48, 12.53], [11.61, 13.15], [10.49, 13.6], [9.55, 13.87], [8.94, 14.07], [8.55, 14.23], [8.38, 14.36], [8.37, 14.47], [8.5, 14.61], [8.8, 14.7], [9.25, 14.62], [9.77, 14.39], [10.19, 14.14], [10.44, 13.92], [10.74, 13.51], [11.24, 12.84], [11.67, 12.04], [11.7, 11.37], [11.71, 10.8], [12.03, 10.26], [12.28, 9.75], [12.1, 9.27], [11.99, 8.91], [12.11, 8.65], [12.08, 8.43], [11.94, 8.28], [11.86, 8.25], [11.83, 8.37], [11.97, 8.6], [12.4, 8.83], [13.0, 9.03]]};
+  var ROOT = { list: [], sig: '' }, RNA = 72, RNV = 18;
+  function vRadD(V, a) { return v3add(v3add([0, 0, 0], V.e1, Math.cos(a)), V.e2, Math.sin(a)); }
+  function vAngOf(V, d) { return Math.atan2(v3dot(d, V.e2), v3dot(d, V.e1)); }
+  function vMix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  function vBez(a, q, b, t) { var u = 1 - t; return [u * u * a[0] + 2 * u * t * q[0] + t * t * b[0], u * u * a[1] + 2 * u * t * q[1] + t * t * b[1], u * u * a[2] + 2 * u * t * q[2] + t * t * b[2]]; }
+  function vV0(id) { return (VLV0 || VLV)[id]; }
+  function vRk(id) { var V = VLV[id], V0 = vV0(id); return (V.A + V.B) / (V0.A + V0.B); }
+  /* leaflet layout from the valve's neighbours (as the echo and the coplanar view do) */
+  function vLayout(id) {
+    var V = VLV[id], TAU = 2 * Math.PI;
+    if (id === 'mv') {   /* anterior leaflet toward the aortic valve; commissures about 77° either side of it */
+      var aA = vAngOf(V, vlvRef('mv', 'av'));
+      return { kind: 'av2', aA: aA, lf: [{ a0: aA - 1.35, a1: aA + 1.35, name: 'anterior' }, { a0: aA + 1.35, a1: aA - 1.35 + TAU, name: 'posterior' }] };
+    }
+    if (id === 'tv') {   /* septal leaflet toward the septum (mitral side), anterior toward the outflow tract, posterior between */
+      var rS = vlvRef('tv', 'mv'), rA = vlvRef('tv', 'pv'), aS = vAngOf(V, rS), aAn = vAngOf(V, rA), aP = vAngOf(V, v3unit(v3add(v3add([0, 0, 0], rS, -1), rA, -1)));
+      var cs = [aS, aAn, aP].map(function (a) { return ((a % TAU) + TAU) % TAU; }).sort(function (a, b) { return a - b; }), cm = [];
+      for (var i = 0; i < 3; i++) { var a = cs[i], b = cs[(i + 1) % 3] + (i === 2 ? TAU : 0); cm.push((a + b) / 2); }
+      return { kind: 'av3', aS: aS, lf: [0, 1, 2].map(function (i) { var a0 = cm[(i + 2) % 3], a1 = cm[i]; if (a1 < a0) a1 += TAU; return { a0: a0, a1: a1 }; }) };
+    }
+    /* semilunar: aortic commissure between the left and non-coronary cusps faces the anterior mitral leaflet; the
+       pulmonary commissure between the right and left cusps faces the aorta */
+    var aC = vAngOf(V, vlvRef(id, id === 'av' ? 'mv' : 'av'));
+    return { kind: 'sl', lf: [0, 1, 2].map(function (i) { return { a0: aC + i * TAU / 3, a1: aC + (i + 1) * TAU / 3 }; }) };
+  }
+  function vAnn(V, a, k, id, LY) {   /* annulus point; the mitral annulus is saddle-shaped (high anteriorly and posteriorly) */
+    var p = v3add(v3add(V.c, V.e1, V.A * k * Math.cos(a)), V.e2, V.B * k * Math.sin(a));
+    if (id === 'mv') p = v3add(p, V.n, -2.2 * Math.cos(2 * (a - LY.aA)));
+    return p;
+  }
+  /* semilunar hinge (crown) at angle a: radius and height; sp is 0 at a commissure and 1 at a cusp's nadir */
+  function vCrown(id, LY, a) {
+    var TAU = 2 * Math.PI, lf = LY.lf[0], u = ((((a - lf.a0) % TAU) + TAU) % TAU) / (TAU / 3); u -= Math.floor(u);
+    var RP = ROOT_P[id], k = vRk(id), sp = Math.pow(Math.sin(Math.PI * u), 0.75);
+    return { sp: sp, R: (RP.rc - (RP.rc - RP.rn) * sp) * k, h: (RP.hc - (RP.hc - RP.hn) * sp) * k, k: k };
+  }
+  /* closed free edge, hinge, open direction and bellies of one column: u across the leaflet, 0..1 */
+  function vColumn(id, V, LY, li, u, P) {
+    var lf = LY.lf[li], a = lf.a0 + (lf.a1 - lf.a0) * u, n = v3unit(V.n), rad = vRadD(V, a), R = (V.A + V.B) / 2, s = Math.sin(Math.PI * u), H, Fc, dOpen, bC, bO, w;
+    if (LY.kind === 'sl') {   /* crown-shaped hinge on the root wall: commissures high and wide, nadir low and narrow */
+      var RP = ROOT_P[id], k = vRk(id), Rc = RP.rc * k, hc = RP.hc * k, cr = vCrown(id, LY, a), sp = cr.sp;
+      H = v3add(v3add(V.c, rad, cr.R), n, cr.h);
+      var K0 = v3add(v3add(V.c, vRadD(V, lf.a0), Rc * 0.96), n, hc * 0.93), K1 = v3add(v3add(V.c, vRadD(V, lf.a1), Rc * 0.96), n, hc * 0.93), Cc = v3add(V.c, n, RP.hk * k);
+      Fc = u < 0.5 ? vMix(K0, Cc, u / 0.5) : vMix(Cc, K1, (u - 0.5) / 0.5);
+      dOpen = v3unit(v3add(v3add([0, 0, 0], n, 1), rad, 0.05));
+      bC = v3add([0, 0, 0], n, -0.34 * sp); bO = v3add([0, 0, 0], rad, 0.2 * sp); w = sp;
+    } else if (LY.kind === 'av3') {   /* three leaflets meeting at a Y */
+      H = vAnn(V, a, 1, id, LY);
+      var Kp = v3add(vAnn(V, lf.a0, 0.9, id, LY), n, 2), Kn = v3add(vAnn(V, lf.a1, 0.9, id, LY), n, 2), C3 = v3add(v3add(V.c, n, V.coapt), vlvRef('tv', 'mv'), 0.1 * R);
+      Fc = u < 0.5 ? vMix(Kp, C3, u / 0.5) : vMix(C3, Kn, (u - 0.5) / 0.5);
+      dOpen = v3unit(v3add(v3add([0, 0, 0], n, 1), rad, -0.2));
+      bC = v3add([0, 0, 0], n, -0.13 * s); bO = v3add([0, 0, 0], rad, 0.05 * s); w = Math.pow(s, 0.6);
+    } else {   /* mitral: both leaflets end on one coaptation line, bowed toward the posterior annulus */
+      H = vAnn(V, a, 1, id, LY);
+      var rAn = vRadD(V, LY.aA), K1m = v3add(vAnn(V, LY.aA - 1.35, 0.92, id, LY), n, 2), K2m = v3add(vAnn(V, LY.aA + 1.35, 0.92, id, LY), n, 2);
+      var Q = v3add(v3add(V.c, rAn, -0.3 * R), n, V.coapt), Qc = [2 * Q[0] - (K1m[0] + K2m[0]) / 2, 2 * Q[1] - (K1m[1] + K2m[1]) / 2, 2 * Q[2] - (K1m[2] + K2m[2]) / 2];
+      Fc = vBez(K1m, Qc, K2m, li === 0 ? u : 1 - u);
+      if (li === 0 && VALV.sam > 0) Fc = v3add(v3add(Fc, rAn, 0.5 * R * VALV.sam * s), n, -2.5 * VALV.sam * s);   /* SAM */
+      dOpen = v3unit(v3add(v3add([0, 0, 0], n, 1), rad, -0.22));
+      bC = v3add([0, 0, 0], n, -0.12 * s); bO = v3add([0, 0, 0], rad, 0.05 * s); w = Math.pow(s, 0.4);
+    }
+    var dv = v3sub(Fc, H), L0 = Math.hypot(dv[0], dv[1], dv[2]) || 1e-3;
+    P.H = H; P.Fc = Fc; P.ov = LY.kind === 'sl' ? 0.8 : 1.4; P.L = L0 + P.ov;   /* a little overlap at coaptation */
+    P.dc = [dv[0] / L0, dv[1] / L0, dv[2] / L0]; P.do = dOpen; P.bC = bC; P.bO = bO; P.w = w; P.rad = rad;
+  }
+  function vSlerp(a, b, t) {
+    var d = Math.max(-1, Math.min(1, v3dot(a, b))), ph = Math.acos(d);
+    if (ph < 1e-3) return v3unit(vMix(a, b, t));
+    var s = Math.sin(ph), ka = Math.sin((1 - t) * ph) / s, kb = Math.sin(t * ph) / s;
+    return [a[0] * ka + b[0] * kb, a[1] * ka + b[1] * kb, a[2] * ka + b[2] * kb];
+  }
+  /* the pathology the leaflets show in this scenario; a procedure state's severity is its murmur relative to the
+     untreated lesion (after TEER, mild residual MR) */
+  var V_REF = { 'mv:regurg': 'mr', 'mv:sten': 'ms', 'av:sten': 'as', 'av:regurg': 'ar', 'tv:regurg': 'tr', 'tv:sten': 'ts' };
+  function vPath(id) {
+    var out = { sten: 0, gap: 0 }; if (!cyc.on) return out;
+    var X = cur && cur.X, F = X && X.flow; if (!F || F.valve !== id || F.noJet || F.chip) return out;
+    var w = X.sev ? X.sev.w : 1;
+    if (X.group === 'struct') { var rk = V_REF[id + ':' + F.kind], rf = rk && SCX[rk] && SCX[rk].flow; w = rf && rf.amp ? Math.min(1, (F.amp || rf.amp) / rf.amp) : 1; }
+    if (F.kind === 'regurg') out.gap = 0.16 * w; else out.sten = w;
+    return out;
+  }
+  function valvesGeom(force) {
+    var sig = ['mv', 'tv', 'av', 'pv'].map(function (id) { var V = VLV[id]; return VALV.o[id].toFixed(3) + V.c.join(',') + V.A.toFixed(2) + V.B.toFixed(2); }).join('|') + VALV.sam.toFixed(3) + (cyc.on ? curKey : '-') + VALV.ovSig + ['mv', 'tv', 'av', 'pv'].map(function (id) { return VALV.L[id] && VALV.L[id].mesh.visible ? 1 : 0; }).join('');
+    rootsGeom();
+    if (!force && sig === VALV.sig) return; VALV.sig = sig;
+    var vsig = ['mv', 'tv'].map(function (id) { var V = VLV[id]; return V.c.join(',') + V.A.toFixed(2) + V.B.toFixed(2); }).join('|') + JSON.stringify(remCur);
+    if (vsig !== VALV.vsig) {   /* chordae are taut with the valve shut: take their rest lengths from the closed valve */
+      VALV.vsig = vsig; var o0 = VALV.o, s0 = VALV.sam; VALV.o = { mv: 0, tv: 0, av: 0, pv: 0 }; VALV.sam = 0; VALV.closedPass = true;
+      vGrids(); chordaeGeom(); Object.keys(VALV.ch).forEach(function (k) { VALV.ch[k].list.forEach(function (c) { c.rest = c.len * 1.02; }); });
+      VALV.o = o0; VALV.sam = s0; VALV.closedPass = false;
+    }
+    var ch = vGrids(); if (ch.mv || ch.tv) chordaeGeom();
+  }
+  /* a clip holds the free edges it grasped: for each leaflet near the clip, the column nearest to it and the pull toward
+     it, fading over a few millimetres along the edge (the two leaflets nearest each clip) */
+  function vTies(id, V, LY, ov, P) {
+    if (!ov.ties.length) return null;
+    var n = v3unit(V.n), out = LY.lf.map(function () { var a = []; for (var i = 0; i <= VNU; i++) a.push({ t: 0, dp: [0, 0, 0] }); return a; });
+    var fc = LY.lf.map(function (lf, li) { var a = []; for (var i = 0; i <= VNU; i++) { vColumn(id, V, LY, li, i / VNU, P); a.push(P.Fc); } return a; });
+    ov.ties.forEach(function (T) {
+      var best = fc.map(function (col, li) {
+        var bi = 0, bd = 1e9; col.forEach(function (f, i) { var d = v3sub(f, T.p); d = v3add(d, n, -v3dot(d, n)); var l = Math.hypot(d[0], d[1], d[2]); if (l < bd) { bd = l; bi = i; } });
+        return { li: li, i: bi, d: bd, side: v3dot(v3sub(col[bi], T.p), T.x) };
+      }).filter(function (b) { return b.d < 9 && !(T.slda && b.side > 0); }).sort(function (a, b) { return a.d - b.d; }).slice(0, T.slda ? 1 : 2);
+      best.forEach(function (b) {
+        var col = fc[b.li], f0 = col[b.i], pp = v3add(T.p, n, v3dot(v3sub(f0, T.p), n)), dp = v3sub(pp, f0), s = [0];
+        for (var i = 1; i <= VNU; i++) { var d = v3sub(col[i], col[i - 1]); s.push(s[i - 1] + Math.hypot(d[0], d[1], d[2])); }
+        for (var j = 0; j <= VNU; j++) { var t = T.k * Math.exp(-Math.pow((s[j] - s[b.i]) / 3.2, 2)), o = out[b.li][j]; if (t > o.t) { o.t = t; o.dp = dp; } }
+      });
+    });
+    return out;
+  }
+  /* push leaflet points out of a device's frame or balloon (its local frame: axis y, radius rAt(y), units of the device) */
+  function vPush(q, obs) {
+    for (var k = 0; k < obs.length; k++) {
+      var b = obs[k], e = b.mi, x = e[0] * q[0] + e[4] * q[1] + e[8] * q[2] + e[12], y = e[1] * q[0] + e[5] * q[1] + e[9] * q[2] + e[13], z = e[2] * q[0] + e[6] * q[1] + e[10] * q[2] + e[14];
+      if (y < b.yLo - 1.5 || y > b.yHi + 1.5) continue;
+      var R = b.rAt(Math.max(b.yLo, Math.min(b.yHi, y))) + b.mg, r = Math.hypot(x, z); if (r >= R || R <= b.mg) continue;
+      if (r < 1e-4) { x = R; z = 0; } else { x *= R / r; z *= R / r; }
+      var w = b.mw; q = [(w[0] * x + w[4] * y + w[8] * z + w[12]), (w[1] * x + w[5] * y + w[9] * z + w[13]), (w[2] * x + w[6] * y + w[10] * z + w[14])];
+    }
+    return q;
+  }
+  function vGrids() {   /* only the valves whose state changed are rebuilt */
+    var P = {}, changed = {};
+    ['mv', 'tv', 'av', 'pv'].forEach(function (id) {
+      var Q = VALV.L[id]; if (!Q) return;
+      if (!Q.mesh.visible && !VALV.closedPass && Q.grid) { Q.sig = ''; return; }   /* hidden in this view: redrawn when shown */
+      var Vq = VLV[id], pq = vPath(id), ov = VALV.closedPass ? V_OV0 : (VALV.ov[id] || V_OV0), qs = VALV.o[id].toFixed(3) + Vq.c.join(',') + Vq.A.toFixed(2) + Vq.B.toFixed(2) + pq.sten + ',' + pq.gap + (id === 'mv' ? VALV.sam.toFixed(3) : '') + ov.sig;
+      if (qs === Q.sig && !VALV.closedPass && !Q.wasClosedPass) return;
+      Q.sig = VALV.closedPass ? '' : qs; Q.wasClosedPass = !!VALV.closedPass; changed[id] = true;
+      var V = VLV[id], LY = Q.ly, pa = pq, o = Math.max(VALV.o[id] * (1 - 0.68 * pa.sten), ov.pin), pos = Q.geo.attributes.position.array, k = 0, n = v3unit(V.n);
+      var ties = vTies(id, V, LY, ov, P);
+      Q.grid = Q.grid || [];
+      LY.lf.forEach(function (lf, li) {
+        Q.grid[li] = Q.grid[li] || [];
+        for (var i = 0; i <= VNU; i++) {
+          vColumn(id, V, LY, li, i / VNU, P);
+          var oc = o, dc = P.dc, Lc = P.L, tt = ties && ties[li][i];
+          if (tt && tt.t > 0.002) {   /* held by a clip: closed at the clip, edge pulled to it */
+            oc = o * (1 - tt.t); var F2 = v3add(P.Fc, tt.dp, tt.t), d2 = v3sub(F2, P.H), l2 = Math.hypot(d2[0], d2[1], d2[2]) || 1e-3;
+            dc = [d2[0] / l2, d2[1] / l2, d2[2] / l2]; Lc = l2 + P.ov;
+          }
+          var L = Lc * (1 - pa.gap * (1 - oc) * P.w * (tt ? 1 - tt.t : 1)), d = vSlerp(dc, P.do, oc);
+          if (ov.pin > 0) d = vSlerp(d, v3unit(v3add(P.do, P.rad, 0.32)), ov.pin);   /* pressed aside by a device */
+          var bel = vMix(P.bC, P.bO, oc); if (pa.sten && LY.kind !== 'sl') bel = v3add(bel, n, 0.22 * P.w * oc);   /* stenotic: the body domes downstream */
+          var col = Q.grid[li][i] = Q.grid[li][i] || [];
+          for (var j = 0; j <= VNV; j++) {
+            var v = j / VNV, sv = Math.sin(Math.PI * v), q = v3add(v3add(P.H, d, L * v), bel, L * sv);
+            if (ov.obs.length) q = vPush(q, ov.obs);
+            col[j] = q; pos[k++] = q[0] * 0.001; pos[k++] = q[1] * 0.001; pos[k++] = q[2] * 0.001;
+          }
+        }
+      });
+      Q.geo.attributes.position.needsUpdate = true; Q.geo.computeVertexNormals(); Q.geo.computeBoundingSphere();
+    });
+    return changed;
+  }
+  function valvesBuild() {
+    ['mv', 'tv', 'av', 'pv'].forEach(function (id) {
+      var LY = vLayout(id), nl = LY.lf.length, nv = nl * (VNU + 1) * (VNV + 1), idx = [];
+      for (var l = 0; l < nl; l++) { var b0 = l * (VNU + 1) * (VNV + 1); for (var i = 0; i < VNU; i++) for (var j = 0; j < VNV; j++) { var a = b0 + i * (VNV + 1) + j, b = a + VNV + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); } }
+      var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nv * 3), 3)); g.setIndex(idx);
+      var mat = new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0, side: THREE.DoubleSide }); heartMats.push(mat);
+      var m = new THREE.Mesh(g, mat); m.userData.id = id; m.userData.noEcho = true; m.userData.dyn = true; m.frustumCulled = false; scene.add(m); meshes.push(m);
+      VALV.L[id] = { ly: LY, geo: g, mesh: m };
+      vSwap(id, m);
+    });
+    /* chordae: from each papillary head to a point near the free edge of the leaflet above it */
+    [['chMV', 'mv'], ['chTV', 'tv']].forEach(function (q) {
+      var list = (EXTRAS.structs[q[0]] || []).map(function (c, ci) {
+        var V = VLV[q[1]], LY = VALV.L[q[1]].ly, e = c.p[c.p.length - 1], a = vAngOf(V, v3sub(e, V.c)), best = 0, bu = 0.5, TAU = 2 * Math.PI;
+        LY.lf.forEach(function (lf, li) { for (var t = -1; t <= 1; t++) { var aa = a + t * TAU; if (aa >= lf.a0 && aa <= lf.a1) { best = li; bu = (aa - lf.a0) / (lf.a1 - lf.a0); } } });
+        return { p0: c.p[0], li: best, u: Math.min(0.94, Math.max(0.06, bu)), v: 0.78 + 0.14 * ((ci * 0.618) % 1), rest: 0 };
+      });
+      var nc = list.length, NS = 7, NR = 4, nv = nc * (NS + 1) * NR, idx = [];
+      for (var c = 0; c < nc; c++) for (var i = 0; i < NS; i++) for (var j = 0; j < NR; j++) {
+        var a = c * (NS + 1) * NR + i * NR + j, b = c * (NS + 1) * NR + i * NR + (j + 1) % NR, d = a + NR, e = b + NR; idx.push(a, d, b, b, d, e);
+      }
+      var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nv * 3), 3)); g.setIndex(idx);
+      var mat = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0 }); heartMats.push(mat);
+      var m = new THREE.Mesh(g, mat); m.userData.id = q[0]; m.userData.noEcho = true; m.userData.dyn = true; m.frustumCulled = false; scene.add(m); meshes.push(m);
+      VALV.ch[q[0]] = { vid: q[1], list: list, geo: g, NS: NS, NR: NR, mesh: m };
+      vSwap(q[0], m);
+    });
+    VALV.on = true;
+    valvesGeom(true);
+  }
+  /* the structure is drawn by the moving mesh; the source model's fixed one is hidden */
+  function vSwap(id, m) {
+    (S[id].meshes || []).forEach(function (o) { o.visible = false; }); (S[id].hits || []).forEach(function (h) { h.visible = false; });
+    S[id].meshes = [m]; S[id].hits = [];
+  }
+  /* the aortic and pulmonary roots: added to the artery once its label anchor is set (they join the artery's colour,
+     visibility and selection, but are not picked, so the cusps inside stay clickable) */
+  function valvesRoots() {
+    ['av', 'pv'].forEach(function (id) {
+      var nv = (RNA + 1) * (RNV + 1), idx = [];
+      for (var i = 0; i < RNA; i++) for (var j = 0; j < RNV; j++) { var a = i * (RNV + 1) + j, b = a + RNV + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); }
+      var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nv * 3), 3)); g.setIndex(idx);
+      var col = new Float32Array(nv * 4); for (var q = 0; q < nv; q++) { col[q * 4] = col[q * 4 + 1] = col[q * 4 + 2] = 1; }
+      g.setAttribute('color', new THREE.BufferAttribute(col, 4));
+      g.setAttribute('aRemA', new THREE.BufferAttribute(new Float32Array(nv * 3), 3)); g.setAttribute('aRemB', new THREE.BufferAttribute(new Float32Array(nv * 3), 3));
+      var mat = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0, side: THREE.DoubleSide, vertexColors: true }); heartMats.push(mat);
+      var m = new THREE.Mesh(g, mat), sid = ROOT_P[id].sid; m.userData.id = sid; m.userData.noEcho = true; m.userData.dyn = true; m.userData.root = id; m.frustumCulled = false; scene.add(m);
+      (S[sid].meshes = S[sid].meshes || []).push(m); ROOT.list.push({ id: id, m: m, g: g, ly: vLayout(id) });
+    });
+    ROOT.sig = ''; rootsGeom();
+  }
+  function rootsGeom() {
+    if (!ROOT.list.length) return;
+    var sig = ['av', 'pv'].map(function (id) { var V = VLV[id]; return V.c.join(',') + V.A.toFixed(2) + V.B.toFixed(2); }).join('|') + JSON.stringify(remCur);
+    if (sig === ROOT.sig) return; ROOT.sig = sig;
+    ROOT.list.forEach(function (Rt) {
+      var id = Rt.id, V = VLV[id], V0 = vV0(id), n = v3unit(V.n), n0 = v3unit(V0.n), RP = ROOT_P[id], rim = ROOT_RIM[id], LY = Rt.ly;
+      var pos = Rt.g.attributes.position.array, k = 0, kw = 0; Rt.wt = Rt.wt || new Float32Array((RNA + 1) * (RNV + 1) * 2);
+      for (var i = 0; i <= RNA; i++) {
+        var a = -Math.PI + i / RNA * 2 * Math.PI, rad = vRadD(V, a), cr = vCrown(id, LY, a), sk = cr.k;
+        /* the artery's open end at this angle, on the source heart, carried by the remodel like the artery itself */
+        var x = (i / RNA * 36) % 36, i0 = Math.floor(x), f = x - i0, r0 = rim[i0], r1 = rim[(i0 + 1) % 36], rr = r0[0] + (r1[0] - r0[0]) * f, hr = r0[1] + (r1[1] - r0[1]) * f;
+        var pr = v3add(v3add(V0.c, vRadD(V0, a), rr - 0.3), n0, hr), pt = v3add(v3add(V0.c, vRadD(V0, a), rr - 0.45), n0, hr + 2.5);
+        if (remCur) { pr = remPt(pr, remCur); pt = remPt(pt, remCur); }
+        var hR = v3dot(v3sub(pr, V.c), n), Rb = (RP.rn - 0.4) * sk, hb = (RP.hn - 3) * sk, hS = Math.max(cr.h + 0.25 * sk, Math.min((RP.hc + 0.7) * sk, hR - 1)), RS = (RP.rc + 0.15) * sk;
+        var Pb = v3add(v3add(V.c, rad, Rb), n, hb), Ph = v3add(v3add(V.c, rad, cr.R), n, cr.h), Ps = v3add(v3add(V.c, rad, RS), n, hS);
+        for (var j = 0; j <= RNV; j++) {
+          var p, fd = 1, w;   /* w: 0 over the sinuses (translucent) .. 1 where it meets the artery; fd fades the lower edge */
+          if (j <= 4) { var t = j / 4; p = vMix(Pb, Ph, t); fd = Math.min(1, t * 2); w = 0; }   /* outflow tract up to the hinge */
+          else if (j <= 12) {   /* the sinus: bulging between hinge and sinotubular junction */
+            var t2 = (j - 4) / 8; p = v3add(vMix(Ph, Ps, t2), rad, RP.bulge * sk * Math.sin(Math.PI * t2) * cr.sp); w = 0.2 * t2 * t2;
+          } else if (j <= 16) { var t3 = (j - 12) / 4, e = t3 * t3 * (3 - 2 * t3); p = vMix(Ps, pr, e); w = 0.2 + 0.8 * e; }   /* into the artery */
+          else { p = vMix(pr, pt, (j - 16) / 2); w = 1; }
+          pos[k++] = p[0] * 0.001; pos[k++] = p[1] * 0.001; pos[k++] = p[2] * 0.001; Rt.wt[kw++] = w; Rt.wt[kw++] = fd;
+        }
+      }
+      Rt.g.attributes.position.needsUpdate = true; Rt.g.computeVertexNormals(); Rt.g.computeBoundingSphere(); Rt.aS = -1;
+    });
+    rootsRefresh();
+  }
+  /* the sinus walls are as see-through as the heart walls (never below 0.4, so the root still reads as a wall) */
+  function rootsRefresh() {
+    var aS = Math.max(0.4, Math.min(1, state.wall));
+    ROOT.list.forEach(function (Rt) {
+      if (!Rt.wt) return;
+      if (Rt.aS !== aS) { Rt.aS = aS; var col = Rt.g.attributes.color.array, n = col.length / 4; for (var i = 0; i < n; i++) col[i * 4 + 3] = Rt.wt[i * 2 + 1] * (aS + (1 - aS) * Rt.wt[i * 2]); Rt.g.attributes.color.needsUpdate = true; }
+      if (aS < 0.999) { var mat = Rt.m.material; mat.transparent = true; mat.depthWrite = false; Rt.m.renderOrder = 2; }
+    });
+  }
+  function chordaeGeom() {
+    Object.keys(VALV.ch).forEach(function (k) {
+      var C = VALV.ch[k], Q = VALV.L[C.vid]; if (!Q || !Q.grid) return;
+      var V = VLV[C.vid], pos = C.geo.attributes.position.array, q = 0, NS = C.NS, NR = C.NR, R = remCur || null, rr = 0.32;
+      C.list.forEach(function (c) {
+        var col = Q.grid[c.li], fi = c.u * VNU, i0 = Math.min(VNU - 1, Math.floor(fi)), f = fi - i0, j = Math.round(c.v * VNV);
+        var e = vMix(col[i0][j], col[i0 + 1][j], f), p0 = c.p0k === VALV.vsig ? c.p0r : (c.p0k = VALV.vsig, c.p0r = R ? remPt(c.p0, R) : c.p0), dv = v3sub(e, p0), d = Math.hypot(dv[0], dv[1], dv[2]) || 1;
+        c.len = d;
+        var mid = vMix(p0, e, 0.5), sag = !VALV.closedPass && c.rest > d ? Math.sqrt(c.rest * c.rest - d * d) * 0.45 : 0, toAx = v3sub(V.c, mid); toAx = v3add(toAx, dv, -v3dot(toAx, dv) / (d * d)); toAx = v3unit(toAx);
+        var qc = v3add(mid, toAx, 2 * sag), t0 = v3unit(dv), b1 = v3unit(v3cross(t0, Math.abs(t0[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0])), b2 = v3cross(t0, b1);
+        for (var i = 0; i <= NS; i++) {
+          var t = i / NS, p = vBez(p0, qc, e, t);
+          for (var jj = 0; jj < NR; jj++) { var an = jj / NR * 2 * Math.PI, ca = Math.cos(an) * rr, sa = Math.sin(an) * rr;
+            pos[q++] = (p[0] + b1[0] * ca + b2[0] * sa) * 0.001; pos[q++] = (p[1] + b1[1] * ca + b2[1] * sa) * 0.001; pos[q++] = (p[2] + b1[2] * ca + b2[2] * sa) * 0.001; }
+        }
+      });
+      C.geo.attributes.position.needsUpdate = true; C.geo.computeVertexNormals(); C.geo.computeBoundingSphere();
+    });
+  }
+  function valvesMode(proc) { if (!proc) { VALV.ov = {}; VALV.ovSig = ''; } if (ready) refresh(); }
+  function valvesRest() { VALV.o = JSON.parse(JSON.stringify(V_REST)); VALV.pr = { mv: 0, tv: 0, av: 0, pv: 0 }; VALV.sam = 0; VALV.lastT = -1; VALV.ov = {}; VALV.ovSig = ''; if (VALV.on) valvesGeom(); }
+  function valvesTick(st) {
+    if (!VALV.on || !TL) return;
+    var X = cur.X, F = X.flow, p = st.p, Pn = {};
+    ['la', 'lv', 'ra', 'rv', 'ao', 'pa'].forEach(function (k) { Pn[k] = TL[k][p]; });
+    if (!cur.vpk) { var T0 = cur.T, pm = 0.3, pt = 0.3; for (var q0 = 0; q0 < T0.la.length; q0++) { pm = Math.max(pm, vB(T0.la[q0] - T0.lv[q0])); pt = Math.max(pt, vB(T0.ra[q0] - T0.rv[q0])); } cur.vpk = { mv: pm, tv: pt }; }
+    var dts = VALV.lastT < 0 ? 1 : Math.abs(cyc.t - VALV.lastT), dt = VALV.lastT < 0 ? 1 : Math.min(1, dts / 0.025), dp = VALV.lastT < 0 ? 1 : Math.min(1, dts / 0.035); VALV.lastT = cyc.t;
+    ['mv', 'tv', 'av', 'pv'].forEach(function (id, i) {
+      var open = !!(st.vb & (1 << i)), tgt = open ? 1 : 0;
+      VALV.pr[id] += (tgt - VALV.pr[id]) * dp;   /* prosthetic leaflets: thin and fast, fully open whenever the valve is open */
+      if (open && id === 'mv') tgt = Math.min(1, 0.35 + 0.9 * vB(Pn.la - Pn.lv) / cur.vpk.mv);
+      if (open && id === 'tv') tgt = Math.min(1, 0.35 + 0.9 * vB(Pn.ra - Pn.rv) / cur.vpk.tv);
+      VALV.o[id] += (tgt - VALV.o[id]) * dt;
+    });
+    var sam = F && F.chip && (st.vb & 4) ? Math.min(1, Math.max(0, (vB(Pn.lv - Pn.ao) - 1.2) / 1.8)) : 0;
+    VALV.sam += (sam - VALV.sam) * dt;
+    valvesGeom();
+  }
+  /* ---------- Valves in the structural procedures ----------
+     The devices act on the native leaflets: a frame or balloon in the orifice pushes them aside, and once it is seated
+     and expanded they are held open, pressed between the frame and the annulus or root. An edge-to-edge clip holds the
+     free edges it has grasped together, so the valve opens as a double orifice (or, after single-leaflet attachment,
+     only one leaflet stays on the clip). The leaflets of a transcatheter replacement valve open and close with the same
+     pressure events as the native valve they replace. */
+  var VP_M = new THREE.Matrix4(), VP_N = new THREE.Matrix4(), VP_S = new THREE.Matrix4().makeScale(0.001, 0.001, 0.001), VP_V = new THREE.Vector3(), VP_X = new THREE.Vector3();
+  function vNearest(p, ids) { var b = null, bd = 1e9; ids.forEach(function (id) { var d = v3sub(VLV[id].c, p), l = Math.hypot(d[0], d[1], d[2]); if (l < bd) { bd = l; b = id; } }); return { id: b, d: bd }; }
+  function valvesProc(o, V) {
+    var ov = {}, parts = [];
+    function slot(id) { return ov[id] || (ov[id] = { pin: 0, obs: [], ties: [], sig: '' }); }
+    if (o && V) Object.keys(o).forEach(function (key) {
+      var d = o[key]; if (!d || typeof d !== 'object') return;
+      var clip = d.isClip ? d : d.clip && d.clip.isClip ? d.clip : null;
+      if (clip && clip.g.visible && clip.k > 0.01) {   /* an edge-to-edge clip on the leaflets it grasped */
+        clip.g.updateWorldMatrix(true, false); VP_V.set(0, 5, 0); clip.g.localToWorld(VP_V);
+        var p = [VP_V.x * 1000, VP_V.y * 1000, VP_V.z * 1000], nv = vNearest(p, ['mv', 'tv']); if (nv.d > 30) return;
+        VP_X.set(1, 0, 0).applyQuaternion(clip.g.getWorldQuaternion(new THREE.Quaternion()));
+        slot(nv.id).ties.push({ p: p, k: Math.min(1, clip.k), x: [VP_X.x, VP_X.y, VP_X.z], slda: !!clip.slda });
+        parts.push(nv.id + 't' + p.map(function (v) { return v.toFixed(1); }).join(',') + clip.k.toFixed(2) + (clip.slda ? 's' : ''));
+      }
+      if (!d.rAt || !d.g || !d.g.visible) return;   /* a frame or balloon */
+      d.g.updateWorldMatrix(true, false); VP_M.copy(d.g.matrixWorld);
+      VP_V.setFromMatrixPosition(VP_M); var c = [VP_V.x * 1000, VP_V.y * 1000, VP_V.z * 1000], vid = d.vid || vNearest(c, ['mv', 'tv']).id, Vv = VLV[vid];
+      VP_N.copy(VP_M).invert().multiply(VP_S);   /* model mm to device units */
+      var mi = VP_N.elements.slice(), e = mi, vc = Vv.c, ly = e[1] * vc[0] + e[5] * vc[1] + e[9] * vc[2] + e[13], lx = e[0] * vc[0] + e[4] * vc[1] + e[8] * vc[2] + e[12], lz = e[2] * vc[0] + e[6] * vc[1] + e[10] * vc[2] + e[14];
+      /* seated in the annulus: its own leaflets work once it is fully expanded (not while a balloon fills it) */
+      var seated = ly >= d.yLo - 1 && ly <= d.yHi + 1 && Math.hypot(lx, lz) < 6;
+      if (d.leafSet) d.leafSet(d.ex >= 0.985 && !(d.balk > 0.02) && seated ? VALV.pr[vid] : 1);
+      if (ly < d.yLo - 28 || ly > d.yHi + 28 || Math.hypot(lx, lz) > 40) return;   /* nowhere near the valve */
+      var mw = VP_M.elements.map(function (v) { return v * 1000; }), sl = slot(vid);
+      sl.obs.push({ mi: mi, mw: mw, rAt: d.rAt, yLo: d.yLo, yHi: d.yHi, mg: 0.7 });
+      /* and wide open: the native leaflets are held open */
+      if (seated) sl.pin = Math.max(sl.pin, Math.max(0, Math.min(1, (d.rAt(Math.max(d.yLo, Math.min(d.yHi, ly))) - 4.5) / (0.45 * Vv.A))));
+      parts.push(vid + 'o' + mi.map(function (v) { return v.toFixed(4); }).join(',') + [d.yLo, ly, d.yHi].map(function (y) { return d.rAt(Math.max(d.yLo, Math.min(d.yHi, y))).toFixed(2); }).join(',') + sl.pin.toFixed(3));
+    });
+    Object.keys(ov).forEach(function (id) { ov[id].sig = parts.filter(function (s) { return s.indexOf(id) === 0; }).join(';'); });
+    VALV.ov = ov; VALV.ovSig = parts.join(';');
+  }
+  /* leaflets of a transcatheter valve, in the device's local frame (y along its axis): three leaflets hinged on the frame
+     (commissure posts downstream, the belly attachment upstream), flow toward +y (f = 1) or −y (f = −1); rOf(y) is the
+     frame's inner radius before crimping. o.leafSet(open) redraws them, then crimps them with the frame (o.sOf). */
+  function pLeaflets(o, g, rOf, yRef, f, yLo, yHi) {
+    var NU = 12, NV = 8, nv = 3 * (NU + 1) * (NV + 1), idx = [];
+    for (var l = 0; l < 3; l++) { var b0 = l * (NU + 1) * (NV + 1); for (var i = 0; i < NU; i++) for (var j = 0; j < NV; j++) { var a = b0 + i * (NV + 1) + j, b = a + NV + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); } }
+    var geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nv * 3), 3)); geo.setIndex(idx);
+    var m = pMesh(geo, PX.M.leaf, g); m.userData.base = new Float32Array(nv * 3);
+    var sEnd = f > 0 ? yHi - yRef : yRef - yLo, last = '', TAU = 2 * Math.PI, sC = 2.6, sN = -4.2, sK = 0.9;
+    o.leafSet = function (op) {
+      var key = op.toFixed(3) + '|' + (o.sk || ''); if (key === last) return; last = key;
+      var bse = m.userData.base, q = 0;
+      for (var l2 = 0; l2 < 3; l2++) {
+        var a0 = 0.5 + l2 * TAU / 3, a1 = a0 + TAU / 3, yK = yRef + f * sC * 0.95, rK = rOf(yK) * 0.97;
+        var K0 = [Math.cos(a0) * rK, yK, Math.sin(a0) * rK], K1 = [Math.cos(a1) * rK, yK, Math.sin(a1) * rK], Cc = [0, yRef + f * sK, 0];
+        for (var i2 = 0; i2 <= NU; i2++) {
+          var u = i2 / NU, a = a0 + (a1 - a0) * u, ca = Math.cos(a), sa = Math.sin(a), sp = Math.pow(Math.sin(Math.PI * u), 0.75);
+          var sH = sC - (sC - sN) * sp, yH = yRef + f * sH, rH = rOf(yH), H = [ca * rH, yH, sa * rH];
+          var Fc = u < 0.5 ? vMix(K0, Cc, u / 0.5) : vMix(Cc, K1, (u - 0.5) / 0.5), dv = v3sub(Fc, H), L0 = Math.hypot(dv[0], dv[1], dv[2]) || 1e-3, L = L0 + 0.5;
+          var dc = [dv[0] / L0, dv[1] / L0, dv[2] / L0], dO = v3unit([-0.05 * ca, f, -0.05 * sa]);
+          var Lo = Math.min(L, Math.max(2, sEnd - sH - 0.8)), Lx = L + (Lo - L) * op, d = vSlerp(dc, dO, op);
+          var bel = vMix([0, -f * 0.3 * sp, 0], [-0.05 * ca * sp, 0, -0.05 * sa * sp], op);
+          for (var j2 = 0; j2 <= NV; j2++) {
+            var v = j2 / NV, sv = Math.sin(Math.PI * v), p = v3add(v3add(H, d, Lx * v), bel, Lx * sv), rr = Math.hypot(p[0], p[2]), rl = rOf(p[1]) - 0.3;
+            if (rr > rl && rr > 1e-6) { p[0] *= rl / rr; p[2] *= rl / rr; }
+            bse[q++] = p[0]; bse[q++] = p[1]; bse[q++] = p[2];
+          }
+        }
+      }
+      var pa = m.geometry.attributes.position.array; for (var y = 1; y < pa.length; y += 3) pa[y] = bse[y];   /* radialSet scales x and z only */
+      radialSet(m, o.sOf || function () { return 1; }); m.geometry.computeBoundingSphere();
+    };
+    return m;
+  }
   /* ---------- Loop ---------- */
   function loop(now) {
     requestAnimationFrame(loop);
