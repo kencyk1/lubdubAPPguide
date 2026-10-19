@@ -11495,6 +11495,25 @@ footer a,.link{color:var(--ven)}
     if (RX_.lengthSq() < 1e-4) { RX_.set(1, 0, 0); RX_.addScaledVector(RY_, -RX_.dot(RY_)); }
     RX_.normalize(); RZ_.crossVectors(RX_, RY_); g.quaternion.setFromRotationMatrix(RM_.makeBasis(RX_, RY_, RZ_));
   }
+  /* a rigid device riding a curved route: front at u, back end (lb mm behind, on the route) where the shaft joins it */
+  function pRideBack(g, cv, u, lb, len) {
+    u = Math.max(0.0005, Math.min(0.9995, u)); var ub = Math.max(0.0005, u - lb / len);
+    cv.getPointAt(u, RP_); cv.getPointAt(ub, RT_); RY_.subVectors(RT_, RP_);
+    if (RY_.lengthSq() < 1e-10) { pRide(g, cv, u, true); return; }
+    RY_.normalize(); g.position.copy(RT_).addScaledVector(RY_, -lb * 0.001);
+    RX_.set(0, 1, 0); RX_.addScaledVector(RY_, -RX_.dot(RY_)); if (RX_.lengthSq() < 1e-4) { RX_.set(1, 0, 0); RX_.addScaledVector(RY_, -RX_.dot(RY_)); }
+    RX_.normalize(); RZ_.crossVectors(RX_, RY_); g.quaternion.setFromRotationMatrix(RM_.makeBasis(RX_, RY_, RZ_));
+  }
+  /* ease a route's last limb (after its highest point above the annulus) onto the valve axis below h1 mm */
+  function pCoax(pts, A, h0, h1) {
+    var n = v3unit(A.n), hs = pts.map(function (p) { return v3dot(v3sub(p, A.c), n); }), top = 0;
+    hs.forEach(function (h, i) { if (h > hs[top]) top = i; });
+    return pts.map(function (p, i) {
+      if (i <= top) return p;
+      var d = v3sub(p, A.c), h = hs[i], off = v3add(d, n, -h), w = (1 - pss(h, h0, h1)) * pss(h, -6, 0);
+      return v3add(p, off, -w);
+    });
+  }
   /* u on a route for a travel parameter p: 0..1 from u0 to u1, 1..2 from u1 to u2 */
   function pPath(p, u0, u1, u2) { return p <= 1 ? u0 + (u1 - u0) * Math.max(0, p) : u1 + (u2 - u1) * Math.min(1, p - 1); }
   /* a catheter or wire along a route, revealed from the access site as it advances */
@@ -11551,6 +11570,7 @@ footer a,.link{color:var(--ven)}
     if (!se) {
       o.bal = pMesh(lathe([[0, -17], [0.55, -16.5], [0.85, -14], [1, -10], [1, 10], [0.85, 14], [0.55, 16.5], [0, 17]], 32), PX.M.balloon, g); o.bal.position.y = y0 + H / 2;
       o.tip = pMesh(new THREE.ConeGeometry(2.2, 7, 18), PX.M.cath, g); o.tip.rotation.x = Math.PI; o.tip.position.y = y0 + H / 2 - 20;
+      var inn = new THREE.CylinderGeometry(1.1, 1.1, 35, 14, 1, true); inn.translate(0, y0 + H / 2 + 0.1, 0); o.inner = pMesh(inn, PX.M.capsule, g);
     } else {
       o.cap = pMesh(new THREE.CylinderGeometry(4.2, 4.2, 1, 24, 1, false), PX.M.capsule, g);
       o.tip = pMesh(new THREE.ConeGeometry(4.2, 9, 20), PX.M.capsule, g); o.tip.rotation.x = Math.PI; o.tip.position.y = y0 - 4.5;
@@ -11564,7 +11584,7 @@ footer a,.link{color:var(--ven)}
       [o.frame, o.skirt].forEach(function (m) { radialSet(m, sOf); }); o.sOf = sOf; o.sk = exp.toFixed(4); o.ex = exp; o.balk = se ? 0 : bal;
       if (!se) {
         var b = Math.max(bal, exp < 0.999 ? 0 : 0), r = 0.3 * (1 - bal) + 10.6 * bal; o.bal.visible = exp < 0.999 || bal > 0.01; o.bal.scale.set(Math.max(3.6, r), 1, Math.max(3.6, r));
-        o.tip.visible = exp < 0.999 || bal > 0.01;
+        o.tip.visible = o.inner.visible = exp < 0.999 || bal > 0.01;
       } else {
         var fr = exp * (H + 6) - 3, top = H + 3, len = Math.max(0.5, top - Math.max(fr, -6)); o.cap.visible = exp < 0.995; o.cap.scale.set(1, len, 1); o.cap.position.y = y0 + top - len / 2; o.tip.visible = exp < 0.02;
       }
@@ -11828,11 +11848,11 @@ footer a,.link{color:var(--ven)}
       layers: ['chambers', 'valves', 'arteries', 'coronary', 'cond'], wall: 0.15, hide: ['pv', 'tv', 'mv'], ghost: ['av', 'aoAsc', 'aoArch', 'aoDesc', 'bca', 'lcca', 'lsa', 'pt', 'rpa', 'lpa'], ghostL: ['coronary', 'cond'], vars: [['be', 'Balloon-expandable'], ['se', 'Self-expanding']],
       build: function (vr) {
         var o = { L: {} }, A = VL.av, n = A.n, se = vr === 'se';
-        o.pig = pTube(SG.pigtail, 0.75, PX.M.cath2); o.rvw = pTube(SG.rvWire, 0.65, PX.M.pace); o.wire = pTube(SG.aoWire, 0.42, PX.M.wire);
+        o.pig = pTube(SG.pigtail, 0.75, PX.M.cath2); o.rvw = pTube(SG.rvWire, 0.65, PX.M.pace); o.wire = pTube(pCoax(SG.aoWire, A, 34, 52), 0.42, PX.M.wire);
         o.thv = mkTHV(se);
         /* the delivery system rides the stiff wire from the femoral artery: route = aorta centreline into the annulus */
-        o.del = pTube(SG.aoRoute.slice(0, -1).concat([pAdd(A.c, n, 3), A.c, pAdd(A.c, n, -12)]), 2.6, PX.M.capsule); o.cv = o.del.cv; o.len = o.del.len;
-        o.uF = pU(o.cv, A.c); o.uA = pU(o.cv, pAdd(A.c, n, 42)); o.u0 = pU(o.cv, SG.aoLow); o.tail = se ? 49 : 23;
+        o.del = pTube(pCoax(SG.aoRoute.slice(0, -1), A, 34, 52).concat([pAdd(A.c, n, 3), A.c, pAdd(A.c, n, -12)]), 2.6, PX.M.capsule); o.cv = o.del.cv; o.len = o.del.len;
+        o.uF = pU(o.cv, A.c); o.uA = pU(o.cv, pAdd(A.c, n, 42)); o.u0 = pU(o.cv, SG.aoLow); o.tail = se ? 44 : 21;   /* where the shaft enters: capsule end / balloon shoulder */
         o.win = pTube(o.del.pts, se ? 4.2 : 4, se ? PX.M.capsule : PX.M.frame, 16); o.wb = se ? 48 : 14.4; o.wf = se ? 8 : 3.6;   /* the rigid valve drawn bent along the arch while it travels */
         var rg = new THREE.TorusGeometry(10.4, 0.35, 8, 64); rg.rotateX(Math.PI / 2); o.ring = pDev(A.c, n); pMesh(rg, PX.M.rim, o.ring);
         var lm = CORO.v.filter(function (v) { return v.id === 'lm'; })[0].p[0];
@@ -11854,9 +11874,9 @@ footer a,.link{color:var(--ven)}
       render: function (o, V) {
         o.pig.reveal(V.pig); o.rvw.reveal(V.rvw); o.wire.reveal(V.wire);
         var pth = V.path || 0, u = pPath(pth, o.u0, o.uA, o.uF);
-        var trav = V.thv && pth < 1; o.thv.set(trav ? 0 : V.thv, 1, V.exp || 0, V.bal || 0); if (V.thv && !trav && pth < 2) pRide(o.thv.g, o.cv, u, true);
+        var trav = V.thv && pth < 1; o.thv.set(trav ? 0 : V.thv, 1, V.exp || 0, V.bal || 0); if (V.thv && !trav && pth < 2) pRideBack(o.thv.g, o.cv, u, o.tail, o.len);
         if (trav) o.win.win(u - o.wb / o.len, u + o.wf / o.len); else o.win.reveal(0);
-        o.del.reveal(V.thv ? Math.max(0, (pth >= 2 ? o.uF : u) - o.tail / o.len) * (V.del == null ? 1 : V.del) : 0); o.ring.visible = !!V.ring;
+        o.del.reveal(V.thv ? Math.max(0, (pth >= 2 ? o.uF : u) - ((trav ? o.wb : o.tail) - 0.5) / o.len) * (V.del == null ? 1 : V.del) : 0); o.ring.visible = !!V.ring;
         o.leafLM.visible = V.comp === 'co'; o.X.visible = V.comp === 'chb'; o.eff.visible = V.comp === 'rup';
         if (o.eff.visible) { var gr = Math.min(1, (performance.now() - (PROCX.ct || 0)) / 9000); o.eff.material.opacity = 0.06 + 0.22 * gr; o.eff.scale.set(heartRadius * (0.6 + 0.12 * gr), heartRadius * (0.68 + 0.12 * gr), heartRadius * (0.58 + 0.12 * gr)); }
         o.pvlJet.g.visible = V.comp === 'pvl'; if (o.pvlJet.g.visible) o.pvlJet.m.material.opacity = Math.min(1, 0.15 + kNow() * 1.4);
