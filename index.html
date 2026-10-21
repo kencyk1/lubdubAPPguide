@@ -755,7 +755,7 @@ footer a,.link{color:var(--ven)}
   </div>
 
   <footer>
-    <span><strong>Web edition</strong> · updated 19 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Web edition</strong> · updated 20 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
@@ -811,7 +811,7 @@ footer a,.link{color:var(--ven)}
       </ol>
     </details>
     <span><strong>3D model:</strong> Human Reference Atlas, <a href="https://github.com/hubmapconsortium/ccf-3d-reference-object-library" target="_blank" rel="noopener">CCF 3D Reference Object Library</a> (HuBMAP) — Visible Human Male heart and heart vasculature, v1.2. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>; merged, simplified and recolored here for teaching.</span>
-    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. In the 3D model the valve leaflets and cusps are built on each annulus and open and close with the same pressure model (the mitral and tricuspid leaflets follow inflow, with E and A waves), with the chordae taut when the valve is shut. The aortic and pulmonary roots (the sinuses of Valsalva between the cusps and the artery) are drawn by the simulator, since the source model leaves a gap there. In the structural procedures the devices act on the leaflets: an expanded frame or balloon holds them open, a clip holds the edges it grasped, and the leaflets of the transcatheter valves open and close with the cycle. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
+    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. In the 3D model the valve leaflets and cusps are built on each annulus and open and close with the same pressure model (the mitral and tricuspid leaflets follow inflow, with E and A waves), with the chordae taut when the valve is shut. The aortic and pulmonary roots (the sinuses of Valsalva between the cusps and the artery) are drawn by the simulator, since the source model leaves a gap there. In the structural procedures the devices act on the leaflets: an expanded frame or balloon holds them open, a clip holds the edges it grasped, and the leaflets of the transcatheter valves open and close with the cycle. The 3D jets use the echo’s colour Doppler map with you as the transducer: red to yellow for flow toward you, blue to cyan away, breaking into a mosaic where it is fast. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
   </footer>
 </div>
 
@@ -3520,29 +3520,97 @@ footer a,.link{color:var(--ven)}
     if (cur.X.flow) { c.textAlign = 'right'; c.fillStyle = 'rgba(252,211,77,0.95)'; c.fillText('murmur: ' + cur.X.flow.label, W - 6 * dpr, H - 13 * dpr); }
   }
 
-  /* 3D jets: a cone with its apex at the valve (or in the LVOT for HOCM), opening toward the receiving chamber, coloured
-     like a turbulent colour-Doppler mosaic and fading toward its base. Drawn on top so it reads through the walls. */
+  /* ---------- 3D jets in colour-Doppler colours ----------
+     The jets in the 3D views use the echo's colour Doppler: the same velocity model (a fast core leaving a narrow vena
+     contracta and widening downstream, with a flow-convergence shell upstream), the same scanner colour map (dark red to
+     yellow toward the transducer, dark blue to cyan away, wrapping past the Nyquist limit) and the same packet noise that
+     turns a fast jet into a mosaic. In 3D the viewer is the transducer: a jet coming toward you is red and yellow, one
+     going away is blue and cyan, so the colours change as the heart is turned, as they would with the probe. The volume
+     is drawn as nested shells (edge, body, core), each coloured by its distance from the jet axis. */
+  var DOPJ_F = { value: 0 }, DOPJ_NYQ = 0.65;
+  var DOPJ_VS = [
+    'uniform float uS;',
+    'varying vec3 vL; varying vec3 vW; varying vec3 vAx; varying vec3 vN;',
+    'void main() {',
+    '  vN = normalize(mat3(modelMatrix) * normal); vL = position * uS; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz;',
+    '  vAx = normalize(mat3(modelMatrix) * vec3(0.0, 1.0, 0.0));',
+    '  gl_Position = projectionMatrix * viewMatrix * w;',
+    '}'].join('\n');
+  var DOPJ_FS = [
+    'uniform float uK, uF, uV0, uW0, uWh, uL, uQ, uNy, uPisa, uWt;',
+    'varying vec3 vL; varying vec3 vW; varying vec3 vAx; varying vec3 vN;',
+    'float hs(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }',
+    'float vn(vec3 p) { vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(mix(hs(i), hs(i + vec3(1.0, 0.0, 0.0)), f.x), mix(hs(i + vec3(0.0, 1.0, 0.0)), hs(i + vec3(1.0, 1.0, 0.0)), f.x), f.y),',
+    '             mix(mix(hs(i + vec3(0.0, 0.0, 1.0)), hs(i + vec3(1.0, 0.0, 1.0)), f.x), mix(hs(i + vec3(0.0, 1.0, 1.0)), hs(i + vec3(1.0, 1.0, 1.0)), f.x), f.y), f.z); }',
+    'float ss(float x) { x = clamp(x, 0.0, 1.0); return x * x * (3.0 - 2.0 * x); }',
+    'vec3 cmap(float u) {',   /* the echo's scanner map (cmapInto), 0..1 */
+    '  if (abs(u) > 1.0) u = mod(u + 1.0, 2.0) - 1.0;',
+    '  float m = abs(u), t = pow(m, 1.3), dim = 0.42 + 0.58 * min(1.0, m * 1.7); vec3 c;',
+    '  if (u >= 0.0) c = vec3(140.0 + 115.0 * min(1.0, t * 1.6), 10.0 + 215.0 * max(0.0, t - 0.25) / 0.75, 10.0 + 60.0 * max(0.0, t - 0.7) / 0.3);',
+    '  else c = vec3(10.0 + 90.0 * max(0.0, t - 0.6) / 0.4, 30.0 + 205.0 * max(0.0, t - 0.2) / 0.8, 150.0 + 105.0 * min(1.0, t * 1.5));',
+    '  return c * dim / 255.0;',
+    '}',
+    'void main() {',
+    '  vec3 beam = normalize(cameraPosition - vW);',
+    '  float c = dot(vAx, beam), sg = (c >= 0.0 ? 1.0 : -1.0) * (0.45 + 0.55 * abs(c));',   /* along the beam, never fully lost side-on */
+    '  float spd, a, tb;',
+    '  if (vL.y >= 0.0) {',   /* the jet: fast core, slower and wider downstream */
+    '    float al = vL.y, tt = min(1.0, al / (0.55 * uL)), hw = uW0 + (uWh - uW0) * pow(sin(1.5707963 * tt), 0.9), fr = length(vL.xz) / hw;',
+    '    float vcl = min(uV0 / (1.0 + 0.3 * al / uW0), 2.0 * uNy);',
+    '    spd = vcl * exp(-pow(fr / 0.6, 2.0)); tb = 0.14 * vcl * (vcl > 1.5 * uNy ? 3.4 : 1.0);',
+    '    a = (1.0 - ss((fr - 0.95) / 0.3)) * (1.0 - ss((al / uL - 0.7) / 0.3));',
+    '  } else {',   /* flow convergence: Q / (2 pi r^2) toward the orifice */
+    '    if (uPisa < 0.5) discard;',
+    '    float r = length(vL), rcm = max(0.03, r / 10.0), Rp = min(32.0, 10.0 * sqrt(uQ / (6.2831853 * 0.1 * uNy * 100.0)));',
+    '    spd = min(min(uV0, 1.6 * uNy), uQ / (6.2831853 * rcm * rcm) / 100.0); tb = spd >= 1.55 * uNy ? 0.18 * spd : 0.04 * spd;',
+    '    a = 1.0 - ss((r / Rp - 0.75) / 0.25);',
+    '  }',
+    '  float nz = (vn(vL / 1.8 + vec3(0.0, 0.0, uF * 13.0)) - 0.5) * 1.6 + (vn(vL / 1.0 + vec3(40.0, 40.0, 40.0 + uF * 17.0)) - 0.5) * 0.9;',
+    '  float v = spd * sg + tb * nz;',
+    '  if (abs(v) < 0.06 * uNy || a <= 0.01) discard;',   /* wall filter */
+    '  a *= smoothstep(0.05, 0.6, abs(dot(normalize(vN), beam)));',   /* soft at the silhouette, so the shells read as a volume */
+    '  if (a <= 0.01) discard;',
+    '  gl_FragColor = vec4(cmap(v / uNy), min(0.95, a * uK * uWt));',
+    '}'].join('\n');
+  /* builds the shells into group g; geometry in the group's units, uS converts them to mm; P = { L, Wh, w0 (mm),
+     v0 (m/s), q (cm^3/s, for the convergence zone), pisa, ro (render order) }. Returns the shared strength uniform. */
+  function dopJet(g, uS, P) {
+    var K = { value: 1 }, ro = P.ro || 20, shells = [[0.85, 0.42], [0.6, 0.62], [0.32, 0.95]];
+    function hw(al) { var tt = Math.min(1, al / (0.55 * P.L)); return P.w0 + (P.Wh - P.w0) * Math.pow(Math.sin(Math.PI / 2 * tt), 0.9); }
+    function mat(wt) {
+      return new THREE.ShaderMaterial({ vertexShader: DOPJ_VS, fragmentShader: DOPJ_FS, transparent: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide,
+        uniforms: { uS: { value: uS }, uK: K, uF: DOPJ_F, uV0: { value: P.v0 }, uW0: { value: P.w0 }, uWh: { value: P.Wh }, uL: { value: P.L }, uQ: { value: P.q || 0 }, uNy: { value: DOPJ_NYQ }, uPisa: { value: P.pisa ? 1 : 0 }, uWt: { value: wt } } });
+    }
+    shells.forEach(function (sh, i) {
+      var prof = []; for (var j = 0; j <= 24; j++) { var al = P.L * j / 24; prof.push(new THREE.Vector2(Math.max(1e-4, hw(al) * sh[0]) / uS, al / uS)); }
+      prof.push(new THREE.Vector2(1e-4, P.L / uS));
+      var m = new THREE.Mesh(new THREE.LatheGeometry(prof, 30), mat(sh[1])); m.renderOrder = ro + i; m.frustumCulled = false;
+      m.onBeforeRender = function () { DOPJ_F.value = Math.floor(cyc.t * 25); };
+      g.add(m);
+    });
+    if (P.pisa) {   /* two shells of the convergence zone: slow outside, aliased inside */
+      var ra = Math.sqrt((P.q || 0) / (2 * Math.PI * DOPJ_NYQ * 100)) * 10 * (P.pisa === 'small' ? 0.6 : 1);
+      [[1.2, 0.3], [0.65, 0.7]].forEach(function (sh, i) {
+        var R = Math.max(0.6, ra * sh[0]) / uS, ge = new THREE.SphereGeometry(R, 24, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+        var m = new THREE.Mesh(ge, mat(sh[1])); m.renderOrder = ro - 2 + i; m.frustumCulled = false; g.add(m);
+      });
+    }
+    return K;
+  }
+  /* 3D jets: from the valve (or the LVOT in HOCM) toward the receiving chamber, in colour-Doppler colours (dopJet), sized
+     from the scenario's orifice. Drawn on top so they read through the walls. */
   var jetGroup = new THREE.Group(), jets = {};
   scene.add(jetGroup);
   function makeJet(key) {
     var F = SCX[key].flow; if (!F || F.noJet || !S[F.valve] || !S[F.valve].center || !S[F.to] || !S[F.to].center) return null;
     var from = S[F.valve].center.clone(); if (F.fromLV && S.lv && S.lv.center) from.lerp(S.lv.center, F.fromLV);
     var to = S[F.to].center.clone(), dir = to.clone().sub(from), dist = dir.length(); dir.normalize();
-    var g = new THREE.Group(), hgt = dist * (F.len || 1.05), rad = hgt * (F.rad || (F.kind === 'sten' ? 0.22 : 0.42));
-    var cA = new THREE.Color('#F59E0B'), cM = new THREE.Color('#16A34A'), cB = new THREE.Color('#1D4ED8');
-    [[rad, 0.7], [rad * 0.42, 1]].forEach(function (spec) {
-      var geo = new THREE.ConeGeometry(spec[0], hgt, 28, 8, true); geo.translate(0, -hgt / 2, 0);
-      var pos = geo.attributes.position, col = new Float32Array(pos.count * 4), tmp = new THREE.Color();
-      for (var i = 0; i < pos.count; i++) {
-        var t = -pos.getY(i) / hgt;
-        if (t < 0.45) tmp.copy(cA).lerp(cM, t / 0.45); else tmp.copy(cM).lerp(cB, (t - 0.45) / 0.55);
-        col[i * 4] = tmp.r; col[i * 4 + 1] = tmp.g; col[i * 4 + 2] = tmp.b; col[i * 4 + 3] = spec[1] * (1 - 0.8 * t);
-      }
-      geo.setAttribute('color', new THREE.BufferAttribute(col, 4));
-      var m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 1, depthWrite: false, depthTest: false, side: THREE.DoubleSide }));
-      m.renderOrder = 20; g.add(m);
-    });
-    g.position.copy(from); g.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); g.visible = false;
+    var g = new THREE.Group(), hgt = dist * (F.len || 1.05), rad = hgt * (F.rad || (F.kind === 'sten' ? 0.22 : 0.42)), reg = F.kind === 'regurg';
+    var base = F.chip ? 'hocm' : ({ 'mv:regurg': 'mr', 'mv:sten': 'ms', 'av:sten': 'as', 'av:regurg': 'ar', 'tv:regurg': 'tr', 'tv:sten': 'ts' })[F.valve + ':' + F.kind];
+    var J = JETP[key] || JETP[base] || {}, A = reg ? (J.eroa || 0.35) : (J.area || 1), v0 = reg ? 5 : F.valve === 'av' ? 4.2 : F.valve === 'pv' ? 3 : 1.8;
+    g.userData.k = dopJet(g, 1000, { L: hgt * 1000, Wh: rad * 750, w0: Math.min(rad * 500, Math.sqrt(A / Math.PI) * 10), v0: v0, q: A * v0 * 100, pisa: reg ? true : 'small', ro: 20 });
+    g.position.copy(from); g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); g.visible = false;
     jetGroup.add(g); return g;
   }
   function jetFor(key) { if (!(key in jets) && ready) jets[key] = makeJet(key); return jets[key] || null; }
@@ -3824,7 +3892,7 @@ footer a,.link{color:var(--ven)}
     var jet = F ? jetFor(curKey) : null;
     if (jet) {
       jet.visible = k > 0.02;
-      if (jet.visible) { var kj = Math.min(1.4, k); jet.children.forEach(function (m) { m.material.opacity = Math.min(1, 0.55 + 0.45 * kj); }); var js = X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1; jet.scale.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js, (0.8 + 0.2 * kj) * js); }
+      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj); var js = X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1; jet.scale.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js, (0.8 + 0.2 * kj) * js); }
     }
     var skip = CYC_SKIP[b.type] || {};
     Object.keys(CYC_WIN).forEach(function (id) {
@@ -6754,12 +6822,9 @@ footer a,.link{color:var(--ven)}
     var g = pDev(c, Y), d = new THREE.CircleGeometry(R, 40); d.rotateX(-Math.PI / 2);
     pMesh(d, PX.M.hole, g); var rg = new THREE.TorusGeometry(R, 0.55, 8, 48); rg.rotateX(Math.PI / 2); pMesh(rg, PX.M.rim, g); return { g: g };
   }
-  function mkJetCone(c, dir, len, rad) {   /* a small regurgitant or shunt jet, coloured like a Doppler mosaic */
-    var g = pDev(c, dir), geo = new THREE.ConeGeometry(rad, len, 20, 4, true); geo.rotateX(Math.PI); geo.translate(0, len / 2, 0);
-    var pos = geo.attributes.position, col = new Float32Array(pos.count * 4), tmp = new THREE.Color(), cA = new THREE.Color('#F59E0B'), cM = new THREE.Color('#16A34A'), cB = new THREE.Color('#1D4ED8');
-    for (var i = 0; i < pos.count; i++) { var t = pos.getY(i) / len; if (t < 0.45) tmp.copy(cA).lerp(cM, t / 0.45); else tmp.copy(cM).lerp(cB, (t - 0.45) / 0.55); col[i * 4] = tmp.r; col[i * 4 + 1] = tmp.g; col[i * 4 + 2] = tmp.b; col[i * 4 + 3] = 0.85 * (1 - 0.8 * t); }
-    geo.setAttribute('color', new THREE.BufferAttribute(col, 4));
-    var m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide })); m.renderOrder = 30; g.add(m);
+  function mkJetCone(c, dir, len, rad) {   /* a small regurgitant or shunt jet in colour-Doppler colours */
+    var g = pDev(c, dir), w0 = rad * 0.3, K = dopJet(g, 1, { L: len, Wh: rad * 0.9, w0: w0, v0: 4, q: Math.PI * Math.pow(w0 / 10, 2) * 400, pisa: true, ro: 30 });
+    var m = { material: {} }; Object.defineProperty(m.material, 'opacity', { get: function () { return K.value; }, set: function (v) { K.value = v; } });
     return { g: g, m: m };
   }
   function mkX(mm) { var cv = document.createElement('canvas'); cv.width = cv.height = 64; var x = cv.getContext('2d'); x.strokeStyle = '#EF4444'; x.lineWidth = 11; x.lineCap = 'round'; x.beginPath(); x.moveTo(14, 14); x.lineTo(50, 50); x.moveTo(50, 14); x.lineTo(14, 50); x.stroke();
