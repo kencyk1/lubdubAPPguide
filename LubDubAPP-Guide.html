@@ -403,6 +403,96 @@ footer a,.link{color:var(--ven)}
 .angcard .seg .btn{white-space:nowrap}
 .angseg4{display:grid;grid-template-columns:1fr 1fr;width:fit-content;max-width:100%}
 .angseg4[hidden]{display:none}
+/* ---- phone layout: one screen with a top bar, the 3D view, a pull-up sheet and a bottom tab bar (built by mBuild) ---- */
+html.mob,body.mob{height:100%;overflow:hidden;overscroll-behavior:none}
+body.mob{background:var(--stage)}
+body.mob .wrap{display:none}
+.mbar{position:fixed;left:0;right:0;top:0;z-index:30;display:flex;flex-direction:row;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 6px) 8px 6px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.mbar .logo{width:30px;height:28px;margin:0;flex:none}
+.mbar h1{flex:1;min-width:0;margin:0;font:600 19px/1.15 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mico{flex:none;width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:10px;background:none;color:var(--fg);cursor:pointer}
+.mico svg{width:23px;height:23px}
+.mico:focus-visible,.mtabs button:focus-visible,.msegs button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+#mstagewrap{position:fixed;left:0;right:0;z-index:1;transition:height .26s ease}
+#mstagewrap>.stage{position:absolute;inset:0;height:auto!important;border:0;border-radius:0}
+#mstagewrap>.toolbar{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;flex-wrap:nowrap;gap:6px;margin:0;padding:8px 10px 10px;overflow-x:auto;scrollbar-width:none;background:linear-gradient(rgba(251,252,253,.92),rgba(251,252,253,0))}
+#mstagewrap>.toolbar::-webkit-scrollbar{display:none}
+#mstagewrap>.toolbar .btn{flex:none;min-height:32px;padding:0 11px;font-size:12.5px;background:rgba(255,255,255,.9)}
+#mstagewrap>.toolbar .btn[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
+#mstagewrap>.toolbar .sep{flex:none;width:1px;align-self:stretch;margin:4px 2px;background:var(--line)}
+#mstagewrap>.toolbar .cathv:not([hidden]){display:contents}
+body.mob .compass{bottom:28px}
+body.mob .zoom{bottom:28px}
+body.mob .carm{bottom:108px}
+body.mob .impcap{top:52px}
+body.mob .hint{display:none}
+.msheet{position:fixed;left:0;right:0;z-index:20;bottom:calc(58px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -8px 28px rgba(23,33,44,.18);transition:height .26s ease}
+.msheet.drag{transition:none}
+.mhead{flex:none;padding:6px 14px 10px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.mgrip{width:42px;height:5px;margin:0 auto 8px;border-radius:3px;background:#C3CDD7}
+.mchips{display:flex;gap:6px;margin:0 -14px 6px;padding:0 14px 2px;overflow-x:auto;scrollbar-width:none}
+.mchips[hidden]{display:none}
+.mchips::-webkit-scrollbar{display:none}
+.mchips .btn{flex:none;min-height:34px;padding:0 13px;font-size:13px}
+.mtrow{display:flex;align-items:center;gap:10px;min-height:38px}
+.mtt{flex:1;min-width:0}
+.mtitle{margin:0;font:600 17px/1.25 var(--serif);color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msub{margin:2px 0 0;font:400 12.5px/1.35 var(--sans);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtrow.compact{min-height:0}
+.mtrow.compact .mtitle{display:none}
+.mtrow.compact .msub{margin:0}
+.mnav{flex:none;display:flex}
+.mnav .scnav{margin:0}
+.mnav .scnav .btn{min-height:34px;padding:0 11px;font-size:13px}
+.msegs{display:flex;gap:3px;margin-top:9px;padding:3px;border-radius:11px;background:var(--sunken);border:1px solid var(--line)}
+.msegs button{flex:1;min-width:0;min-height:34px;border:0;border-radius:8px;background:none;font:600 13px/1 var(--sans);color:var(--muted);cursor:pointer;white-space:nowrap}
+.msegs button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(23,33,44,.16)}
+.mbody{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 10px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.mbody>*{flex:none;margin:0}
+.mbody>.card{padding:14px}
+.mbody>.cyclepanel,.mbody>.echopanel{border-radius:12px;padding:12px}
+.mbody>.cycinfo{border:0;padding:4px 4px 0}
+.msheet[data-snap="peek"] .mbody{visibility:hidden}
+.mtabs{position:fixed;left:0;right:0;bottom:0;z-index:31;height:calc(58px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);display:grid;grid-template-columns:repeat(6,1fr);background:var(--surface);border-top:1px solid var(--line)}
+.mtabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0;border:0;background:none;font:600 10.5px/1 var(--sans);color:var(--muted);cursor:pointer}
+.mtabs svg{width:23px;height:23px}
+.mtabs button[aria-pressed="true"]{color:var(--ven)}
+.mtabs button[aria-pressed="true"] svg{stroke-width:2.2}
+.mov{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;background:var(--bg)}
+.mov[hidden]{display:none}
+.movhead{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;background:var(--surface);border-bottom:1px solid var(--line)}
+.movhead h2{margin:0;font:600 19px/1.2 var(--serif)}
+.movbody{flex:1;min-height:0;overflow-y:auto;padding:16px 14px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.movbody .mast{display:grid}
+.movbody .leadmore{display:none}
+.movbody footer{margin:0}
+.mpre>.eyebrow,.mpre>#presets{display:none}
+.mpre .pdesc{margin:0}
+body.mob #hemo{height:300px}
+body.mob #cycinfo #scMore{display:none}
+body.mob #cycinfo .schead{display:none}
+.mbody #cycEyebrow,body.mob #echoTitle{display:none}
+.mbody .cycstats{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbody .cycctl{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.mbody .cycctl::-webkit-scrollbar{display:none}
+.mbody .cycctl>*{flex:none}
+.mbody .cycctl .btn{min-height:32px;padding:0 10px;font-size:12.5px}
+body.mob #ecg{height:96px}
+body.mob .rhy-on #ecg{height:150px}
+body.mob #hemo{height:280px}
+#mshell[data-scene="ang"] #mstagewrap>.toolbar{display:none}
+#msheet[data-seg="info"] .mbody>[data-part]:not([data-part~="info"]){display:none!important}
+#msheet[data-seg="find"] .mbody>[data-part]:not([data-part~="find"]){display:none!important}
+#msheet[data-seg="about"] .mbody>[data-part]:not([data-part~="about"]){display:none!important}
+#msheet[data-seg="trace"] .mbody>[data-part]:not([data-part~="trace"]){display:none!important}
+#msheet[data-seg="scen"] .mbody>[data-part]:not([data-part~="scen"]){display:none!important}
+#msheet[data-seg="teach"] .mbody>[data-part]:not([data-part~="teach"]){display:none!important}
+#msheet[data-seg="image"] .mbody>[data-part]:not([data-part~="image"]){display:none!important}
+#msheet[data-seg="views"] .mbody>[data-part]:not([data-part~="views"]){display:none!important}
+#msheet[data-seg="ter"] .mbody>[data-part]:not([data-part~="ter"]){display:none!important}
+#msheet[data-seg="ang"] .mbody>[data-part]:not([data-part~="ang"]){display:none!important}
+#msheet[data-seg="scen"] #cyclepanel>:not(.scenrow){display:none!important}
+#msheet[data-seg="trace"] #cyclepanel>.scenrow{display:none!important}
 </style>
 
 </head>
@@ -754,7 +844,7 @@ footer a,.link{color:var(--ven)}
   </div>
 
   <footer>
-    <span><strong>Offline edition</strong> · updated 20 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Offline edition</strong> · updated 21 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
@@ -6383,6 +6473,7 @@ footer a,.link{color:var(--ven)}
     document.querySelectorAll('[data-scheme]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.scheme === state.scheme)); });
     $('#wall').value = Math.round(state.wall * 100); $('#wallv').textContent = Math.round(state.wall * 100) + '%';
     updateLabelSet(); terDisplay();
+    if (MOB && MOB.on) mSync();
   }
 
   /* ---------- Labels ---------- */
@@ -13063,6 +13154,190 @@ footer a,.link{color:var(--ven)}
     };
     return m;
   }
+  /* ---------- Phone layout ----------
+     On a phone the page becomes one screen: the 3D view between a slim top bar and a bottom tab bar of scenes, and a
+     sheet pulled up over the view that holds the scene's panels, split into a few tabs (traces, scenarios and teaching in
+     the cardiac cycle; the step, the procedure and the traces in a procedure; image and views in echo; the selected
+     structure, search and notes in anatomy), so nothing needs a long scroll. The existing panels are moved into the
+     sheet, not copied, so they keep working, and go back to their places when the screen widens. */
+  var MOB = { on: false, moved: [], snap: 'peek', seg: {}, last: {}, scene: '', lastSel: null, el: {} };
+  var MOB_MQ = window.matchMedia ? matchMedia('(max-width:560px)') : null;
+  var MTABS = [
+    { id: 'anat', name: 'Anatomy', presets: ['exterior', 'inside', 'valves', 'conduction', 'vessels'], short: { exterior: 'Exterior', inside: 'Inside', valves: 'Valve plane', conduction: 'Conduction', vessels: 'Great vessels' },
+      icon: '<path d="M12 20.5s-7.5-4.6-7.5-10.4A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 7.5 2.5c0 5.8-7.5 10.4-7.5 10.4z"/>' },
+    { id: 'cycle', name: 'Cycle', presets: ['cycle'], icon: '<path d="M2.5 15.5h3l1.6-7 2.4 11 2.2-8.5 1.6 4.5h8.2"/>' },
+    { id: 'rhythm', name: 'Rhythm', presets: ['rhythm'], icon: '<path d="M2.5 12.5h4.5l1.5-3 2 9 3-15 2.5 12 1.5-3h4"/>' },
+    { id: 'struct', name: 'Structural', presets: ['struct'], icon: '<path d="M7 4.5h10M7 19.5h10M7 4.5l5 7.5-5 7.5M17 4.5L12 12l5 7.5M7 4.5v15M17 4.5v15"/>' },
+    { id: 'echo', name: 'Echo', presets: ['echo'], icon: '<path d="M12 4L4.2 16.8a10 10 0 0 0 15.6 0z"/><path d="M8.5 14.5a5 5 0 0 0 7 0"/>' },
+    { id: 'cor', name: 'Coronary', presets: ['coronary', 'territory', 'angio'], short: { coronary: 'Coronaries', territory: 'Territories', angio: 'Angiogram' },
+      icon: '<path d="M12 3v6.5M12 9.5L7 14v6.5M12 9.5l5 4v7M7 14l-3.2 2.4M17 13.5l3-1.5"/>' }
+  ];
+  /* sheet tabs per scene: [key, label]; the panels each key shows are marked with data-part */
+  var MSEGS = {
+    anat: [['info', 'Structure'], ['find', 'Find'], ['about', 'About']],
+    cycle: [['trace', 'Traces'], ['scen', 'Scenarios'], ['teach', 'Teaching']],
+    rhythm: [['trace', 'Traces'], ['scen', 'Rhythms'], ['teach', 'Teaching']],
+    struct: [['teach', 'This step'], ['scen', 'Procedure'], ['trace', 'Traces']],
+    echo: [['image', 'Image'], ['views', 'Views']],
+    cor: [['info', 'Structure'], ['find', 'Find'], ['about', 'About']],
+    ter: [['ter', 'Occlusion'], ['info', 'Structure'], ['about', 'About']],
+    ang: [['ang', 'Angiogram'], ['info', 'Structure'], ['about', 'About']]
+  };
+  var MSNAP = { anat: 'peek', cor: 'peek', cycle: 'half', rhythm: 'half', struct: 'half', echo: 'tall', ter: 'half', ang: 'half' }, MHALF = { cycle: 0.56, rhythm: 0.56 };
+  function mTabOf(p) { for (var i = 0; i < MTABS.length; i++) if (MTABS[i].presets.indexOf(p) >= 0) return MTABS[i]; return MTABS[0]; }
+  function mSceneKey() { var t = mTabOf(state.preset).id; return t === 'cor' ? (state.preset === 'territory' ? 'ter' : state.preset === 'angio' ? 'ang' : 'cor') : t; }
+  function mMove(node, to, before) { if (!node) return; MOB.moved.push([node, node.parentNode, node.nextSibling]); if (before) to.insertBefore(node, before); else to.appendChild(node); }
+  function mIcon(path) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>'; }
+  function mPart(node, parts) { if (node) node.setAttribute('data-part', parts); }
+  function mBuild() {
+    if (MOB.on) return; MOB.on = true;
+    document.documentElement.classList.add('mob'); document.body.classList.add('mob');
+    var sh = document.createElement('div'); sh.id = 'mshell'; MOB.el.shell = sh;
+    var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'mlgL').replace(/lgR/g, 'mlgR');
+    sh.innerHTML =
+      '<header class="mbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
+        '<button class="mico" type="button" id="mAboutBtn" aria-label="About this guide">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '</button>' +
+        '<button class="mico" type="button" id="mSetBtn" aria-label="Display and layers">' + mIcon('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>') + '</button></header>' +
+      '<div id="mstagewrap"></div>' +
+      '<section class="msheet" id="msheet" aria-label="Scene panel"><div class="mhead" id="mhead"><div class="mgrip" aria-hidden="true"></div>' +
+        '<div class="mchips" id="mchips" hidden></div>' +
+        '<div class="mtrow" id="mtrow"><div class="mtt"><h2 class="mtitle" id="mtitle"></h2><p class="msub" id="msub"></p></div><div class="mnav" id="mnav"></div></div>' +
+        '<div class="msegs" id="msegs" role="tablist" aria-label="Panel"></div></div>' +
+        '<div class="mbody" id="mbody"></div></section>' +
+      '<nav class="mtabs" id="mtabs" aria-label="Scenes">' + MTABS.map(function (t) { return '<button type="button" data-mtab="' + t.id + '" aria-pressed="false">' + mIcon(t.icon) + '<span>' + t.name + '</span></button>'; }).join('') + '</nav>' +
+      '<div class="mov" id="mAbout" hidden role="dialog" aria-label="About this guide"><div class="movhead"><h2>About this guide</h2><button class="btn" type="button" data-mclose>Done</button></div><div class="movbody" id="mAboutBody"></div></div>' +
+      '<div class="mov" id="mSet" hidden role="dialog" aria-label="Display and layers"><div class="movhead"><h2>Display and layers</h2><button class="btn" type="button" data-mclose>Done</button></div><div class="movbody" id="mSetBody"></div></div>';
+    document.body.appendChild(sh);
+    var $s = function (q) { return sh.querySelector(q); }, body = $s('#mbody');
+    MOB.el = { shell: sh, sheet: $s('#msheet'), head: $s('#mhead'), body: body, stagewrap: $s('#mstagewrap'), tabs: $s('#mtabs'), bar: $s('.mbar'), title: $s('#mtitle'), sub: $s('#msub'), chips: $s('#mchips'), segs: $s('#msegs'), trow: $s('#mtrow') };
+    /* the 3D view and its toolbar */
+    mMove($('#stage'), MOB.el.stagewrap); mMove(document.querySelector('.stagecard .toolbar'), MOB.el.stagewrap);
+    /* the scene panels, in sheet order */
+    var finder = $('#finder').closest('.card'), pre = $('#presets').closest('.card');
+    [[$('#cycinfo'), 'teach'], [$('#cyclepanel'), 'scen trace'], [$('#echopanel'), 'image'], [$('#echocard'), 'views'], [$('#tercard'), 'ter'], [$('#angcard'), 'ang'],
+     [$('#info'), 'info teach views ter ang'], [finder, 'find'], [pre, 'about']].forEach(function (q) { mPart(q[0], q[1]); mMove(q[0], body); });
+    pre.classList.add('mpre');
+    mMove($('#scNav'), $s('#mnav'));
+    mMove(document.querySelector('.mast'), $s('#mAboutBody')); mMove(document.querySelector('footer'), $s('#mAboutBody'));
+    mMove($('#wall').closest('.card'), $s('#mSetBody')); mMove($('#layerChecks').closest('.card'), $s('#mSetBody'));
+    $('#cycinfo').classList.add('open'); var lead = document.querySelector('.lead'); if (lead) lead.classList.add('open');
+    /* events */
+    MOB.el.tabs.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-mtab]'); if (!b) return;
+      var t = MTABS.filter(function (x) { return x.id === b.dataset.mtab; })[0], cur0 = mTabOf(state.preset);
+      if (t === cur0) { if (MOB.snap === 'peek') mSetSnap('half'); return; }
+      applyPreset(MOB.last[t.id] || t.presets[0], true);
+    });
+    MOB.el.chips.addEventListener('click', function (e) { var b = e.target.closest('[data-mpre]'); if (b && b.dataset.mpre !== state.preset) applyPreset(b.dataset.mpre, true); });
+    MOB.el.segs.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-mseg]'); if (!b) return;
+      MOB.seg[MOB.scene] = b.dataset.mseg; mSegShow(); if (MOB.snap === 'peek') mSetSnap('half');
+    });
+    $s('#mAboutBtn').addEventListener('click', function () { $s('#mAbout').hidden = false; });
+    $s('#mSetBtn').addEventListener('click', function () { $s('#mSet').hidden = false; });
+    sh.querySelectorAll('[data-mclose]').forEach(function (b) { b.addEventListener('click', function () { b.closest('.mov').hidden = true; }); });
+    mDrag();
+    ['#scTitle', '#scSub', '#echoTitle'].forEach(function (q) { var n = $(q); if (n && window.MutationObserver) new MutationObserver(mHead).observe(n, { childList: true, characterData: true, subtree: true }); });
+    MOB.scene = ''; mSync(); mLayout();
+    if (ready) resize();
+  }
+  function mTeardown() {
+    if (!MOB.on) return; MOB.on = false;
+    for (var i = MOB.moved.length - 1; i >= 0; i--) { var m = MOB.moved[i]; if (m[2] && m[2].parentNode === m[1]) m[1].insertBefore(m[0], m[2]); else m[1].appendChild(m[0]); m[0].removeAttribute && m[0].removeAttribute('data-part'); }
+    MOB.moved = []; if (MOB.el.shell) MOB.el.shell.remove(); MOB.el = {};
+    document.documentElement.classList.remove('mob'); document.body.classList.remove('mob');
+    $('#cycinfo').classList.remove('open'); $('#stage').style.height = '';
+    if (ready) resize();
+  }
+  /* sheet heights: peek shows the header, half shares the screen with the view, tall leaves a strip of it */
+  function mHeights() {
+    var E = MOB.el, top = E.bar.getBoundingClientRect().height, tabs = E.tabs.getBoundingClientRect().height, avail = Math.max(240, window.innerHeight - top - tabs);
+    var peek = Math.min(avail - 120, E.head.offsetHeight + 2), half = Math.max(peek + 120, Math.round(avail * (MHALF[MOB.scene] || 0.52))), tall = Math.max(half, avail - 56);
+    return { top: top, avail: avail, peek: peek, half: half, tall: tall };
+  }
+  function mLayout() {
+    if (!MOB.on) return;
+    var h = mHeights(), sheetH = h[MOB.snap] || h.peek, stageH = h.avail - (MOB.snap === 'peek' ? h.peek : h.half) + 14;
+    MOB.H = h; MOB.el.sheet.style.height = sheetH + 'px';
+    MOB.el.stagewrap.style.top = h.top + 'px'; MOB.el.stagewrap.style.height = stageH + 'px';
+  }
+  function mSetSnap(s) { MOB.snap = s; MOB.el.sheet.dataset.snap = s; mLayout(); }
+  function mDrag() {
+    var E = MOB.el, st = null;
+    E.head.addEventListener('pointerdown', function (e) {
+      if (e.button && e.button !== 0) return;
+      st = { y: e.clientY, h: E.sheet.getBoundingClientRect().height, t: performance.now(), moved: false, id: e.pointerId, last: [] };
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!st || e.pointerId !== st.id) return;
+      var dy = e.clientY - st.y;
+      if (!st.moved && Math.abs(dy) < 7) return;
+      if (!st.moved) { st.moved = true; E.sheet.classList.add('drag'); try { E.head.setPointerCapture(e.pointerId); } catch (x) {} }
+      var H = MOB.H, nh = Math.max(H.peek, Math.min(H.tall, st.h - dy)); E.sheet.style.height = nh + 'px';
+      st.last.push([performance.now(), e.clientY]); if (st.last.length > 5) st.last.shift();
+    });
+    function end(e) {
+      if (!st || (e && e.pointerId !== st.id)) return;
+      var s0 = st; st = null; E.sheet.classList.remove('drag');
+      if (s0.moved) { E.sheet.dataset.justDragged = '1'; setTimeout(function () { delete E.sheet.dataset.justDragged; }, 60); }
+      if (!s0.moved) {
+        if (e && e.target && e.target.closest && e.target.closest('button,a,input,select')) return;
+        mSetSnap(MOB.snap === 'peek' ? 'half' : MOB.snap === 'half' ? 'peek' : 'half'); return;
+      }
+      var H = MOB.H, h = E.sheet.getBoundingClientRect().height, L = s0.last, v = L.length > 1 ? (L[L.length - 1][1] - L[0][1]) / Math.max(1, L[L.length - 1][0] - L[0][0]) : 0;
+      var order = ['peek', 'half', 'tall'], hs = [H.peek, H.half, H.tall], best = 0;
+      for (var i = 1; i < 3; i++) if (Math.abs(hs[i] - h) < Math.abs(hs[best] - h)) best = i;
+      if (v < -0.45 && best < 2 && hs[best] < h + 40) best++;   /* a flick up opens further, a flick down closes */
+      else if (v > 0.45 && best > 0 && hs[best] > h - 40) best--;
+      mSetSnap(order[best]);
+    }
+    window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+    /* a click that ended a drag should not also press the chip or tab under the finger */
+    E.head.addEventListener('click', function (e) { if (E.sheet.dataset.justDragged) { e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  function mSegShow() {
+    var segs = MSEGS[MOB.scene] || MSEGS.anat, k = MOB.seg[MOB.scene];
+    if (!segs.some(function (s) { return s[0] === k; })) k = MOB.seg[MOB.scene] = segs[0][0];
+    MOB.el.sheet.dataset.seg = k;
+    MOB.el.segs.querySelectorAll('[data-mseg]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mseg === k)); });
+    MOB.el.body.scrollTop = 0;
+    if (k === 'trace' || k === 'image') requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
+  }
+  function mHead() {
+    if (!MOB.on) return;
+    var sc = MOB.scene, t = '', s = '', tab = mTabOf(state.preset), multi = tab.presets.length > 1;
+    if (sc === 'cycle' || sc === 'rhythm' || sc === 'struct') { t = ($('#scTitle') || {}).textContent || ''; s = ($('#scSub') || {}).textContent || ''; }
+    else if (sc === 'echo') { t = ($('#echoTitle') || {}).textContent || 'Echo'; var es = $('#eScen'); s = es && es.selectedIndex >= 0 ? es.options[es.selectedIndex].text : ''; }
+    else { var p = PRESETS.filter(function (x) { return x.id === state.preset; })[0]; t = p ? p.name : ''; s = state.sel && S[state.sel] ? S[state.sel].n : 'Tap a structure to learn about it'; }
+    MOB.el.title.textContent = t; MOB.el.sub.textContent = s;
+    MOB.el.trow.classList.toggle('compact', multi);
+  }
+  /* called after every refresh: active tab, the scene's chips and sheet tabs, the header, and the defaults when the scene changes */
+  function mSync() {
+    if (!MOB.on) return;
+    var tab = mTabOf(state.preset), sc = mSceneKey(), E = MOB.el;
+    E.tabs.querySelectorAll('[data-mtab]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mtab === tab.id)); });
+    MOB.last[tab.id] = state.preset;
+    if (sc !== MOB.scene) {
+      MOB.scene = sc; E.shell.dataset.scene = sc;
+      var multi = tab.presets.length > 1; E.chips.hidden = !multi;
+      E.chips.innerHTML = multi ? tab.presets.map(function (id) { return '<button class="btn" type="button" data-mpre="' + id + '" aria-pressed="false">' + (tab.short[id] || id) + '</button>'; }).join('') : '';
+      E.segs.innerHTML = (MSEGS[sc] || MSEGS.anat).map(function (s) { return '<button type="button" role="tab" data-mseg="' + s[0] + '" aria-pressed="false">' + s[1] + '</button>'; }).join('');
+      mSegShow(); MOB.snap = MSNAP[sc] || 'peek'; E.sheet.dataset.snap = MOB.snap;
+      requestAnimationFrame(mLayout);
+    }
+    E.chips.querySelectorAll('[data-mpre]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mpre === state.preset)); });
+    /* tapping a structure in an anatomy scene brings up its card */
+    if (state.sel !== MOB.lastSel) {
+      MOB.lastSel = state.sel;
+      if (state.sel && (sc === 'anat' || sc === 'cor' || sc === 'ter' || sc === 'ang')) { MOB.seg[sc] = 'info'; mSegShow(); if (MOB.snap === 'peek') mSetSnap('half'); }
+    }
+    mHead(); mLayout();
+  }
+  function mCheck() { if (MOB_MQ && MOB_MQ.matches) mBuild(); else mTeardown(); }
+  if (MOB_MQ) { if (MOB_MQ.addEventListener) MOB_MQ.addEventListener('change', mCheck); else if (MOB_MQ.addListener) MOB_MQ.addListener(mCheck); }
+  window.addEventListener('resize', function () { if (MOB.on) mLayout(); });
+  mCheck();
   /* ---------- Loop ---------- */
   function loop(now) {
     requestAnimationFrame(loop);

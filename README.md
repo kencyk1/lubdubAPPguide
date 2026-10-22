@@ -9,7 +9,7 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 ## Use it
 
 - **Online:** <https://lubdubappguide.com/>
-- **On a computer or a phone:** the teaching card for each scene stays beside the 3D view on a computer and sits just under it on a phone, so the text and the heart can be read together.
+- **On a computer or a phone:** on a computer the teaching card for each scene stays beside the 3D view. On a phone the 3D view fills the screen, the scenes sit in a bottom tab bar, and the traces, scenarios and teaching text are in a sheet you pull up over the heart, each in its own tab, so there is no long scrolling.
 
 ## What is in it
 
