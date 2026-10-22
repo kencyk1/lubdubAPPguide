@@ -849,7 +849,7 @@ body.mob #hemo{height:280px}
   </div>
 
   <footer>
-    <span><strong>Web edition</strong> · updated 21 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Web edition</strong> · updated 22 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
@@ -3986,8 +3986,8 @@ body.mob #hemo{height:280px}
     });
     var jet = F ? jetFor(curKey) : null;
     if (jet) {
-      jet.visible = k > 0.02;
-      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj); var js = X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1; jet.scale.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js, (0.8 + 0.2 * kj) * js); }
+      jet.visible = k > 0.02; var jleft = jet.visible ? vJetPlace(jet, F) : 1; if (jleft < 0.05) jet.visible = false;
+      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj) * jleft; var js = X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1; jet.scale.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js, (0.8 + 0.2 * kj) * js); }
     }
     var skip = CYC_SKIP[b.type] || {};
     Object.keys(CYC_WIN).forEach(function (id) {
@@ -7209,7 +7209,7 @@ body.mob #hemo{height:280px}
           b: ['The large guide leaves a defect; most are small, shunt left to right and close over months.', 'Closure is considered for a large left-to-right shunt with RV volume overload, or right-to-left shunting with hypoxemia.'], p: 'Look at the septum on TEE before the probe comes out.' }
       ] },
     tmvr: { name: 'TMVR', full: 'Transcatheter mitral valve replacement (TMVR), transseptal', pre: 'p_mr', met: ['mvg', 'la', 'pa', 'lvot'],
-      layers: ['chambers', 'valves', 'veins'], wall: 0.15, hide: ['pv', 'tv'], ghost: ['mv', 'svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
+      layers: ['chambers', 'valves', 'veins'], wall: 0.15, hide: ['pv', 'tv'], semi: ['mv'], ghost: ['svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
       build: function () {
         var o = { L: {} }, M = VL.mv;
         tsKit(o, SG.bmvRoute, SG.sites.bmv, 4.2); o.wire = pTube(SG.bmvRoute.concat([pAdd(M.c, M.n, 28)]), 0.42, PX.M.wire);
@@ -7267,7 +7267,7 @@ body.mob #hemo{height:280px}
           b: ['Inadequate anchoring lets the valve migrate into the LA (or the LV).', 'Severe MR returns; the valve has to be retrieved or fixed surgically.'], p: 'Undersizing and a too-atrial position are the usual causes.' }
       ] },
     bmv: { name: 'Balloon valvuloplasty', full: 'Percutaneous balloon mitral valvuloplasty (commissurotomy)', pre: 'p_ms', met: ['mvg', 'la', 'pa'],
-      layers: ['chambers', 'valves', 'veins'], wall: 0.15, hide: ['av', 'pv', 'tv'], ghost: ['mv', 'svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
+      layers: ['chambers', 'valves', 'veins'], wall: 0.15, hide: ['av', 'pv', 'tv'], semi: ['mv'], ghost: ['svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
       build: function () {
         var o = { L: {} }, M = VL.mv;
         tsKit(o, SG.bmvRoute, SG.sites.bmv, 2.2); o.b = mkInoue(); o.bc = pTube(SG.bmvRoute, 1.6, PX.M.guide); o.cv = o.bc.cv; o.len = o.bc.len;
@@ -7374,7 +7374,7 @@ body.mob #hemo{height:280px}
           b: ['Too many clips or too much tissue grasped leave a small orifice.', 'A mean gradient above about 3 mmHg after T-TEER warrants caution; RA pressure stays high.'], p: 'Accept moderate TR rather than create stenosis.' }
       ] },
     ttvr: { name: 'TTVR', full: 'Transcatheter tricuspid valve replacement (TTVR)', pre: 'p_tr', met: ['ra', 'rv', 'tvg'],
-      layers: ['chambers', 'valves', 'veins', 'cond'], wall: 0.15, hide: ['av', 'pv', 'mv'], ghostL: ['cond'], ghost: ['tv', 'svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
+      layers: ['chambers', 'valves', 'veins', 'cond'], wall: 0.15, hide: ['av', 'pv', 'mv'], ghostL: ['cond'], semi: ['tv'], ghost: ['svc', 'ivc', 'lbcv', 'rbcv', 'pvRS', 'pvRI', 'pvLS', 'pvLI', 'cs', 'gcv', 'mcv', 'scv', 'acv', 'pvlv', 'obl'],
       build: function () {
         var o = { L: {} }, T = VL.tv;
         o.wire = pTube(SG.tvRoute.concat([pAdd(T.c, T.n, 30)]), 0.45, PX.M.wire);
@@ -8124,13 +8124,14 @@ body.mob #hemo{height:280px}
   function vNearest(p, ids) { var b = null, bd = 1e9; ids.forEach(function (id) { var d = v3sub(VLV[id].c, p), l = Math.hypot(d[0], d[1], d[2]); if (l < bd) { bd = l; b = id; } }); return { id: b, d: bd }; }
   function valvesProc(o, V) {
     var ov = {}, parts = [];
-    function slot(id) { return ov[id] || (ov[id] = { pin: 0, obs: [], ties: [], sig: '' }); }
+    function slot(id) { return ov[id] || (ov[id] = { pin: 0, obs: [], ties: [], clips: [], sig: '' }); }
     if (o && V) Object.keys(o).forEach(function (key) {
       var d = o[key]; if (!d || typeof d !== 'object') return;
       var clip = d.isClip ? d : d.clip && d.clip.isClip ? d.clip : null;
-      if (clip && clip.g.visible && clip.k > 0.01) {   /* an edge-to-edge clip on the leaflets it grasped */
+      if (clip && clip.g.visible) {   /* an edge-to-edge clip: in the orifice, and on the leaflets once it grasps */
         clip.g.updateWorldMatrix(true, false); VP_V.set(0, 5, 0); clip.g.localToWorld(VP_V);
         var p = [VP_V.x * 1000, VP_V.y * 1000, VP_V.z * 1000], nv = vNearest(p, ['mv', 'tv']); if (nv.d > 30) return;
+        slot(nv.id).clips.push({ p: p }); if (!(clip.k > 0.01)) return;
         VP_X.set(1, 0, 0).applyQuaternion(clip.g.getWorldQuaternion(new THREE.Quaternion()));
         slot(nv.id).ties.push({ p: p, k: Math.min(1, clip.k), x: [VP_X.x, VP_X.y, VP_X.z], slda: !!clip.slda });
         parts.push(nv.id + 't' + p.map(function (v) { return v.toFixed(1); }).join(',') + clip.k.toFixed(2) + (clip.slda ? 's' : ''));
@@ -8186,6 +8187,38 @@ body.mob #hemo{height:280px}
       radialSet(m, o.sOf || function () { return 1; }); m.geometry.computeBoundingSphere();
     };
     return m;
+  }
+  /* the 3D jet leaves the actual orifice: where the closed leaflets meet (the mitral coaptation line, the tricuspid Y,
+     the semilunar cusps' centre), moved beside a clip or a catheter that is in the orifice, and fading as an expanded
+     frame or balloon fills it. Returns how much of the jet is left (0..1). */
+  var VJ_P = new THREE.Vector3(), VJ_D = new THREE.Vector3(), VJ_Y = new THREE.Vector3(0, 1, 0);
+  function vJetPlace(jet, F) {
+    var id = F.valve; if (F.chip || !VLV[id] || !VALV.L[id] || !S[F.to] || !S[F.to].center) return 1;
+    var V = VLV[id], n = v3unit(V.n), LY = VALV.L[id].ly, R = (V.A + V.B) / 2, o, line = null;
+    if (id === 'mv') { var rAn = vRadD(V, LY.aA); o = v3add(v3add(V.c, rAn, -0.3 * R), n, V.coapt); line = v3unit(v3cross(n, rAn)); }
+    else if (id === 'tv') o = v3add(v3add(V.c, n, V.coapt), vlvRef('tv', 'mv'), 0.1 * R);
+    else o = v3add(V.c, n, ROOT_P[id].hk * vRk(id));
+    var ov = VALV.ov[id], left = 1;
+    if (ov) {
+      (ov.clips || []).forEach(function (c) {   /* beside the clip, along the line of coaptation for the mitral valve */
+        var cp = v3add(c.p, n, v3dot(v3sub(o, c.p), n)), d = v3sub(o, cp), u, l;
+        if (line) { var sl = v3dot(d, line); l = Math.abs(sl); u = sl < 0 ? [-line[0], -line[1], -line[2]] : line; }
+        else { l = Math.hypot(d[0], d[1], d[2]); u = l > 0.5 ? [d[0] / l, d[1] / l, d[2] / l] : v3unit(v3cross(n, [0, 1, 0])); }
+        if (l < 8) o = v3add(cp, u, 8);
+      });
+      ov.obs.forEach(function (b) {   /* outside a frame, capsule or balloon in the orifice */
+        var e = b.mi, x = e[0] * o[0] + e[4] * o[1] + e[8] * o[2] + e[12], y = e[1] * o[0] + e[5] * o[1] + e[9] * o[2] + e[13], z = e[2] * o[0] + e[6] * o[1] + e[10] * o[2] + e[14];
+        if (y < b.yLo - 3 || y > b.yHi + 3) return;
+        var Rq = b.rAt(Math.max(b.yLo, Math.min(b.yHi, y))) + 2.5, r = Math.hypot(x, z); if (r >= Rq) return;
+        if (r < 1e-3) { x = Rq; z = 0; } else { x *= Rq / r; z *= Rq / r; }
+        var w = b.mw; o = [w[0] * x + w[4] * y + w[8] * z + w[12], w[1] * x + w[5] * y + w[9] * z + w[13], w[2] * x + w[6] * y + w[10] * z + w[14]];
+      });
+      left = 1 - ov.pin;
+    }
+    VJ_P.set(o[0] * 0.001, o[1] * 0.001, o[2] * 0.001); VJ_D.copy(S[F.to].center).sub(VJ_P);
+    if (VJ_D.lengthSq() < 1e-10) return left;
+    jet.position.copy(VJ_P); jet.quaternion.setFromUnitVectors(VJ_Y, VJ_D.normalize());
+    return left;
   }
   /* ---------- Phone layout ----------
      On a phone the page becomes one screen: the 3D view between a slim top bar and a bottom tab bar of scenes, and a
