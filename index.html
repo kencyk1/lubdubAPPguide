@@ -405,6 +405,10 @@ footer a,.link{color:var(--ven)}
 .angseg4{display:grid;grid-template-columns:1fr 1fr;width:fit-content;max-width:100%}
 .angseg4[hidden]{display:none}
 /* ---- phone layout: one screen with a top bar, the 3D view, a pull-up sheet and a bottom tab bar (built by mBuild) ---- */
+/* translucent chips and the fade behind them follow the light or dark theme */
+:root{--mchip:rgba(255,255,255,.9);--mfade:rgba(251,252,253,.92);--mfade0:rgba(251,252,253,0);--mgrip:#C3CDD7}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--mchip:rgba(20,28,38,.9);--mfade:rgba(24,35,47,.92);--mfade0:rgba(24,35,47,0);--mgrip:#3A4757}}
+:root[data-theme="dark"]{--mchip:rgba(20,28,38,.9);--mfade:rgba(24,35,47,.92);--mfade0:rgba(24,35,47,0);--mgrip:#3A4757}
 html.mob,body.mob{height:100%;overflow:hidden;overscroll-behavior:none}
 body.mob{background:var(--stage)}
 body.mob .wrap{display:none}
@@ -416,9 +420,9 @@ body.mob .wrap{display:none}
 .mico:focus-visible,.mtabs button:focus-visible,.msegs button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 #mstagewrap{position:fixed;left:0;right:0;z-index:1;transition:height .26s ease}
 #mstagewrap>.stage{position:absolute;inset:0;height:auto!important;border:0;border-radius:0}
-#mstagewrap>.toolbar{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;flex-wrap:nowrap;gap:6px;margin:0;padding:8px 10px 10px;overflow-x:auto;scrollbar-width:none;background:linear-gradient(rgba(251,252,253,.92),rgba(251,252,253,0))}
+#mstagewrap>.toolbar{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;flex-wrap:nowrap;gap:6px;margin:0;padding:8px 10px 10px;overflow-x:auto;scrollbar-width:none;background:linear-gradient(var(--mfade),var(--mfade0))}
 #mstagewrap>.toolbar::-webkit-scrollbar{display:none}
-#mstagewrap>.toolbar .btn{flex:none;min-height:32px;padding:0 11px;font-size:12.5px;background:rgba(255,255,255,.9)}
+#mstagewrap>.toolbar .btn{flex:none;min-height:32px;padding:0 11px;font-size:12.5px;background:var(--mchip);color:var(--fg)}
 #mstagewrap>.toolbar .btn[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
 #mstagewrap>.toolbar .sep{flex:none;width:1px;align-self:stretch;margin:4px 2px;background:var(--line)}
 #mstagewrap>.toolbar .cathv:not([hidden]){display:contents}
@@ -430,7 +434,7 @@ body.mob .hint{display:none}
 .msheet{position:fixed;left:0;right:0;z-index:20;bottom:calc(58px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -8px 28px rgba(23,33,44,.18);transition:height .26s ease}
 .msheet.drag{transition:none}
 .mhead{flex:none;padding:6px 14px 10px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
-.mgrip{width:42px;height:5px;margin:0 auto 8px;border-radius:3px;background:#C3CDD7}
+.mgrip{width:42px;height:5px;margin:0 auto 8px;border-radius:3px;background:var(--mgrip)}
 .mchips{display:flex;gap:6px;margin:0 -14px 6px;padding:0 14px 2px;overflow-x:auto;scrollbar-width:none}
 .mchips[hidden]{display:none}
 .mchips::-webkit-scrollbar{display:none}
