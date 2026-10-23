@@ -1,0 +1,60 @@
+{
+  "id": "./",
+  "name": "LubDubAPP Guide",
+  "short_name": "LubDubAPP",
+  "lang": "en",
+  "dir": "ltr",
+  "description": "A beating 3D heart for cardiovascular APP training: anatomy, the cardiac cycle with pressures and heart sounds, rhythm and pacing, structural interventions step by step, coronary territories and simulated echo.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#EFF3F6",
+  "theme_color": "#FFFFFF",
+  "categories": [
+    "education",
+    "medical"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screens/wide.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "The cardiac cycle with the pressure traces under the beating heart"
+    },
+    {
+      "src": "screens/narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "A structural procedure on a phone"
+    }
+  ]
+}

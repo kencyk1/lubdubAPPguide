@@ -9,6 +9,7 @@ An interactive guide for cardiovascular advanced practice provider (APP) trainin
 ## Use it
 
 - **Online:** <https://lubdubappguide.com/>
+- **As an app:** the site installs as an app (Install in the top bar or in About; on iPhone and iPad, Share then Add to Home Screen). It opens in its own window from the home screen, dock or Start menu, and works without internet once it has loaded on the device.
 - **On a computer or a phone:** on a computer the guide fills the window with nothing to scroll: the scenes in a top bar, the 3D view filling the space, the ECG, heart sounds and pressures docked under the heart (resizable), and one side panel with the scene's tabs; a presentation mode goes full screen without the panel, and Page Down / Page Up step through a procedure. On a phone the 3D view fills the screen, the scenes sit in a bottom tab bar, and the traces, scenarios and teaching text are in a sheet you pull up over the heart, each in its own tab, so there is no long scrolling.
 
 ## What is in it
@@ -94,7 +95,9 @@ The conduction system, chordae, moderator band, septal perforator arteries, the 
 | `heart-sounds.json` | Patient heart-sound recordings |
 | `vendor/three/` | three.js r147, served locally so the site works where CDNs are blocked |
 | `LubDubAPP-Guide.html` | Offline single-file edition |
+| `manifest.webmanifest`, `icons/`, `screens/` | The installable app: name, icons and install-dialog screenshots |
+| `sw.js` | Service worker: keeps a copy of the site on the device for offline use (the network is always tried first, so updates show on the next load) |
 | `og.png` | Link-preview image (1200 × 630) |
-| `_headers` | Caching rules for Cloudflare |
+| `_headers` | Caching rules for Cloudflare (the service worker is never cached) |
 
 To run it locally, serve the folder with any static web server (for example `python3 -m http.server`) and open `http://localhost:8000`. Opening `index.html` directly from disk will not load the model; use the offline file for that.

@@ -1,5 +1,12 @@
-# Cloudflare Pages response headers (GitHub Pages ignores this file)
+# Cloudflare response headers (GitHub Pages ignores this file)
 /*.json
   Cache-Control: public, max-age=86400
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=3600
+/icons/*
+  Cache-Control: public, max-age=604800

@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141C26" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LubDubAPP">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>LubDubAPP Guide</title>
 <meta name="description" content="A beating 3D heart for cardiology teaching: anatomy, the cardiac cycle with pressures and heart sounds, valve disease graded mild to severe, conduction blocks, pacing and arrhythmias with ablation, structural interventions step by step, and simulated TTE and TEE views with colour and spectral Doppler.">
 <meta property="og:title" content="LubDubAPP Guide">
@@ -665,6 +673,9 @@ body.dpres .tip{font-size:14.5px}
 #dside[data-seg="views"] .dbody>[data-dpart]:not([data-dpart~="views"]){display:none!important}
 #dside[data-seg="ter"] .dbody>[data-dpart]:not([data-dpart~="ter"]){display:none!important}
 #dside[data-seg="ang"] .dbody>[data-dpart]:not([data-dpart~="ang"]){display:none!important}
+html:not(.can-install) [data-install]{display:none!important}
+.appbox{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--sunken);color:var(--fg);font-size:13.5px;line-height:1.5}
+.appbox .btn{min-height:36px}
 </style>
 
 </head>
@@ -1019,6 +1030,13 @@ body.dpres .tip{font-size:14.5px}
     <span><strong>Web edition</strong> · updated 22 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
+    <div class="appbox" id="appBox">
+      <span><strong>Use it as an app.</strong> Install LubDubAPP Guide to open it from your home screen, dock or Start menu in its own window (in Chrome or Edge the browser menu also offers <i>Install</i> or <i>Add to Home screen</i>). Once it has loaded on a device, it opens without internet.</span>
+      <button class="btn" type="button" id="appInstall" hidden>Install app</button>
+      <span id="appIos" hidden>On iPhone or iPad: tap <b>Share</b>, then <b>Add to Home Screen</b>.</span>
+      <span id="appDone" hidden>You are using the installed app.</span>
+      <span>On a computer you can also <a href="LubDubAPP-Guide.html" download>download the offline single file</a> (6.6 MB) and open it in any browser without internet.</span>
+    </div>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
     <details class="refs"><summary>References and sources</summary>
       <p style="margin:6px 0 0">Grading thresholds, normal values, view definitions and waveform physiology follow these documents. The simulation itself is a simplified model and has not been validated against patient data.</p>
@@ -8515,6 +8533,7 @@ body.dpres .tip{font-size:14.5px}
     var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'mlgL').replace(/lgR/g, 'mlgR');
     sh.innerHTML =
       '<header class="mbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
+        '<button class="mico" type="button" data-install aria-label="Install as an app">' + mIcon('<path d="M12 4v10.5M7.5 10L12 14.5 16.5 10"/><path d="M5 15.5V19h14v-3.5"/>') + '</button>' +
         '<button class="mico" type="button" id="mAboutBtn" aria-label="About this guide">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '</button>' +
         '<button class="mico" type="button" id="mSetBtn" aria-label="Display and layers">' + mIcon('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>') + '</button></header>' +
       '<div id="mstagewrap"></div>' +
@@ -8688,7 +8707,8 @@ body.dpres .tip{font-size:14.5px}
     sh.innerHTML =
       '<header class="dbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
         '<nav class="dtabs" id="dtabs" aria-label="Scenes">' + MTABS.map(function (t) { return '<button type="button" data-dtab="' + t.id + '" aria-pressed="false">' + mIcon(t.icon) + '<span>' + t.name + '</span></button>'; }).join('') + '</nav>' +
-        '<div class="dact"><button class="dico" type="button" id="dPresBtn" aria-pressed="false" title="Presentation mode: full screen, no side panel, larger labels (P)">' + mIcon('<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5v3M8.5 19.5h7"/>') + '<span>Present</span></button>' +
+        '<div class="dact"><button class="dico" type="button" data-install title="Install LubDubAPP Guide on this device as an app">' + mIcon('<path d="M12 4v10.5M7.5 10L12 14.5 16.5 10"/><path d="M5 15.5V19h14v-3.5"/>') + '<span>Install</span></button>' +
+        '<button class="dico" type="button" id="dPresBtn" aria-pressed="false" title="Presentation mode: full screen, no side panel, larger labels (P)">' + mIcon('<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5v3M8.5 19.5h7"/>') + '<span>Present</span></button>' +
         '<button class="dico" type="button" id="dAboutBtn" title="About this guide, credits and references">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '<span>About</span></button></div></header>' +
       '<main class="dwork" id="dwork"><div class="dstage" id="dstage"><div class="dpcap" id="dpcap"><div class="dptt"><b id="dpTitle"></b><span id="dpSub"></span></div><div class="dpnav" id="dpNav"><button class="btn" type="button" id="dpPrev" aria-label="Previous step">‹</button><button class="btn" type="button" id="dpNext" aria-label="Next step">›</button></div></div></div>' +
         '<div class="dsplit" id="dsplit" role="separator" aria-orientation="horizontal" aria-label="Resize the traces" tabindex="0" title="Drag to resize the traces; double-click to reset"></div><div class="ddock" id="ddock"></div><div class="decho" id="decho"></div></main>' +
@@ -8871,6 +8891,37 @@ body.dpres .tip{font-size:14.5px}
     if (ready) { placeLabels(); drawCompass(); updateCarm(); }
   }
   requestAnimationFrame(loop);
+})();
+</script>
+<script>
+/* Installable app (web edition only): save the site for offline use, and offer Install where the browser allows it.
+   Chrome, Edge and Android hand over an install prompt; iPhone and iPad have none, so Install there opens the steps. */
+(function () {
+  var root = document.documentElement, deferred = null;
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)))
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {}); });
+  function show() {
+    root.classList.toggle('can-install', !standalone && (!!deferred || ios));
+    var b = document.getElementById('appInstall'), h = document.getElementById('appIos'), d = document.getElementById('appDone');
+    if (b) b.hidden = standalone || !deferred;
+    if (h) h.hidden = standalone || !ios;
+    if (d) d.hidden = !standalone;
+  }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; show(); });
+  window.addEventListener('appinstalled', function () { deferred = null; standalone = true; show(); });
+  function install() {
+    if (deferred) { var p = deferred; deferred = null; p.prompt(); Promise.resolve(p.userChoice).then(show, show); show(); return; }
+    var a = document.getElementById('dAboutBtn') || document.getElementById('mAboutBtn');   /* no prompt: show the steps in About */
+    if (a) a.click();
+    setTimeout(function () { var box = document.getElementById('appBox'); if (box) box.scrollIntoView({ block: 'center' }); }, 80);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest && e.target.closest('[data-install], #appInstall'); if (!t) return;
+    e.preventDefault(); install();
+  });
+  show();
 })();
 </script>
 </body>
