@@ -905,7 +905,7 @@ body.mob #hemo{height:280px}
       </ol>
     </details>
     <span><strong>3D model:</strong> Human Reference Atlas, <a href="https://github.com/hubmapconsortium/ccf-3d-reference-object-library" target="_blank" rel="noopener">CCF 3D Reference Object Library</a> (HuBMAP) — Visible Human Male heart and heart vasculature, v1.2. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>; merged, simplified and recolored here for teaching.</span>
-    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. In the 3D model the valve leaflets and cusps are built on each annulus and open and close with the same pressure model (the mitral and tricuspid leaflets follow inflow, with E and A waves), with the chordae taut when the valve is shut. The aortic and pulmonary roots (the sinuses of Valsalva between the cusps and the artery) are drawn by the simulator, since the source model leaves a gap there. In the structural procedures the devices act on the leaflets: an expanded frame or balloon holds them open, a clip holds the edges it grasped, and the leaflets of the transcatheter valves open and close with the cycle. The 3D jets use the echo’s colour Doppler map with you as the transducer: red to yellow for flow toward you, blue to cyan away, breaking into a mosaic where it is fast. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
+    <span>The vessel the source model names “diagonal branch of the LAD” runs from the left main in the left AV groove and gives off the obtuse marginal, so it is labeled here as the circumflex. The conduction system, chordae tendineae, moderator band, septal perforator arteries and the smaller coronary branches (the second diagonal, further obtuse marginals, posterolateral, conus, SA and AV nodal, RV and inferior septal branches, and the distal first diagonal and obtuse marginal) are not part of the source model; they are drawn schematically, fitted to the model’s own landmarks (the SVC–RA junction, Koch’s triangle, the septal crest beneath the aortic valve, the septal surfaces, the papillary muscles and the leaflets). Echo images are simulated from the beating model’s cross-section in each view’s plane: B-mode speckle and walls move with the beat, valve leaflets open and close from the pressure model, and colour and spectral Doppler are calculated from the same pressures (simplified Bernoulli, v = √(ΔP/4); flow convergence and aliasing at the Nyquist limit). The left atrial appendage lumen and the fossa ovalis are drawn by the simulator because the source model lacks them. In the 3D model the valve leaflets and cusps are built on each annulus and open and close with the same pressure model (the mitral and tricuspid leaflets follow inflow, with E and A waves), with the chordae taut when the valve is shut. The aortic and pulmonary roots (the sinuses of Valsalva between the cusps and the artery) are drawn by the simulator, since the source model leaves a gap there. In the structural procedures the devices act on the leaflets: an expanded frame or balloon holds them open, a clip holds the edges it grasped, and the leaflets of the transcatheter valves open and close with the cycle. The 3D jets use the echo’s colour Doppler map with you as the transducer: red to yellow for flow toward you, blue to cyan away, breaking into a mosaic where it is fast. Each jet leaves its valve along the valve’s axis and curves where the wall of the chamber it enters turns it. Coronary territories follow the usual right-dominant distribution of the AHA 17-segment model, laid onto this LV using its own interventricular grooves; in the occlusion scenarios the territory stops moving inward and thickening, and the 12-lead ECG is a model tracing built to show the typical pattern. Probe positions, planes and the omniplane angles shown are fitted to this one heart, so depths and angles are approximate; C-arm angles are read from the 3D camera. The cine angiogram is computed from the vessel centrelines with normal adult lumen sizes, X-ray attenuation by path length and simplified, schematic contrast flow; it is not a recording. Pressures and percentages are typical adult values; not for diagnosis.</span>
   </footer>
 </div>
 
@@ -3621,14 +3621,22 @@ body.mob #hemo{height:280px}
      yellow toward the transducer, dark blue to cyan away, wrapping past the Nyquist limit) and the same packet noise that
      turns a fast jet into a mosaic. In 3D the viewer is the transducer: a jet coming toward you is red and yellow, one
      going away is blue and cyan, so the colours change as the heart is turned, as they would with the probe. The volume
-     is drawn as nested shells (edge, body, core), each coloured by its distance from the jet axis. */
-  var DOPJ_F = { value: 0 }, DOPJ_NYQ = 0.65;
+     is drawn as nested shells (edge, body, core), each coloured by its distance from the jet axis. The shells are built
+     straight and bent in the vertex shader along a centreline (uP / uT / uN, 12 points in the jet's frame, mm), so a jet
+     can follow the chamber it flows into; uSc scales the width (x) and the length (y) without bending the centreline. */
+  var DOPJ_F = { value: 0 }, DOPJ_NYQ = 0.65, DOPJ_SEE = 0.7;
   var DOPJ_VS = [
-    'uniform float uS;',
+    'uniform float uS, uPL; uniform vec2 uSc; uniform vec3 uP[12]; uniform vec3 uT[12]; uniform vec3 uN[12];',
     'varying vec3 vL; varying vec3 vW; varying vec3 vAx; varying vec3 vN;',
     'void main() {',
-    '  vN = normalize(mat3(modelMatrix) * normal); vL = position * uS; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz;',
-    '  vAx = normalize(mat3(modelMatrix) * vec3(0.0, 1.0, 0.0));',
+    '  vec3 q = position * uS, P, T, N; float s = q.y * uSc.y;',
+    '  if (s <= 0.0) { P = uP[0] + s * uT[0]; T = uT[0]; N = uN[0]; }',
+    '  else if (s >= uPL) { P = uP[11] + (s - uPL) * uT[11]; T = uT[11]; N = uN[11]; }',
+    '  else { float u = s / uPL * 11.0; int i = int(u); float f = u - float(i);',
+    '    P = mix(uP[i], uP[i + 1], f); T = normalize(mix(uT[i], uT[i + 1], f)); N = normalize(mix(uN[i], uN[i + 1], f)); }',
+    '  N = normalize(N - T * dot(N, T)); vec3 B = cross(N, T), p = P + uSc.x * (q.x * N + q.z * B);',
+    '  vN = normalize(mat3(modelMatrix) * (normal.x * N + normal.y * T + normal.z * B)); vL = q;',
+    '  vAx = normalize(mat3(modelMatrix) * T); vec4 w = modelMatrix * vec4(p / uS, 1.0); vW = w.xyz;',
     '  gl_Position = projectionMatrix * viewMatrix * w;',
     '}'].join('\n');
   var DOPJ_FS = [
@@ -3654,12 +3662,12 @@ body.mob #hemo{height:280px}
     '    float al = vL.y, tt = min(1.0, al / (0.55 * uL)), hw = uW0 + (uWh - uW0) * pow(sin(1.5707963 * tt), 0.9), fr = length(vL.xz) / hw;',
     '    float vcl = min(uV0 / (1.0 + 0.3 * al / uW0), 2.0 * uNy);',
     '    spd = vcl * exp(-pow(fr / 0.6, 2.0)); tb = 0.14 * vcl * (vcl > 1.5 * uNy ? 3.4 : 1.0);',
-    '    a = (1.0 - ss((fr - 0.95) / 0.3)) * (1.0 - ss((al / uL - 0.7) / 0.3));',
+    '    a = (1.0 - ss((fr - 0.95) / 0.3)) * (1.0 - ss((al / uL - 0.7) / 0.3)) * ss(0.35 + al / 1.2);',   /* bright from the vena contracta */
     '  } else {',   /* flow convergence: Q / (2 pi r^2) toward the orifice */
     '    if (uPisa < 0.5) discard;',
     '    float r = length(vL), rcm = max(0.03, r / 10.0), Rp = min(32.0, 10.0 * sqrt(uQ / (6.2831853 * 0.1 * uNy * 100.0)));',
     '    spd = min(min(uV0, 1.6 * uNy), uQ / (6.2831853 * rcm * rcm) / 100.0); tb = spd >= 1.55 * uNy ? 0.18 * spd : 0.04 * spd;',
-    '    a = 1.0 - ss((r / Rp - 0.75) / 0.25);',
+    '    a = (1.0 - ss((r / Rp - 0.75) / 0.25)) * ss(-vL.y / max(0.5, 0.45 * r));',
     '  }',
     '  float nz = (vn(vL / 1.8 + vec3(0.0, 0.0, uF * 13.0)) - 0.5) * 1.6 + (vn(vL / 1.0 + vec3(40.0, 40.0, 40.0 + uF * 17.0)) - 0.5) * 0.9;',
     '  float v = spd * sg + tb * nz;',
@@ -3669,26 +3677,35 @@ body.mob #hemo{height:280px}
     '  gl_FragColor = vec4(cmap(v / uNy), min(0.95, a * uK * uWt));',
     '}'].join('\n');
   /* builds the shells into group g; geometry in the group's units, uS converts them to mm; P = { L, Wh, w0 (mm),
-     v0 (m/s), q (cm^3/s, for the convergence zone), pisa, ro (render order) }. Returns the shared strength uniform. */
+     v0 (m/s), q (cm^3/s, for the convergence zone), pisa, ro (render order) }. Returns the shared strength uniform;
+     the centreline and scale uniforms are kept in g.userData.jp (straight until vJetPath bends them). */
   function dopJet(g, uS, P) {
     var K = { value: 1 }, ro = P.ro || 20, shells = [[0.85, 0.42], [0.6, 0.62], [0.32, 0.95]];
     function hw(al) { var tt = Math.min(1, al / (0.55 * P.L)); return P.w0 + (P.Wh - P.w0) * Math.pow(Math.sin(Math.PI / 2 * tt), 0.9); }
-    function mat(wt) {
-      return new THREE.ShaderMaterial({ vertexShader: DOPJ_VS, fragmentShader: DOPJ_FS, transparent: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide,
-        uniforms: { uS: { value: uS }, uK: K, uF: DOPJ_F, uV0: { value: P.v0 }, uW0: { value: P.w0 }, uWh: { value: P.Wh }, uL: { value: P.L }, uQ: { value: P.q || 0 }, uNy: { value: DOPJ_NYQ }, uPisa: { value: P.pisa ? 1 : 0 }, uWt: { value: wt } } });
+    var JP = { P: { value: [] }, T: { value: [] }, N: { value: [] }, PL: { value: P.L }, SC: { value: new THREE.Vector2(1, 1) }, L: P.L, hw: hw };
+    for (var i = 0; i < 12; i++) { JP.P.value.push(new THREE.Vector3(0, P.L * i / 11, 0)); JP.T.value.push(new THREE.Vector3(0, 1, 0)); JP.N.value.push(new THREE.Vector3(1, 0, 0)); }
+    g.userData.jp = JP;
+    function mat(wt, see) {
+      return new THREE.ShaderMaterial({ vertexShader: DOPJ_VS, fragmentShader: DOPJ_FS, transparent: true, depthWrite: false, depthTest: !see, side: THREE.DoubleSide,
+        uniforms: { uS: { value: uS }, uP: JP.P, uT: JP.T, uN: JP.N, uPL: JP.PL, uSc: JP.SC, uK: K, uF: DOPJ_F, uV0: { value: P.v0 }, uW0: { value: P.w0 }, uWh: { value: P.Wh }, uL: { value: P.L }, uQ: { value: P.q || 0 }, uNy: { value: DOPJ_NYQ }, uPisa: { value: P.pisa ? 1 : 0 }, uWt: { value: wt * (see ? DOPJ_SEE : 1) } } });
+    }
+    function add(geo, wt, ro2) {
+      [true, false].forEach(function (see) {
+        var m = new THREE.Mesh(geo, mat(wt, see)); m.renderOrder = ro2 + (see ? 0 : 6); m.frustumCulled = false;
+        m.onBeforeRender = function () { DOPJ_F.value = Math.floor(cyc.t * 25); };
+        g.add(m);
+      });
     }
     shells.forEach(function (sh, i) {
       var prof = []; for (var j = 0; j <= 24; j++) { var al = P.L * j / 24; prof.push(new THREE.Vector2(Math.max(1e-4, hw(al) * sh[0]) / uS, al / uS)); }
       prof.push(new THREE.Vector2(1e-4, P.L / uS));
-      var m = new THREE.Mesh(new THREE.LatheGeometry(prof, 30), mat(sh[1])); m.renderOrder = ro + i; m.frustumCulled = false;
-      m.onBeforeRender = function () { DOPJ_F.value = Math.floor(cyc.t * 25); };
-      g.add(m);
+      add(new THREE.LatheGeometry(prof, 30), sh[1], ro + i);
     });
     if (P.pisa) {   /* two shells of the convergence zone: slow outside, aliased inside */
       var ra = Math.sqrt((P.q || 0) / (2 * Math.PI * DOPJ_NYQ * 100)) * 10 * (P.pisa === 'small' ? 0.6 : 1);
       [[1.2, 0.3], [0.65, 0.7]].forEach(function (sh, i) {
         var R = Math.max(0.6, ra * sh[0]) / uS, ge = new THREE.SphereGeometry(R, 24, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-        var m = new THREE.Mesh(ge, mat(sh[1])); m.renderOrder = ro - 2 + i; m.frustumCulled = false; g.add(m);
+        add(ge, sh[1], ro - 2 + i);
       });
     }
     return K;
@@ -3704,7 +3721,7 @@ body.mob #hemo{height:280px}
     var g = new THREE.Group(), hgt = dist * (F.len || 1.05), rad = hgt * (F.rad || (F.kind === 'sten' ? 0.22 : 0.42)), reg = F.kind === 'regurg';
     var base = F.chip ? 'hocm' : ({ 'mv:regurg': 'mr', 'mv:sten': 'ms', 'av:sten': 'as', 'av:regurg': 'ar', 'tv:regurg': 'tr', 'tv:sten': 'ts' })[F.valve + ':' + F.kind];
     var J = JETP[key] || JETP[base] || {}, A = reg ? (J.eroa || 0.35) : (J.area || 1), v0 = reg ? 5 : F.valve === 'av' ? 4.2 : F.valve === 'pv' ? 3 : 1.8;
-    g.userData.k = dopJet(g, 1000, { L: hgt * 1000, Wh: rad * 750, w0: Math.min(rad * 500, Math.sqrt(A / Math.PI) * 10), v0: v0, q: A * v0 * 100, pisa: reg ? true : 'small', ro: 20 });
+    g.userData.L = hgt * 1000; g.userData.k = dopJet(g, 1000, { L: hgt * 1000, Wh: rad * 750, w0: Math.min(rad * 500, Math.sqrt(A / Math.PI) * 10), v0: v0, q: A * v0 * 100, pisa: reg ? true : 'small', ro: 20 });
     g.position.copy(from); g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); g.visible = false;
     jetGroup.add(g); return g;
   }
@@ -3987,7 +4004,7 @@ body.mob #hemo{height:280px}
     var jet = F ? jetFor(curKey) : null;
     if (jet) {
       jet.visible = k > 0.02; var jleft = jet.visible ? vJetPlace(jet, F) : 1; if (jleft < 0.05) jet.visible = false;
-      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj) * jleft; var js = X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1; jet.scale.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js, (0.8 + 0.2 * kj) * js); }
+      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj) * jleft; var js = (X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1) * (0.55 + 0.45 * jleft); jet.userData.jp.SC.value.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js * (jet.userData.ls || 1)); }
     }
     var skip = CYC_SKIP[b.type] || {};
     Object.keys(CYC_WIN).forEach(function (id) {
@@ -8191,14 +8208,77 @@ body.mob #hemo{height:280px}
   /* the 3D jet leaves the actual orifice: where the closed leaflets meet (the mitral coaptation line, the tricuspid Y,
      the semilunar cusps' centre), moved beside a clip or a catheter that is in the orifice, and fading as an expanded
      frame or balloon fills it. Returns how much of the jet is left (0..1). */
-  var VJ_P = new THREE.Vector3(), VJ_D = new THREE.Vector3(), VJ_Y = new THREE.Vector3(0, 1, 0);
+  var VJ_P = new THREE.Vector3(), VJ_D = new THREE.Vector3(), VJ_X = new THREE.Vector3(), VJ_Y = new THREE.Vector3(0, 1, 0), VJ_Q = new THREE.Quaternion(), VJC = {};
+  /* the walls of the chamber a jet flows into: its vertices as remodelled (the rest pose plus the remodel field; the
+     aortic and pulmonary roots as drawn), in mm */
+  function vCloud(to) {
+    var c = VJC[to]; if (c && c.sig === remSig) return c.v;
+    var a = [];
+    (S[to].meshes || []).forEach(function (m) {
+      if (!m.isMesh) return; var ud = m.userData;
+      if (ud.dyn) { var pos = m.geometry.attributes.position; m.updateMatrixWorld(true); for (var i = 0; i < pos.count; i++) { VJ_X.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld); a.push(VJ_X.x * 1000, VJ_X.y * 1000, VJ_X.z * 1000); } return; }
+      remEnsure(m); for (var j = 0; j < ud.w0.length; j++) a.push(ud.w0[j] + ud.remD[j]);
+    });
+    VJC[to] = { sig: remSig, v: new Float32Array(a) }; return VJC[to].v;
+  }
+  /* how far a probe of radius rc (widening slowly) travels from p along d before it meets a wall vertex */
+  function vFree(W, p, d, rc, far) {
+    var best = far;
+    for (var i = 0; i < W.length; i += 3) {
+      var x = W[i] - p[0], y = W[i + 1] - p[1], z = W[i + 2] - p[2], t = x * d[0] + y * d[1] + z * d[2];
+      if (t <= 0.5 || t >= best) continue;
+      var r = rc + 0.08 * t; if (x * x + y * y + z * z - t * t < r * r) best = t;
+    }
+    return best;
+  }
+  /* the jet's centreline: it leaves the valve along the valve axis and, where the chamber wall comes up ahead, turns
+     along it toward the open body of the chamber while that lies ahead (no tighter than its own width allows), as a jet deflects off the wall;
+     if it is boxed in it stops there. A leak into an atrium reaches up to three quarters of the way across it (at most a
+     quarter longer than its set length, and 48 mm). Written into the jet's bend uniforms, in its own frame. */
+  function vJetPath(jet, F, o0, d0) {
+    var jp = jet.userData.jp; if (!jp) return;
+    var key = F.to + o0.map(function (v) { return Math.round(v / 2); }).join(',') + d0.map(function (v) { return v.toFixed(2); }).join(',') + remSig;
+    if (jp.key === key) return; jp.key = key;
+    var all = vCloud(F.to), L = jp.L, R2 = Math.pow(L + 25, 2), W = [];
+    for (var i = 0; i < all.length; i += 3) { var x = all[i] - o0[0], y = all[i + 1] - o0[1], z = all[i + 2] - o0[2]; if (x * x + y * y + z * z < R2) W.push(all[i], all[i + 1], all[i + 2]); }
+    var C = S[F.to].center, Cm = [C.x * 1000, C.y * 1000, C.z * 1000], atr = F.kind === 'regurg' && (F.to === 'la' || F.to === 'ra'), Lm = L * (atr ? 1.25 : 1);
+    var h = Lm / 11, p = o0.slice(), d = v3unit(d0), pts = [p.slice()], stop = Lm, fd = 0;
+    for (var k = 1; k < 12; k++) {
+      var s0 = (k - 1) * h, w = jp.hw(Math.min(L, s0 + h)), rc = Math.max(2.5, Math.min(7, 0.45 * w)), need = h + rc + 3; fd = vFree(W, p, d, rc, 80);
+      if (fd < need) {
+        var cen = v3unit(v3sub(Cm, p)), e1 = v3unit(v3cross(d, Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0])), e2 = v3cross(d, e1);
+        var maxA = Math.min(0.55, h / (0.9 * w)), best = d, kc = v3dot(d, cen) > 0.2 ? 4 : 0, bs = Math.min(fd, 2 * need) + kc * v3dot(d, cen);
+        [0.5, 1].forEach(function (f) {
+          for (var j = 0; j < 8; j++) {
+            var a = maxA * f, ph = j * Math.PI / 4, c = v3unit(v3add(v3add(v3add([0, 0, 0], d, Math.cos(a)), e1, Math.sin(a) * Math.cos(ph)), e2, Math.sin(a) * Math.sin(ph)));
+            var sc = Math.min(vFree(W, p, c, rc, 80), 2 * need) + kc * v3dot(c, cen) - 3 * f;
+            if (sc > bs) { bs = sc; best = c; }
+          }
+        });
+        d = best; fd = vFree(W, p, d, rc, 80);
+      }
+      if (fd < 0.6 * h && stop === Lm) stop = s0;
+      p = v3add(p, d, h); pts.push(p.slice());
+    }
+    jet.updateMatrixWorld(); VJ_Q.copy(jet.quaternion).invert();
+    var T = [], N = [];
+    pts.forEach(function (q, i) { T.push(i === 0 ? v3unit(d0) : v3unit(v3sub(pts[Math.min(11, i + 1)], pts[i - 1]))); });
+    VJ_X.set(1, 0, 0).applyQuaternion(jet.quaternion); var n0 = [VJ_X.x, VJ_X.y, VJ_X.z];
+    T.forEach(function (t, i) { n0 = v3unit(v3add(n0, t, -v3dot(n0, t))); N.push(n0); });
+    pts.forEach(function (q, i) {
+      jp.P.value[i].set(q[0] - o0[0], q[1] - o0[1], q[2] - o0[2]).applyQuaternion(VJ_Q);
+      jp.T.value[i].set(T[i][0], T[i][1], T[i][2]).applyQuaternion(VJ_Q);
+      jp.N.value[i].set(N[i][0], N[i][1], N[i][2]).applyQuaternion(VJ_Q);
+    });
+    jp.PL.value = Lm; jet.userData.ls = stop < L ? Math.max(0.4, stop / L) : atr ? Math.max(1, Math.min(1.25, 48 / L, 0.75 * (stop < Lm ? stop : Lm + fd) / L)) : 1;
+  }
   function vJetPlace(jet, F) {
     var id = F.valve; if (F.chip || !VLV[id] || !VALV.L[id] || !S[F.to] || !S[F.to].center) return 1;
     var V = VLV[id], n = v3unit(V.n), LY = VALV.L[id].ly, R = (V.A + V.B) / 2, o, line = null;
     if (id === 'mv') { var rAn = vRadD(V, LY.aA); o = v3add(v3add(V.c, rAn, -0.3 * R), n, V.coapt); line = v3unit(v3cross(n, rAn)); }
     else if (id === 'tv') o = v3add(v3add(V.c, n, V.coapt), vlvRef('tv', 'mv'), 0.1 * R);
     else o = v3add(V.c, n, ROOT_P[id].hk * vRk(id));
-    var ov = VALV.ov[id], left = 1;
+    var ov = VALV.ov[id], left = 1, o0 = o.slice();
     if (ov) {
       (ov.clips || []).forEach(function (c) {   /* beside the clip, along the line of coaptation for the mitral valve */
         var cp = v3add(c.p, n, v3dot(v3sub(o, c.p), n)), d = v3sub(o, cp), u, l;
@@ -8215,9 +8295,14 @@ body.mob #hemo{height:280px}
       });
       left = 1 - ov.pin;
     }
-    VJ_P.set(o[0] * 0.001, o[1] * 0.001, o[2] * 0.001); VJ_D.copy(S[F.to].center).sub(VJ_P);
-    if (VJ_D.lengthSq() < 1e-10) return left;
-    jet.position.copy(VJ_P); jet.quaternion.setFromUnitVectors(VJ_Y, VJ_D.normalize());
+    /* the jet leaves along the valve axis (backward for a leak, forward for a stenosis), from where the leaflets close
+       (the annulus level for a leak, with the convergence zone below it), then follows the receiving chamber (vJetPath,
+       worked out from the undisturbed origin, so a device beside the leak moves the jet without reshaping it) */
+    var reg = F.kind === 'regurg', ax = reg ? [-n[0], -n[1], -n[2]] : n;
+    if (reg && (id === 'mv' || id === 'tv')) { o = v3add(o, n, -0.8 * V.coapt); o0 = v3add(o0, n, -0.8 * V.coapt); }
+    VJ_P.set(o[0] * 0.001, o[1] * 0.001, o[2] * 0.001); VJ_D.set(ax[0], ax[1], ax[2]).normalize();
+    jet.position.copy(VJ_P); jet.quaternion.setFromUnitVectors(VJ_Y, VJ_D);
+    vJetPath(jet, F, o0, ax);
     return left;
   }
   /* ---------- Phone layout ----------
