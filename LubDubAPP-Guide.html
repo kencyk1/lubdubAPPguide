@@ -497,6 +497,173 @@ body.mob #hemo{height:280px}
 #msheet[data-seg="ang"] .mbody>[data-part]:not([data-part~="ang"]){display:none!important}
 #msheet[data-seg="scen"] #cyclepanel>:not(.scenrow){display:none!important}
 #msheet[data-seg="trace"] #cyclepanel>.scenrow{display:none!important}
+/* ---- desktop workspace (built by dBuild at 1024 × 600 and up): scenes in a top bar, the 3D view filling the window,
+   the traces docked under it, one side panel; nothing scrolls but the panel ---- */
+html.dsk,body.dsk{height:100%;overflow:hidden}
+body.dsk .wrap{display:none}
+#dshell{--dside:clamp(340px,26vw,430px);--ddock:clamp(280px,42vh,480px);--decho:clamp(400px,48%,700px);--dbarh:54px;
+  position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1fr) var(--dside);grid-template-rows:var(--dbarh) minmax(0,1fr);background:var(--bg)}
+/* top bar */
+header.dbar{grid-column:1/-1;grid-row:1;display:flex;flex-direction:row;align-items:center;gap:6px;padding:0 12px 0 16px;background:var(--surface);border-bottom:1px solid var(--line);min-width:0}
+.dbar .logo{width:30px;height:28px;margin:0;flex:none}
+.dbar h1{flex:none;margin:0 18px 0 6px;font:600 20px/1 var(--serif);letter-spacing:-.005em;white-space:nowrap}
+.dtabs{flex:1;min-width:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.dtabs::-webkit-scrollbar{display:none}
+.dtabs button{flex:none;display:flex;align-items:center;gap:7px;height:38px;padding:0 13px;border:0;border-radius:9px;background:none;font:600 14px/1 var(--sans);color:var(--muted);cursor:pointer;white-space:nowrap}
+.dtabs button svg{width:20px;height:20px;flex:none}
+.dtabs button:hover{color:var(--fg);background:var(--sunken)}
+.dtabs button[aria-pressed="true"]{color:var(--ven);background:var(--sunken);background:color-mix(in srgb,var(--ven) 11%,transparent)}
+.dtabs button[aria-pressed="true"] svg{stroke-width:2.2}
+.dact{flex:none;display:flex;gap:6px;margin-left:8px}
+.dico{display:flex;align-items:center;gap:7px;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font:600 13px/1 var(--sans);cursor:pointer}
+.dico svg{width:18px;height:18px}
+.dico:hover{border-color:var(--ven)}
+.dico[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
+.dtabs button:focus-visible,.dico:focus-visible,.dsegs button:focus-visible,.dsplit:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+/* work area: the view, the splitter and trace dock under it, or the echo column beside it */
+.dwork{grid-column:1;grid-row:2;min-width:0;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+#dshell[data-dock="1"] .dwork{grid-template-rows:minmax(0,1fr) 8px var(--ddock)}
+#dshell[data-echo="1"] .dwork{grid-template-columns:minmax(0,1fr) var(--decho)}
+.dstage{position:relative;min-width:0;min-height:0;grid-column:1;grid-row:1}
+.dstage>.stage{position:absolute;inset:0;height:auto!important;border:0;border-radius:0}
+.dstage>.toolbar{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;flex-wrap:nowrap;gap:5px;margin:0;padding:10px 12px 14px;overflow-x:auto;scrollbar-width:none;background:linear-gradient(var(--mfade),var(--mfade0))}
+.dstage>.toolbar::-webkit-scrollbar{display:none}
+.dstage>.toolbar .btn{flex:none;min-height:30px;padding:0 9px;font-size:12px;background:var(--mchip);color:var(--fg)}
+.dstage>.toolbar .btn[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
+.dstage>.toolbar .sep{flex:none;width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
+.dstage>.toolbar .cathv:not([hidden]){display:contents}
+body.dsk .hint{top:auto;bottom:14px}
+#dshell[data-dock="1"] .hint,#dshell[data-echo="1"] .hint{display:none}
+body.dsk .impcap{bottom:16px}
+body.dsk .anghud{top:58px}
+.dsplit{display:none;grid-column:1;grid-row:2;cursor:row-resize;background:#0A1119;border-top:1px solid var(--line);position:relative;touch-action:none}
+.dsplit::after{content:'';position:absolute;left:50%;top:2px;width:44px;height:3px;margin-left:-22px;border-radius:2px;background:#3A4757}
+.dsplit:hover::after,.dsplit.on::after{background:#86AEEB}
+#dshell[data-dock="1"] .dsplit{display:block}
+.ddock{display:none;grid-column:1;grid-row:3;min-height:0;background:#0A1119}
+#dshell[data-dock="1"] .ddock{display:block}
+.decho{display:none;grid-column:2;grid-row:1/-1;min-height:0;overflow-y:auto;overscroll-behavior:contain;background:#0A1119;border-left:1px solid #1D2733;scrollbar-width:thin;scrollbar-color:#2B3644 transparent}
+#dshell[data-echo="1"] .decho{display:block}
+/* the monitor in the dock: controls along the top, traces sharing one time axis, chips and readouts in a column */
+.ddock>#cyclepanel{height:100%;max-width:none;border:0;border-radius:0;padding:10px 14px 10px;display:grid;grid-template-columns:minmax(0,1fr) 272px;
+  grid-template-rows:minmax(0,.8fr) minmax(0,.3fr) minmax(0,2.6fr) auto;grid-template-areas:"ecg gut" "pcg gut" "hemo gut" "phase gut";gap:6px 18px}
+#dshell[data-rhy="1"] .ddock>#cyclepanel{grid-template-rows:minmax(0,1.6fr) minmax(0,.3fr) minmax(0,1.5fr) auto}
+.dgut .cychead{flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:5px;min-width:0}
+.dgut .cychead .eyebrow{font:600 15px/1.25 var(--serif)}
+.dgut .cycstats{font-size:11.5px;line-height:1.45;white-space:normal}
+.dgut .cycctl{flex-wrap:wrap;gap:5px;margin-top:3px}
+.dgut .cycctl .btn{min-height:28px;padding:0 8px;font-size:12px}
+.dgut .cycctl .seg{padding:2px;gap:2px}
+.dgut .cycctl .seg .btn{min-height:24px}
+.ddock #ecg{grid-area:ecg;height:100%!important;min-height:0}
+.ddock #phono{grid-area:pcg;height:100%!important;min-height:0}
+.ddock #hemo{grid-area:hemo;height:100%!important;min-height:0}
+.ddock .phasebar{grid-area:phase}
+.ddock .scrubhint{display:none}
+.dgut{grid-area:gut;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:2px;scrollbar-width:thin;scrollbar-color:#2B3644 transparent}
+.dgut .cycrow{display:flex;flex-wrap:wrap;gap:4px;margin:0}
+.dgut .vchip,.dgut .sound{min-height:24px;font-size:11.5px}
+.dgut .vchip{padding:0 8px;gap:5px}
+.dgut .sound{min-width:32px}
+.dgut .hfrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:4px 8px;margin:0}
+.dgut .hfrow .seg{display:flex;flex-wrap:wrap;padding:2px;gap:2px}
+.dgut .hfrow .btn{min-height:24px;padding:0 7px;font-size:11.5px}
+.dgut .hemolegend{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:4px;margin:0}
+.dgut .hemolegend .gname{grid-column:1/-1;margin:0}
+.dgut .hchip{min-height:25px;padding:0 7px;gap:5px;font-size:11.5px;min-width:0}
+.dgut .hchip .sw{width:10px}
+.dgut .hchip .val{font-size:11.5px}
+.dgut .hchip .nrm{font-size:10.5px}
+/* the echo image beside the view */
+.decho>#echopanel{min-height:100%;border:0;border-radius:0;padding:12px 14px 16px}
+.decho #echo{width:min(100%,calc(100vh - var(--dbarh) - 330px));min-width:280px;margin:0 auto}
+/* side panel */
+.dside{grid-column:2;grid-row:2;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--line)}
+.dhead{flex:none;padding:14px 16px 0;border-bottom:1px solid var(--line)}
+.dtrow{display:flex;align-items:center;gap:10px;margin-top:3px}
+.dtitle{margin:0;font:600 19px/1.25 var(--serif);color:var(--fg);text-wrap:balance}
+.dsub{flex:1;min-width:0;margin:0;font:400 13px/1.4 var(--sans);color:var(--muted)}
+.dnav{flex:none}
+.dnav .scnav{margin:0}
+.dnav .scnav .btn{min-height:32px;padding:0 11px;font-size:13px}
+.dchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.dchips[hidden]{display:none}
+.dchips .btn{min-height:32px;padding:0 12px;font-size:13px}
+.dsegs{display:flex;gap:4px;margin:12px -4px 0}
+.dsegs button{flex:none;padding:9px 8px 10px;border:0;border-bottom:2px solid transparent;background:none;font:600 13.5px/1 var(--sans);color:var(--muted);cursor:pointer;white-space:nowrap}
+.dsegs button:hover{color:var(--fg)}
+.dsegs button[aria-pressed="true"]{color:var(--fg);border-bottom-color:var(--ven)}
+.dbody{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 16px 28px;display:flex;flex-direction:column;gap:18px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.dbody>*{flex:none;margin:0}
+.dbody>.card{border:0;border-radius:0;padding:0;background:none;box-shadow:none}
+.dbody>.cycinfo{border:0;padding:0;background:none;border-radius:0;max-height:none;overflow:visible}
+body.dsk #cycinfo .schead{display:none}
+body.dsk #cycinfo #scMore{display:none}
+.dbody .sccols{display:flex;flex-direction:column;gap:12px}
+.dpre>.eyebrow,.dpre>#presets{display:none}
+.dpreh{margin:0 0 6px;font:600 13px/1.3 var(--sans);color:var(--muted)}
+.dpre .pdesc{margin:0;font-size:14px;line-height:1.55}
+.dbody>[data-dpart="info"]+[data-dpart="info"]{padding-top:16px;border-top:1px solid var(--line)}
+/* the scenario and procedure pickers, moved out of the dark monitor */
+.dscen{display:flex;flex-direction:column;gap:14px}
+.dscen .scenrow{gap:8px 8px}
+.dscen .scenset{display:contents}
+.dscen .scenset[hidden]{display:none}
+.dscen .gname{flex-basis:100%;font:600 12.5px/1.2 var(--sans)!important;color:var(--muted)!important;margin-top:4px}
+.dscen .seg{display:flex;flex-wrap:wrap;gap:6px;border:0;border-radius:0;padding:0;background:none;max-width:100%}
+.dscen .btn,.dscen .seg .btn{min-height:34px;padding:0 12px;font-size:13px;border:1px solid var(--line)}
+.dscen .btn[aria-pressed="true"]{border-color:var(--ven)}
+.dscen .pgrp{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;flex-basis:100%}
+.dscen .pgrp>.gname{flex-basis:100%}
+.dscen .procrow>.gname{flex-basis:100%}
+.dscen .pctl{margin-left:0}
+.dscen .sevrow{flex-wrap:wrap}
+.dscen #sevIn{flex:1 1 160px}
+.dbody>#ecg12wrap{background:#0A1119;border-radius:10px;padding:10px}
+/* about */
+.dov{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:6vh 20px;background:rgba(9,14,20,.5)}
+.dov[hidden]{display:none}
+.dovbox{width:min(860px,100%);max-height:88vh;display:flex;flex-direction:column;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 60px rgba(9,14,20,.35)}
+.dovhead{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.dovhead h2{margin:0;font:600 20px/1.2 var(--serif)}
+.dovbody{flex:1;min-height:0;overflow-y:auto;padding:20px 24px 28px;display:flex;flex-direction:column;gap:18px}
+.dovbody .leadmore{display:none}
+.dovbody footer{margin:0}
+/* presentation: no side panel, the scene title and step buttons over the view, larger labels and captions */
+.dpcap{display:none}
+#dshell.dpres{grid-template-columns:minmax(0,1fr) 0}
+#dshell.dpres .dside{display:none}
+#dshell.dpres .dpcap{position:absolute;left:12px;top:58px;z-index:7;display:flex;align-items:center;gap:14px;max-width:min(560px,60%);padding:9px 10px 9px 14px;background:var(--mchip);border:1px solid var(--line);border-radius:12px}
+.dptt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dptt b{font:600 18px/1.25 var(--serif)}
+.dptt span{font-size:13.5px;color:var(--muted)}
+.dpnav{flex:none;display:flex;gap:6px}
+.dpnav[hidden]{display:none}
+.dpnav .btn{min-height:38px;width:42px;padding:0;font-size:20px}
+body.dpres .lbl{font-size:15px;padding:5px 11px}
+body.dpres .impcap{font-size:17px;padding:10px 16px}
+body.dpres .impcap .ph{font-size:12.5px}
+body.dpres .tip{font-size:14.5px}
+/* smaller laptops and landscape tablets: the logo stands in for the title, the monitor column narrows */
+@media (max-width:1279px){
+.dbar h1{display:none}
+.dbar .logo{margin-right:10px}
+.ddock>#cyclepanel{grid-template-columns:minmax(0,1fr) clamp(214px,30%,272px);gap:6px 14px}
+}
+@media (max-width:1120px){
+.dico span{display:none}
+.dico{padding:0 9px}
+.dtabs button{padding:0 10px;gap:6px}
+#dshell{--dside:320px}
+}
+#dside[data-seg="info"] .dbody>[data-dpart]:not([data-dpart~="info"]){display:none!important}
+#dside[data-seg="find"] .dbody>[data-dpart]:not([data-dpart~="find"]){display:none!important}
+#dside[data-seg="layers"] .dbody>[data-dpart]:not([data-dpart~="layers"]){display:none!important}
+#dside[data-seg="scen"] .dbody>[data-dpart]:not([data-dpart~="scen"]){display:none!important}
+#dside[data-seg="teach"] .dbody>[data-dpart]:not([data-dpart~="teach"]){display:none!important}
+#dside[data-seg="views"] .dbody>[data-dpart]:not([data-dpart~="views"]){display:none!important}
+#dside[data-seg="ter"] .dbody>[data-dpart]:not([data-dpart~="ter"]){display:none!important}
+#dside[data-seg="ang"] .dbody>[data-dpart]:not([data-dpart~="ang"]){display:none!important}
 </style>
 
 </head>
@@ -6478,6 +6645,7 @@ body.mob #hemo{height:280px}
     $('#wall').value = Math.round(state.wall * 100); $('#wallv').textContent = Math.round(state.wall * 100) + '%';
     updateLabelSet(); terDisplay();
     if (MOB && MOB.on) mSync();
+    if (DSK && DSK.on) dSync();
   }
 
   /* ---------- Labels ---------- */
@@ -7008,7 +7176,7 @@ body.mob #hemo{height:280px}
       state.wall = 0.9; refresh();
       camera.up.copy(d).negate(); makeControls();
       var center = T.clone().addScaledVector(d, v.depth * 0.001 * 0.52);
-      var dist = (v.depth * 0.001 * 0.46) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      var dist = Math.max(v.depth * 0.001 * 0.46, v.depth * 0.001 * 0.55 / (camera.aspect || 1)) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
       flyTo(N.clone().negate().toArray(), center, dist, animate ? 700 : 0);
       $('#viewnote').textContent = 'The heart is cut along the imaging plane and turned to match the echo screen: transducer at the top, image right on your right. Drag to rotate away from it.';
     } else {
@@ -8482,7 +8650,7 @@ body.mob #hemo{height:280px}
       c.lineWidth = 1;
       for (var gx = 0; gx * 0.2 <= ECG_WIN; gx++) { var x0 = Math.round(gx * 0.2 * g.pps) + 0.5; c.strokeStyle = 'rgba(148,163,184,0.10)'; c.beginPath(); c.moveTo(x0, top); c.lineTo(x0, bot); c.stroke(); }
       c.font = '500 ' + Math.round(10 * dpr) + 'px "IBM Plex Mono", ui-monospace, monospace'; c.textAlign = 'left'; c.textBaseline = 'middle';
-      ticksFor(max).forEach(function (tv) { var y = Math.round(Y(tv)) + 0.5; c.strokeStyle = 'rgba(148,163,184,' + (tv === 0 ? 0.28 : 0.13) + ')'; c.beginPath(); c.moveTo(padL, y); c.lineTo(W, y); c.stroke(); c.fillStyle = 'rgba(203,213,225,0.7)'; c.fillText(String(tv), 4 * dpr, y); });
+      ticksFor(max).filter(function (tv, i, a) { return bot - top >= 15 * dpr * a.length || i === 0 || i === a.length - 1; }).forEach(function (tv) { var y = Math.round(Y(tv)) + 0.5; c.strokeStyle = 'rgba(148,163,184,' + (tv === 0 ? 0.28 : 0.13) + ')'; c.beginPath(); c.moveTo(padL, y); c.lineTo(W, y); c.stroke(); c.fillStyle = 'rgba(203,213,225,0.7)'; c.fillText(String(tv), 4 * dpr, y); });
       if (F && F.shade === pi && hemoOn[F.hi] && hemoOn[F.lo]) {
         c.fillStyle = F.shadeCol;
         for (x = padL; x <= W; x += dpr) {
@@ -13312,7 +13480,7 @@ body.mob #hemo{height:280px}
   function mIcon(path) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>'; }
   function mPart(node, parts) { if (node) node.setAttribute('data-part', parts); }
   function mBuild() {
-    if (MOB.on) return; MOB.on = true;
+    if (MOB.on) return; if (typeof DSK !== 'undefined' && DSK && DSK.on) dTeardown(); MOB.on = true;
     document.documentElement.classList.add('mob'); document.body.classList.add('mob');
     var sh = document.createElement('div'); sh.id = 'mshell'; MOB.el.shell = sh;
     var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'mlgL').replace(/lgR/g, 'mlgR');
@@ -13460,6 +13628,203 @@ body.mob #hemo{height:280px}
   if (MOB_MQ) { if (MOB_MQ.addEventListener) MOB_MQ.addEventListener('change', mCheck); else if (MOB_MQ.addListener) MOB_MQ.addListener(mCheck); }
   window.addEventListener('resize', function () { if (MOB.on) mLayout(); });
   mCheck();
+  /* ---------- Desktop workspace ----------
+     On a wide screen (at least 1024 × 600) the page becomes one window with nothing to scroll: a top bar with the
+     scenes, the 3D view filling the space, the traces docked under it in the cardiac cycle, rhythm and procedure scenes
+     (the echo image beside it in echo), and a side panel with the scene's tabs (the same groups as the phone sheet).
+     The existing panels are moved, not copied, so they keep working, and go back to the page below that size.
+     Presentation mode hides the side panel, enlarges the labels and goes full screen; Page Down / Page Up step a
+     procedure. */
+  var DSK = { on: false, moved: [], seg: {}, last: {}, scene: '', lastSel: null, el: {}, pres: false, added: [] };
+  var DSK_MQ = window.matchMedia ? matchMedia('(min-width:1024px) and (min-height:600px)') : null;
+  var DSEGS = {
+    anat: [['info', 'Structure'], ['find', 'Find'], ['layers', 'Layers']],
+    cor: [['info', 'Structure'], ['find', 'Find'], ['layers', 'Layers']],
+    ter: [['ter', 'Territories'], ['info', 'Structure'], ['layers', 'Layers']],
+    ang: [['ang', 'Angiogram'], ['info', 'Structure'], ['layers', 'Layers']],
+    cycle: [['scen', 'Scenarios'], ['teach', 'Teaching'], ['info', 'Structure'], ['layers', 'Layers']],
+    rhythm: [['scen', 'Rhythms'], ['teach', 'Teaching'], ['info', 'Structure'], ['layers', 'Layers']],
+    struct: [['teach', 'This step'], ['scen', 'Procedure'], ['info', 'Structure'], ['layers', 'Layers']],
+    echo: [['views', 'Views'], ['info', 'Structure'], ['layers', 'Layers']]
+  };
+  var DKEY = 'lubdub.dock';
+  function dMove(node, to, before) { if (!node) return; DSK.moved.push([node, node.parentNode, node.nextSibling]); if (before) to.insertBefore(node, before); else to.appendChild(node); }
+  function dPart(node, parts) { if (node) node.setAttribute('data-dpart', parts); }
+  function dEl(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html) n.innerHTML = html; return n; }
+  function dBuild() {
+    if (DSK.on) return; if (MOB && MOB.on) mTeardown(); DSK.on = true;
+    document.documentElement.classList.add('dsk'); document.body.classList.add('dsk');
+    var sh = dEl('div'); sh.id = 'dshell';
+    var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'dlgL').replace(/lgR/g, 'dlgR');
+    sh.innerHTML =
+      '<header class="dbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
+        '<nav class="dtabs" id="dtabs" aria-label="Scenes">' + MTABS.map(function (t) { return '<button type="button" data-dtab="' + t.id + '" aria-pressed="false">' + mIcon(t.icon) + '<span>' + t.name + '</span></button>'; }).join('') + '</nav>' +
+        '<div class="dact"><button class="dico" type="button" id="dPresBtn" aria-pressed="false" title="Presentation mode: full screen, no side panel, larger labels (P)">' + mIcon('<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5v3M8.5 19.5h7"/>') + '<span>Present</span></button>' +
+        '<button class="dico" type="button" id="dAboutBtn" title="About this guide, credits and references">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '<span>About</span></button></div></header>' +
+      '<main class="dwork" id="dwork"><div class="dstage" id="dstage"><div class="dpcap" id="dpcap"><div class="dptt"><b id="dpTitle"></b><span id="dpSub"></span></div><div class="dpnav" id="dpNav"><button class="btn" type="button" id="dpPrev" aria-label="Previous step">‹</button><button class="btn" type="button" id="dpNext" aria-label="Next step">›</button></div></div></div>' +
+        '<div class="dsplit" id="dsplit" role="separator" aria-orientation="horizontal" aria-label="Resize the traces" tabindex="0" title="Drag to resize the traces; double-click to reset"></div><div class="ddock" id="ddock"></div><div class="decho" id="decho"></div></main>' +
+      '<aside class="dside" id="dside" aria-label="Scene panel"><div class="dhead" id="dhead"><h2 class="dtitle" id="dtitle"></h2><div class="dtrow"><p class="dsub" id="dsub"></p><div class="dnav" id="dnav"></div></div>' +
+        '<div class="dchips" id="dchips" hidden></div><div class="dsegs" id="dsegs" role="tablist" aria-label="Panel"></div></div>' +
+        '<div class="dbody" id="dbody"></div></aside>' +
+      '<div class="dov" id="dAbout" hidden><div class="dovbox" role="dialog" aria-modal="true" aria-labelledby="dAboutH"><div class="dovhead"><h2 id="dAboutH">About this guide</h2><button class="btn" type="button" data-dclose>Close</button></div><div class="dovbody" id="dAboutBody"></div></div></div>';
+    document.body.appendChild(sh);
+    var $s = function (q) { return sh.querySelector(q); }, body = $s('#dbody');
+    DSK.el = { shell: sh, side: $s('#dside'), body: body, stage: $s('#dstage'), dock: $s('#ddock'), echo: $s('#decho'), split: $s('#dsplit'), tabs: $s('#dtabs'),
+      title: $s('#dtitle'), sub: $s('#dsub'), chips: $s('#dchips'), segs: $s('#dsegs'), pcap: $s('#dpcap') };
+    /* the 3D view, with the camera views floating over its top edge */
+    dMove($('#stage'), DSK.el.stage, DSK.el.pcap); dMove(document.querySelector('.stagecard .toolbar'), DSK.el.stage);
+    /* the monitor: the traces on one time axis, with the playback controls, valve and sound chips, trace filter and
+       pressure readouts in a column beside them, as on a bedside monitor; the scenario pickers and the 12-lead go to
+       the side panel */
+    var cp = $('#cyclepanel'), gut = dEl('div', 'dgut'); DSK.added.push(gut);
+    dMove(cp, DSK.el.dock); cp.appendChild(gut);
+    ['.cychead', '#hemolegend', '.cycrow', '.hfrow'].forEach(function (q) { dMove(cp.querySelector(q), gut); });
+    var scen = dEl('div', 'dscen'); DSK.added.push(scen); dPart(scen, 'scen'); body.appendChild(scen);
+    [cp.querySelector('.scenrow:not(#varrow):not(#sevrow)'), $('#varrow'), $('#sevrow')].forEach(function (n) { dMove(n, scen); });
+    dMove($('#echopanel'), DSK.el.echo);
+    /* the side panel's parts, in order */
+    var finder = $('#finder').closest('.card'), pre = $('#presets').closest('.card'), preh = dEl('h3', 'dpreh', 'About this scene');
+    DSK.added.push(preh); pre.insertBefore(preh, pre.firstChild); pre.classList.add('dpre');
+    [[$('#cycinfo'), 'teach'], [$('#ecg12wrap'), 'teach'], [$('#echocard'), 'views'], [$('#tercard'), 'ter'], [$('#angcard'), 'ang'],
+     [$('#info'), 'info'], [pre, 'info'], [finder, 'find'], [$('#wall').closest('.card'), 'layers'], [$('#layerChecks').closest('.card'), 'layers']].forEach(function (q) { dPart(q[0], q[1]); dMove(q[0], body); });
+    dMove($('#scNav'), $s('#dnav'));
+    dMove(document.querySelector('.mast'), $s('#dAboutBody')); dMove(document.querySelector('footer'), $s('#dAboutBody'));
+    $('#cycinfo').classList.add('open'); var lead = document.querySelector('.lead'); if (lead) lead.classList.add('open');
+    /* the trace dock keeps the height it was dragged to */
+    try { var hh = parseFloat(localStorage.getItem(DKEY)); if (hh > 0) sh.style.setProperty('--ddock', hh + 'px'); } catch (x) {}
+    /* events */
+    DSK.el.tabs.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-dtab]'); if (!b) return;
+      var t = MTABS.filter(function (x) { return x.id === b.dataset.dtab; })[0];
+      if (t !== mTabOf(state.preset)) applyPreset(DSK.last[t.id] || t.presets[0], true);
+    });
+    DSK.el.chips.addEventListener('click', function (e) { var b = e.target.closest('[data-dpre]'); if (b && b.dataset.dpre !== state.preset) applyPreset(b.dataset.dpre, true); });
+    DSK.el.segs.addEventListener('click', function (e) { var b = e.target.closest('[data-dseg]'); if (!b) return; DSK.seg[DSK.scene] = b.dataset.dseg; dSegShow(); });
+    DSK.el.segs.addEventListener('keydown', function (e) {   /* arrow keys move between the panel tabs */
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var bs = [].slice.call(DSK.el.segs.querySelectorAll('[data-dseg]')), i = bs.indexOf(document.activeElement); if (i < 0) return;
+      var n = bs[(i + (e.key === 'ArrowRight' ? 1 : bs.length - 1)) % bs.length]; n.focus(); n.click(); e.preventDefault();
+    });
+    $s('#dAboutBtn').addEventListener('click', function () { dAbout(true); });
+    $s('#dAbout').addEventListener('click', function (e) { if (e.target === e.currentTarget || e.target.closest('[data-dclose]')) dAbout(false); });
+    $s('#dPresBtn').addEventListener('click', function () { dPresent(!DSK.pres); });
+    $s('#dpPrev').addEventListener('click', function () { var b = $('#scPrev'); if (b && !b.disabled) b.click(); });
+    $s('#dpNext').addEventListener('click', function () { var b = $('#scNext'); if (b && !b.disabled) b.click(); });
+    dSplitter();
+    ['#scTitle', '#scSub', '#echoTitle'].forEach(function (q) { var n = $(q); if (n && window.MutationObserver) { var o = new MutationObserver(dHead); o.observe(n, { childList: true, characterData: true, subtree: true }); DSK.obs = (DSK.obs || []).concat(o); } });
+    if (window.MutationObserver) { var o2 = new MutationObserver(dLayout); [cp, $('#echopanel'), $('#scNav')].forEach(function (n) { o2.observe(n, { attributes: true, attributeFilter: ['hidden', 'class'] }); }); DSK.obs = (DSK.obs || []).concat(o2); }
+    DSK.scene = ''; dSync();
+    if (ready) resize();
+  }
+  function dTeardown() {
+    if (!DSK.on) return; if (DSK.pres) dPresent(false); DSK.on = false;
+    (DSK.obs || []).forEach(function (o) { o.disconnect(); }); DSK.obs = [];
+    for (var i = DSK.moved.length - 1; i >= 0; i--) { var m = DSK.moved[i]; if (m[2] && m[2].parentNode === m[1]) m[1].insertBefore(m[0], m[2]); else m[1].appendChild(m[0]); m[0].removeAttribute && m[0].removeAttribute('data-dpart'); }
+    DSK.moved = []; DSK.added.forEach(function (n) { n.remove(); }); DSK.added = [];
+    var pre = document.querySelector('.dpre'); if (pre) pre.classList.remove('dpre');
+    if (DSK.el.shell) DSK.el.shell.remove(); DSK.el = {};
+    document.documentElement.classList.remove('dsk'); document.body.classList.remove('dsk');
+    $('#cycinfo').classList.remove('open'); var lead = document.querySelector('.lead'); if (lead) lead.classList.remove('open');
+    $('#stage').style.height = '';
+    if (ready) resize();
+  }
+  function dAbout(on) {
+    var d = DSK.el.shell && DSK.el.shell.querySelector('#dAbout'); if (!d) return;
+    d.hidden = !on;
+    if (on) { DSK.aboutFrom = document.activeElement; var c = d.querySelector('[data-dclose]'); if (c) c.focus(); }
+    else if (DSK.aboutFrom && DSK.aboutFrom.focus) DSK.aboutFrom.focus();
+  }
+  /* presentation: the side panel goes, the scene title and step buttons float over the view, labels grow */
+  function dPresent(on) {
+    if (!DSK.on) return; DSK.pres = !!on;
+    DSK.el.shell.classList.toggle('dpres', DSK.pres); document.body.classList.toggle('dpres', DSK.pres);
+    DSK.el.shell.querySelector('#dPresBtn').setAttribute('aria-pressed', String(DSK.pres));
+    var fe = document.fullscreenElement || document.webkitFullscreenElement;
+    try {
+      if (DSK.pres && !fe) { var r = document.documentElement, f = r.requestFullscreen || r.webkitRequestFullscreen; if (f) { var p = f.call(r); if (p && p.catch) p.catch(function () {}); } }
+      else if (!DSK.pres && fe) { var x = document.exitFullscreen || document.webkitExitFullscreen; if (x) { var q = x.call(document); if (q && q.catch) q.catch(function () {}); } }
+    } catch (e) {}
+    dHead(); dLayout();
+  }
+  function dFsChange() { if (DSK.on && DSK.pres && !(document.fullscreenElement || document.webkitFullscreenElement) && DSK.fsWas) dPresent(false); DSK.fsWas = !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  document.addEventListener('fullscreenchange', dFsChange); document.addEventListener('webkitfullscreenchange', dFsChange);
+  window.addEventListener('keydown', function (e) {
+    if (!DSK.on || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target, typing = t && (t.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName));
+    var ab = DSK.el.shell.querySelector('#dAbout');
+    if (e.key === 'Escape') { if (ab && !ab.hidden) { dAbout(false); e.preventDefault(); } else if (DSK.pres) { dPresent(false); e.preventDefault(); } return; }
+    if (typing || (ab && !ab.hidden)) return;
+    if ((e.key === 'p' || e.key === 'P') && !e.shiftKey) { dPresent(!DSK.pres); e.preventDefault(); return; }
+    if ((e.key === 'PageDown' || e.key === 'PageUp') && !$('#scNav').hidden) {   /* a presenter's clicker steps the procedure */
+      var b = $(e.key === 'PageDown' ? '#scNext' : '#scPrev'); if (b && !b.disabled) b.click(); e.preventDefault();
+    }
+  });
+  /* the splitter between the view and the traces */
+  function dSplitter() {
+    var E = DSK.el, sp = E.split, st = null;
+    function lim(h) { var wk = E.shell.querySelector('#dwork').getBoundingClientRect().height; return Math.max(180, Math.min(wk - 220, h)); }
+    function set(h, save) { E.shell.style.setProperty('--ddock', Math.round(h) + 'px'); if (save) try { localStorage.setItem(DKEY, String(Math.round(h))); } catch (x) {} }
+    sp.addEventListener('pointerdown', function (e) { if (e.button) return; st = { y: e.clientY, h: E.dock.getBoundingClientRect().height, id: e.pointerId }; try { sp.setPointerCapture(e.pointerId); } catch (x) {} sp.classList.add('on'); e.preventDefault(); });
+    sp.addEventListener('pointermove', function (e) { if (st && e.pointerId === st.id) set(lim(st.h - (e.clientY - st.y))); });
+    function end(e) { if (!st || e.pointerId !== st.id) return; st = null; sp.classList.remove('on'); set(lim(E.dock.getBoundingClientRect().height), true); }
+    sp.addEventListener('pointerup', end); sp.addEventListener('pointercancel', end);
+    sp.addEventListener('dblclick', function () { E.shell.style.removeProperty('--ddock'); try { localStorage.removeItem(DKEY); } catch (x) {} });
+    sp.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      set(lim(E.dock.getBoundingClientRect().height + (e.key === 'ArrowUp' ? 24 : -24)), true); e.preventDefault();
+    });
+  }
+  function dSegShow() {
+    var segs = DSEGS[DSK.scene] || DSEGS.anat, k = DSK.seg[DSK.scene];
+    if (!segs.some(function (s) { return s[0] === k; })) k = DSK.seg[DSK.scene] = segs[0][0];
+    DSK.el.side.dataset.seg = k;
+    DSK.el.segs.querySelectorAll('[data-dseg]').forEach(function (b) { var on = b.dataset.dseg === k; b.setAttribute('aria-selected', String(on)); b.setAttribute('aria-pressed', String(on)); b.tabIndex = on ? 0 : -1; });
+    DSK.el.body.scrollTop = 0;
+    requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });   /* the 12-lead and other canvases re-measure */
+  }
+  function dHead() {
+    if (!DSK.on) return;
+    var sc = DSK.scene, t = '', s = '';
+    if (sc === 'cycle' || sc === 'rhythm' || sc === 'struct') { t = ($('#scTitle') || {}).textContent || ''; s = ($('#scSub') || {}).textContent || ''; }
+    else if (sc === 'echo') { t = ($('#echoTitle') || {}).textContent || 'Echo'; var es = $('#eScen'); s = es && es.selectedIndex >= 0 ? es.options[es.selectedIndex].text : ''; }
+    else { var p = PRESETS.filter(function (x) { return x.id === state.preset; })[0]; t = p ? p.name : ''; s = state.sel && S[state.sel] ? S[state.sel].n : 'Click any part of the heart to learn about it'; }
+    DSK.el.title.textContent = t; DSK.el.sub.textContent = s;
+    DSK.el.shell.querySelector('#dpTitle').textContent = t; DSK.el.shell.querySelector('#dpSub').textContent = s;
+  }
+  /* which areas the work space shows: the trace dock while the cycle panel is up, the echo column in echo */
+  function dLayout() {
+    if (!DSK.on) return;
+    var E = DSK.el, dock = !$('#cyclepanel').hidden, echo = !$('#echopanel').hidden, was = E.shell.dataset.echo === '1';
+    E.shell.dataset.dock = dock ? '1' : '0'; E.shell.dataset.echo = echo ? '1' : '0';
+    /* the echo column narrows the view: frame the cut heart again for the new shape */
+    if (echo && !was && state.echo && state.echo.look === 'face') requestAnimationFrame(function () { if (state.echo && state.echo.look === 'face') { resize(); setLook('face', false); } });
+    E.shell.dataset.rhy = $('#cyclepanel').classList.contains('rhy-on') ? '1' : '0';
+    E.shell.querySelector('#dpNav').hidden = $('#scNav').hidden;
+  }
+  /* called after every refresh: active scene tab, chips and panel tabs, the header, and the defaults when the scene changes */
+  function dSync() {
+    if (!DSK.on) return;
+    var tab = mTabOf(state.preset), sc = mSceneKey(), E = DSK.el;
+    E.tabs.querySelectorAll('[data-dtab]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.dtab === tab.id)); });
+    DSK.last[tab.id] = state.preset;
+    if (sc !== DSK.scene) {
+      DSK.scene = sc; E.shell.dataset.scene = sc;
+      var multi = tab.presets.length > 1; E.chips.hidden = !multi;
+      E.chips.innerHTML = multi ? tab.presets.map(function (id) { var p = PRESETS.filter(function (x) { return x.id === id; })[0]; return '<button class="btn" type="button" data-dpre="' + id + '" aria-pressed="false">' + (p ? p.name : id) + '</button>'; }).join('') : '';
+      E.segs.innerHTML = (DSEGS[sc] || DSEGS.anat).map(function (s) { return '<button type="button" role="tab" data-dseg="' + s[0] + '" aria-pressed="false">' + s[1] + '</button>'; }).join('');
+      dSegShow();
+    }
+    E.chips.querySelectorAll('[data-dpre]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.dpre === state.preset)); });
+    /* clicking a structure in an anatomy scene brings up its card */
+    if (state.sel !== DSK.lastSel) {
+      DSK.lastSel = state.sel;
+      if (state.sel && (sc === 'anat' || sc === 'cor' || sc === 'ter' || sc === 'ang') && DSK.seg[sc] !== 'info') { DSK.seg[sc] = 'info'; dSegShow(); }
+    }
+    dHead(); dLayout();
+  }
+  function dCheck() { if (DSK_MQ && DSK_MQ.matches) dBuild(); else dTeardown(); }
+  if (DSK_MQ) { if (DSK_MQ.addEventListener) DSK_MQ.addEventListener('change', dCheck); else if (DSK_MQ.addListener) DSK_MQ.addListener(dCheck); }
+  dCheck();
   /* ---------- Loop ---------- */
   function loop(now) {
     requestAnimationFrame(loop);
