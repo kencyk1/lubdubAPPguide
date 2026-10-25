@@ -7322,7 +7322,7 @@ html:not(.can-install) [data-install]{display:none!important}
      la:[[0,10.8],[0.06,11.4],[0.11,13.5],[0.15,18],[0.2,16.6],[0.225,15.9],[0.25,16.5],[0.29,12],[0.36,9.5],[0.42,9],[0.5,10.5],[0.58,12.8],[0.64,14.6],[0.69,15.6],[0.72,14.2],[0.76,10.5],[0.8,8.6],[0.86,9.4],[0.93,10.2]]}},
    ar:{curves:{
      ao:[[0,54.5],[0.1,50],[0.2,47],[0.3,46],[0.32,60],[0.35,95],[0.39,135],[0.43,155],[0.47,158],[0.52,148],[0.57,130],[0.61,114],[0.63,106],[0.637,102],[0.648,104],[0.66,103],[0.7,94],[0.78,78],[0.86,66],[0.93,59]],
-     lv:[[0,18.5],[0.08,19.5],[0.13,21],[0.17,23],[0.2,22.5],[0.215,23],[0.225,23.5],[0.245,34],[0.265,40],[0.285,44],[0.3,50],[0.32,66],[0.35,102],[0.39,142],[0.43,162],[0.47,163],[0.52,152],[0.57,132],[0.61,115],[0.63,104],[0.645,82],[0.665,52],[0.685,30],[0.705,16],[0.72,10],[0.745,6.5],[0.8,10],[0.86,15],[0.93,17.5]],
+     lv:[[0,18.5],[0.08,19.5],[0.13,21],[0.17,23],[0.2,22.5],[0.215,23],[0.225,23.5],[0.245,34],[0.265,40],[0.285,44],[0.3,50],[0.32,72],[0.35,116],[0.39,153],[0.43,165],[0.47,163.5],[0.52,152],[0.57,132],[0.61,115],[0.63,104],[0.645,82],[0.665,52],[0.685,30],[0.705,16],[0.72,10],[0.745,6.5],[0.8,10],[0.86,15],[0.93,17.5]],
      la:[[0,19.5],[0.06,20.5],[0.11,22.5],[0.15,25],[0.2,23.6],[0.225,23.2],[0.25,24],[0.29,21],[0.36,18],[0.42,17.5],[0.5,19],[0.58,21],[0.64,22.5],[0.69,23.5],[0.72,22],[0.76,17],[0.8,14],[0.86,15.5],[0.93,18]]},
     rmap:[[0,1],[6.5,7.5],[9.5,21],[25.5,40]]},
    ara:{curves:{
@@ -7432,6 +7432,7 @@ html:not(.can-install) [data-install]{display:none!important}
       cap: { 4: 'The aortic valve closes but leaks: blood runs back into the LV.', 5: 'The LV fills from both the LA and the aorta.', 6: 'Aortic pressure falls fast as blood regurgitates; LV pressure climbs.', 0: 'Aortic regurgitation continues all through diastole.', 1: 'LV diastolic pressure ends high, close to LA pressure.' },
       sub: 'Chronic volume overload with a dilated, compliant LV.',
       trace: ['<b>Wide pulse pressure:</b> high systolic from a large stroke volume, low diastolic from rapid run-off back into the LV.',
+        '<b>LV leads aortic pressure in early ejection:</b> the large stroke volume crosses a normal valve fast, so forward velocity on CW Doppler rises (about 2–2.5 m/s when severe). That is high flow, not stenosis.',
         '<b>LV diastolic pressure rises</b> through diastole as it fills from both the LA and the aorta; LVEDP is raised.',
         'The shaded <b>diastolic Ao–LV gradient</b> drives the regurgitation; it narrows by end-diastole but never closes.',
         'Switch to <b>Acute</b> to see what the same leak does to a normal-sized LV.'],
@@ -7759,7 +7760,7 @@ html:not(.can-install) [data-install]{display:none!important}
      systolic jet, LA/LV volume load), tamponade (equalized diastolic pressures, pulsus paradoxus) and rapid pacing. */
   function SX(base, o) { return Object.assign(Object.create(SCX[base]), { group: 'struct', variantOf: undefined, variant: undefined, rec: Object.keys(o).length ? undefined : SCX[base].rec, sev: undefined }, o); }
   Object.assign(HSC, {
-    p_as: { mix: [['as', 1]] }, tavr: { mix: [['normal', 0.86], ['as', 0.14]] }, tavr_pvl: { mix: [['tavr', 0.6], ['ar', 0.4]] },
+    p_as: { mix: [['as', 1]] }, tavr: { mix: [['normal', 0.86], ['as', 0.14]] }, tavr_pvl: { mix: [['normal', 0.14], ['as', 0.11], ['ar', 0.75]] },
     tavr_co: { mix: [['tavr', 1]], maps: { lv: [[0, 9], [10, 24], [80, 60], [140, 80]], ao: [[0, 0], [60, 46], [80, 58], [140, 80]], la: [[0, 15], [16, 27]], ra: [[0, 6], [8, 11]], rv: [[0, 6], [5, 10], [26, 37]], pa: [[0, 14], [10, 20], [25, 34]] } },
     tamp: { mix: [['normal', 1]], maps: { lv: [[0, 15], [9, 18], [80, 60], [121, 88]], ao: [[0, 0], [80, 62], [121, 88]], la: [[0, 15.5], [15, 18.5]], ra: [[0, 15], [7, 17]], rv: [[0, 15], [6.5, 17], [25.5, 32]], pa: [[0, 14], [10, 18], [25, 31]] } },
     tavr_rup: { mix: [['normal', 1]], maps: { lv: [[0, 21], [9, 23.5], [80, 37], [121, 47]], ao: [[0, 0], [80, 37.5], [121, 46]], la: [[0, 22], [15, 24.5]], ra: [[0, 21.5], [7, 23.5]], rv: [[0, 21.5], [6.5, 23.5], [25.5, 33]], pa: [[0, 20], [10, 23], [25, 31]] } },
@@ -7873,6 +7874,7 @@ html:not(.can-install) [data-install]{display:none!important}
       else if (m === 'la') out.push(['LA mean / v wave', Math.round(avg(T.la)) + ' / ' + Math.round(mx(T.la)) + ' mmHg']);
       else if (m === 'ra') out.push(['RA mean / peak', Math.round(avg(T.ra)) + ' / ' + Math.round(mx(T.ra)) + ' mmHg']);
       else if (m === 'lvedp') out.push(['LVEDP', mm(tabAt(T.lv, 0.224))]);
+      else if (m === 'ari') { if (key === 'tavr' || key === 'tavr_pvl') { var ari = (mn(T.ao) - tabAt(T.lv, 0.224)) / mx(T.ao) * 100; out.push(['AR index', Math.round(ari) + (ari < 25 ? ' — under 25 suggests significant regurgitation' : '')]); } }
       else if (m === 'pa') out.push(['PA', Math.round(mx(T.pa)) + '/' + Math.round(mn(T.pa)) + ' (' + Math.round(avg(T.pa)) + ') mmHg']);
       else if (m === 'rv') out.push(['RV', Math.round(mx(T.rv)) + '/' + Math.round(tabAt(T.rv, 0.215)) + ' mmHg']);
       else if (m === 'qpqs') out.push(['Qp : Qs', STRUCT_QPQS[key] || '1 : 1']);
@@ -9382,7 +9384,7 @@ html:not(.can-install) [data-install]{display:none!important}
     } else if (site === 'avcw') {
       var av = win(E.avO, E.avC).map(function (f) { return [f, vB(P('lv', f) - P('ao', f))]; });
       var pk = 0, mg2 = 0; av.forEach(function (s, i) { if (s[1] > av[pk][1]) pk = i; mg2 += 4 * s[1] * s[1]; }); mg2 /= av.length;
-      out.push(['Peak velocity', f2(av[pk][1]) + ' m/s'], ['Peak gradient', Math.round(4 * av[pk][1] * av[pk][1]) + ' mmHg'], ['Mean gradient', Math.round(mg2) + ' mmHg']);
+      out.push(['Peak velocity', f2(av[pk][1]) + ' m/s' + (F && F.valve === 'av' && F.kind === 'regurg' && av[pk][1] >= 2 ? ' — high forward flow from the regurgitant volume, not stenosis' : '')], ['Peak gradient', Math.round(4 * av[pk][1] * av[pk][1]) + ' mmHg'], ['Mean gradient', Math.round(mg2) + ' mmHg']);
       out.push(['Time to peak', ms(av[pk][0] - E.avO) + ' of ' + ms(E.avC - E.avO) + ' ms ejection' + (X.flow && X.flow.chip ? ' — late-peaking (dagger)' : '')]);
       if (F && F.valve === 'av' && F.kind === 'regurg') {
         var ar = phtSlope(win(E.avC, E.mvC < E.avC ? E.mvC + 1 : E.mvC).map(function (f) { return [f, vB(P('ao', f) - P('lv', f))]; }));
@@ -12205,7 +12207,7 @@ html:not(.can-install) [data-install]{display:none!important}
   function pFollow(obj) { if (!obj.userData.home) return; var h = obj.userData.home; beatDisp(h.x, h.y, h.z, CYC.c.value, CYC.a.value, PBD); obj.position.set(h.x + PBD[0], h.y + PBD[1], h.z + PBD[2]); }
   /* ---------- the nine procedures ---------- */
   var PROCS = {
-    tavi: { name: 'TAVI', full: 'Transcatheter aortic valve implantation (TAVI), transfemoral', pre: 'p_as', met: ['avg', 'lvedp', 'pa'],
+    tavi: { name: 'TAVI', full: 'Transcatheter aortic valve implantation (TAVI), transfemoral', pre: 'p_as', met: ['avg', 'lvedp', 'ari', 'pa'],
       layers: ['chambers', 'valves', 'arteries', 'coronary', 'cond'], wall: 0.15, hide: ['pv', 'tv', 'mv'], ghost: ['av', 'aoAsc', 'aoArch', 'aoDesc', 'bca', 'lcca', 'lsa', 'pt', 'rpa', 'lpa'], ghostL: ['coronary', 'cond'], vars: [['be', 'Balloon-expandable'], ['se', 'Self-expanding']],
       build: function (vr) {
         var o = { L: {} }, A = VL.av, n = A.n, se = vr === 'se';
