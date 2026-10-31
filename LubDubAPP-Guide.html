@@ -998,8 +998,8 @@ html:not(.can-install) [data-install]{display:none!important}
         <div class="row" style="margin-top:12px;align-items:center;flex-wrap:wrap">
           <span style="font-size:14px">Colors</span>
           <div class="seg" role="group" aria-label="Color scheme">
-            <button class="btn" data-scheme="teach" aria-pressed="true">By circulation</button>
-            <button class="btn" data-scheme="natural" aria-pressed="false">Tissue</button>
+            <button class="btn" data-scheme="natural" aria-pressed="true">Anatomic</button>
+            <button class="btn" data-scheme="teach" aria-pressed="false">By circulation</button>
           </div>
         </div>
         <label class="check" style="margin-top:6px"><input type="checkbox" id="showLabels" checked> Show labels</label>
@@ -6064,6 +6064,14 @@ html:not(.can-install) [data-install]{display:none!important}
 <script>
 (function () {
   'use strict';
+  if (THREE.ColorManagement) THREE.ColorManagement.legacyMode = false;
+  (function () {
+    var CT = THREE.CanvasTexture;
+    THREE.CanvasTexture = class extends CT { constructor(a, b, c, d, e, f, g, h, i) { super(a, b, c, d, e, f, g, h, i); this.encoding = THREE.sRGBEncoding; } };
+    ['SpriteMaterial', 'LineBasicMaterial', 'LineDashedMaterial', 'MeshBasicMaterial', 'PointsMaterial'].forEach(function (n) {
+      var B = THREE[n]; THREE[n] = class extends B { constructor(p) { super(p); this.toneMapped = false; } };
+    });
+  })();
   var $ = function (s) { return document.querySelector(s); };
   var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -6082,7 +6090,7 @@ html:not(.can-install) [data-install]{display:none!important}
   ];
   var COLORS = {
     teach: { chR: '#93B2EA', chL: '#EDA9A1', sept: '#D9A08F', valve: '#F2B63C', pap: '#B9705F', art: '#D9534F', pa: '#4F7FD9', vein: '#4F7FD9', pvn: '#D9534F', cor: '#C8102E', cvn: '#1F3F99', chord: '#F1E9D2', mod: '#B9705F', cond: '#7C3AED', node: '#5B21B6', dev: '#D5DBE3' },
-    natural: { chR: '#CFA294', chL: '#C99384', sept: '#C28B7C', valve: '#EADCB8', pap: '#A9695B', art: '#D7867A', pa: '#C9A2A0', vein: '#8E8FB6', pvn: '#D7867A', cor: '#B0222E', cvn: '#3A4C8F', chord: '#EFE6D0', mod: '#A9695B', cond: '#8B5CF6', node: '#6D28D9', dev: '#C9CED6' }
+    natural: { chR: '#B03A30', chL: '#B03A30', sept: '#A5362D', valve: '#F1E8DA', pap: '#98322A', art: '#C7372D', pa: '#3A67C2', vein: '#3A67C2', pvn: '#C7372D', cor: '#D03A33', cvn: '#2E57AE', chord: '#F2EADA', mod: '#98322A', cond: '#E8A23A', node: '#D9822B', dev: '#C9CED6' }
   };
   var S = {
     ra: { n: 'Right atrium', ab: 'RA', l: 'chambers', c: 'chR', g: 'Chamber',
@@ -6370,9 +6378,9 @@ html:not(.can-install) [data-install]{display:none!important}
     { id: 'exterior', name: 'Exterior', view: 'ant', wall: 100, layers: ['chambers', 'valves', 'pap', 'chordae', 'cond', 'arteries', 'veins', 'coronary', 'cveins'], hide: [],
       labels: ['ra', 'rv', 'lv', 'aoAsc', 'aoArch', 'pt', 'svc', 'ivc', 'lad', 'rca'],
       desc: 'The whole heart with its coronary arteries and veins. Rotate to the back to see the left atrium and the four pulmonary veins.' },
-    { id: 'inside', name: 'Inside the heart', view: 'ant', wall: 16, layers: ['chambers', 'valves', 'pap', 'chordae', 'arteries', 'veins'], hide: [],
+    { id: 'inside', name: 'Inside the heart', view: 'ant', wall: 100, cut: true, semi: ['tv'], layers: ['chambers', 'valves', 'pap', 'chordae', 'arteries', 'veins'], hide: [],
       labels: ['tv', 'mv', 'av', 'pv', 'papAL', 'papRA', 'chMV', 'chTV', 'mod'],
-      desc: 'The wall turns see-through to reveal the valves and their support: papillary muscles, chordae tendineae and the moderator band crossing the RV. Try the LAO view to see the septum edge-on.' },
+      desc: 'The front half of the heart is cut away to show the chambers, the valves and their support: papillary muscles, chordae tendineae and the moderator band crossing the RV. Lower the wall slider to see through what remains; try the LAO view to see the septum edge-on.' },
     { id: 'conduction', name: 'Conduction system', view: 'lao', wall: 14, zoom: 0.66, focus: 'cond', layers: ['chambers', 'valves', 'pap', 'cond'], hide: [],
       labels: ['san', 'bach', 'inter', 'avn', 'his', 'rbb', 'lbb', 'laf', 'lpf', 'purk'],
       desc: 'Seen LAO, with the septum edge-on: the right bundle runs down your left side of the septum, the left bundle and its fascicles down your right. Press “Play impulse” to watch activation spread in step with the ECG.' },
@@ -6401,7 +6409,7 @@ html:not(.can-install) [data-install]{display:none!important}
   ];
 
   /* ---------- State ---------- */
-  var state = { preset: 'exterior', view: 'ant', wall: 1, scheme: 'teach', labels: true, layers: {}, hide: {}, sel: null, hover: null, isolate: false, spin: false };
+  var state = { preset: 'exterior', view: 'ant', wall: 1, scheme: 'natural', labels: true, layers: {}, hide: {}, sel: null, hover: null, isolate: false, spin: false };
   LAYERS.forEach(function (L) { state.layers[L.id] = true; });
   var ANG = { on: false, built: false, pt: 'norm', side: 'L', view: { L: 'raocau', R: 'lao', CL: 'raocau', CR: 'lao', LIMA: 'ap', RIMA: 'ap', SVG: 'lao', SVGP: 'lao' }, bt: 0, t: 0, front: -10, wash: -1e9, playing: true, speed: 1, inset: true, maxS: { L: 0, R: 0, CL: 0, CR: 0, LIMA: 0, RIMA: 0, SVG: 0, SVGP: 0 }, ctr: {}, rad: {}, ctrD: {}, radD: {}, meshes: [], pick: { L: [], R: [], CL: [], CR: [], LIMA: [], RIMA: [], SVG: [], SVGP: [] } };
 
@@ -6475,14 +6483,24 @@ html:not(.can-install) [data-install]{display:none!important}
   catch (e) { fail('This browser can’t show 3D graphics (WebGL is unavailable or turned off). Try another browser or device.'); return; }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.88;
   var scene = new THREE.Scene();
+  /* a small studio (soft key, warm and cool fills) prefiltered as the environment: soft reflections and ambient light */
+  (function () {
+    var pm = new THREE.PMREMGenerator(renderer), es = new THREE.Scene();
+    es.add(new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshBasicMaterial({ color: 0x6f6a66, side: THREE.BackSide })));
+    function panel(x, y, z, w, h, c, k) { var m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(k), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); es.add(m); }
+    panel(0, 4.6, 1.5, 6, 3, 0xffffff, 6); panel(-4.6, 1.2, 3, 2.2, 4, 0xfff0e2, 3); panel(4.6, 0.5, -1, 2, 4, 0xe4eeff, 2.2); panel(0, -0.5, 4.9, 4, 2, 0xffffff, 1.6);
+    try { scene.environment = pm.fromScene(es, 0.04).texture; } catch (e) {}
+    pm.dispose();
+  })();
   var camera = new THREE.PerspectiveCamera(32, 1, 0.003, 5);
   scene.add(camera);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7f7a, 0.72));
-  var key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(0.6, 0.9, 1); camera.add(key);
-  var rim = new THREE.DirectionalLight(0xffffff, 0.28); rim.position.set(-1, -0.5, 0.3); camera.add(rim);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7f7a, 0.16));
+  var key = new THREE.DirectionalLight(0xffffff, 1.45); key.position.set(0.6, 0.9, 1); camera.add(key);
+  var rim = new THREE.DirectionalLight(0xffffff, 0.48); rim.position.set(-1, -0.5, 0.3); camera.add(rim);
   renderer.localClippingEnabled = true;
-  var clipPlane = new THREE.Plane(), heartMats = [];
+  var clipPlane = new THREE.Plane(), heartMats = [], CUT = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);   /* CUT: the anterior half removed (Inside the heart) */
   var controls = null;
   /* OrbitControls fixes its orbit axis from camera.up when created, so it is rebuilt whenever the up vector changes (echo "Match image" puts the transducer at the top of the screen). */
   function makeControls() {
@@ -6537,13 +6555,14 @@ html:not(.can-install) [data-install]{display:none!important}
       var id = NODE[k];
       if (!id) { o.visible = false; return; }
       if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();
-      o.material = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0, side: THREE.DoubleSide }); heartMats.push(o.material);
+      o.material = new THREE.MeshPhysicalMaterial({ roughness: 0.5, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.28, envMapIntensity: 0.8, side: THREE.DoubleSide }); heartMats.push(o.material);
       if (id === 'lv' || id === 'ivs') o.material.userData.terr = true;
+      var L0 = S[id] && S[id].l; o.material.userData.detail = L0 === 'chambers' || L0 === 'pap'; o.material.userData.cap = ['chambers', 'arteries', 'veins', 'pap', 'coronary', 'cveins'].indexOf(L0) >= 0;
       o.userData.id = id;
       (S[id].meshes = S[id].meshes || []).push(o);
       meshes.push(o);
     });
-    buildExtras(); valvesBuild();
+    buildExtras(); valvesBuild(); surfFat();
     var cb = new THREE.Box3();
     ['san', 'avn', 'his', 'rbb', 'lbb', 'laf', 'lpf', 'purk'].forEach(function (id) { (S[id].meshes || []).forEach(function (m) { cb.expandByObject(m); }); });
     if (!cb.isEmpty()) condCenter = cb.getCenter(new THREE.Vector3());
@@ -6620,6 +6639,8 @@ html:not(.can-install) [data-install]{display:none!important}
   function refresh() {
     if (!ready) return;
     var pal = COLORS[state.scheme], pr = PRESETS.filter(function (x) { return x.id === state.preset; })[0], ghost = {};
+    var anat = state.scheme === 'natural'; DETU.fat.value = anat ? 1 : 0; DETU.bump.value = anat ? 1 : 0.5; DETU.capC.value.w = anat ? 0.85 : 0;
+    var cutOn = !!(pr && pr.cut) && !clipOn; if (cutOn) CUT.constant = heartCenter.z + 0.002;
     ((pr && pr.ghost) || []).forEach(function (g) { ghost[g] = true; }); var semi = {}; ((pr && pr.semi) || []).forEach(function (g) { semi[g] = true; });
     Object.keys(S).forEach(function (id) {
       var s = S[id]; if (!s.meshes) return;
@@ -6634,6 +6655,7 @@ html:not(.can-install) [data-install]{display:none!important}
         m.visible = vis;
         mat.color.set(pal[s.c]);
         mat.transparent = op < 0.999; mat.opacity = op; mat.depthWrite = op >= 0.999;
+        if (!clipOn && s.l === 'chambers' && !m.userData.dyn) mat.clippingPlanes = cutOn ? [CUT] : null;
         m.renderOrder = op < 0.999 ? 2 : 0;
         if (id === state.sel) { mat.emissive.copy(HL); mat.emissiveIntensity = 0.55; }
         else if (id === state.hover) { mat.emissive.copy(HOVER); mat.emissiveIntensity = 0.16; }
@@ -6888,7 +6910,12 @@ html:not(.can-install) [data-install]{display:none!important}
     if (ANG.on) { var ah = ray.intersectObjects(ANG.pick[ANG.side], false); lastHit = ah.length ? ah[0].point : null; return ah.length ? ah[0].object.userData.id : null; }
     var cands = meshes.filter(function (m) { return m.visible && m.material.opacity >= 0.35; }).concat(hits.filter(function (h) { return h.visible; }));
     var all = ray.intersectObjects(cands, false), hit = null;
-    for (var i = 0; i < all.length; i++) { if (!clipOn || clipPlane.distanceToPoint(all[i].point) >= 0) { hit = all[i]; break; } }
+    var prC = PRESETS.filter(function (x) { return x.id === state.preset; })[0], cutP = !clipOn && prC && prC.cut;
+    for (var i = 0; i < all.length; i++) {
+      var sid = all[i].object.userData.id;
+      if (cutP && S[sid] && S[sid].l === 'chambers' && CUT.distanceToPoint(all[i].point) < 0) continue;
+      if (!clipOn || clipPlane.distanceToPoint(all[i].point) >= 0) { hit = all[i]; break; }
+    }
     lastHit = hit ? hit.point : null;
     return hit ? hit.object.userData.id : null;
   }
@@ -7276,6 +7303,49 @@ html:not(.can-install) [data-install]{display:none!important}
     'bWorld.xyz += beatField(bWorld.xyz);',
     'vec4 mvPosition = viewMatrix * bWorld;',
     'gl_Position = projectionMatrix * mvPosition;'].join('\n');
+  /* surface relief (fine 3D noise, slightly stretched like fibre bundles) and epicardial fat (per-vertex weight near the
+     coronary vessels, aFat) for the myocardium; solid cut faces where a clipping plane opens a wall (back faces show) */
+  var DETU = { fat: { value: 1 }, bump: { value: 1 }, capC: { value: new THREE.Vector4(0.69, 0.26, 0.19, 0.85) } };
+  var NOISE3 = 'float dHh(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }\n' +
+    'float dVn(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(mix(dHh(i), dHh(i + vec3(1,0,0)), f.x), mix(dHh(i + vec3(0,1,0)), dHh(i + vec3(1,1,0)), f.x), f.y), mix(mix(dHh(i + vec3(0,0,1)), dHh(i + vec3(1,0,1)), f.x), mix(dHh(i + vec3(0,1,1)), dHh(i + vec3(1,1,1)), f.x), f.y), f.z); }\n';
+  function surfPatch(sh, m) {
+    var ud = m.userData || {};
+    if (ud.detail) {
+      sh.uniforms.uDetFat = DETU.fat; sh.uniforms.uDetBump = DETU.bump;
+      sh.vertexShader = 'attribute float aFat;\nvarying float vFat;\nvarying vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vFat = aFat; vWp = (modelMatrix * vec4(position, 1.0)).xyz * 1000.0;');
+      sh.fragmentShader = 'uniform float uDetFat, uDetBump;\nvarying float vFat;\nvarying vec3 vWp;\n' + NOISE3 + sh.fragmentShader
+        .replace('#include <color_fragment>', '#include <color_fragment>\n  float fatN = uDetFat * smoothstep(0.35, 0.85, vFat + 0.3 * (dVn(vWp * 0.3) - 0.5));\n  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80, 0.52, 0.16), 0.6 * fatN);')
+        .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n  if (uDetBump > 0.0) {\n' +
+          '    float hS = 0.6 * dVn(vWp * vec3(0.45, 0.45, 0.12)) + 0.3 * dVn(vWp * 0.9) + 0.6 * fatN * dVn(vWp * 0.6);\n' +
+          '    vec3 dpx = dFdx(-vViewPosition), dpy = dFdy(-vViewPosition); float dhx = dFdx(hS), dhy = dFdy(hS);\n' +
+          '    vec3 r1 = cross(dpy, normal), r2 = cross(normal, dpx); float det = dot(dpx, r1); vec3 grad = sign(det) * (dhx * r1 + dhy * r2);\n' +
+          '    normal = normalize(abs(det) * normal - 0.00035 * uDetBump * grad);\n  }');
+    }
+    if (ud.cap) {
+      sh.uniforms.uCapC = DETU.capC;
+      sh.fragmentShader = 'uniform vec4 uCapC;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n#if NUM_CLIPPING_PLANES > 0\n' +
+        '  if (!gl_FrontFacing) { vec3 cc = mix(diffuseColor.rgb * 1.15, uCapC.rgb, uCapC.w);\n#ifdef TONE_MAPPING\n    cc = toneMapping(cc);\n#endif\n    gl_FragColor = linearToOutputTexel(vec4(cc, diffuseColor.a)); }\n#endif');
+    }
+  }
+  function surfFat() {
+    var C = 0.005, G = {}, tmp = new THREE.Vector3();
+    function key(x, y, z) { return Math.floor(x / C) + ',' + Math.floor(y / C) + ',' + Math.floor(z / C); }
+    Object.keys(S).forEach(function (id) { var s = S[id]; if (!s.meshes || (s.l !== 'coronary' && s.l !== 'cveins')) return;
+      s.meshes.forEach(function (m) { var p = m.geometry.attributes.position; if (!p) return; m.updateMatrixWorld(true); for (var i = 0; i < p.count; i += 3) { tmp.fromBufferAttribute(p, i).applyMatrix4(m.matrixWorld); var k = key(tmp.x, tmp.y, tmp.z); (G[k] = G[k] || []).push(tmp.x, tmp.y, tmp.z); } }); });
+    Object.keys(S).forEach(function (id) { var s = S[id]; if (!s.meshes || (s.l !== 'chambers' && s.l !== 'pap')) return;
+      s.meshes.forEach(function (m) {
+        if (!m.material || !m.material.userData.detail || !m.geometry.attributes.position) return;
+        var p = m.geometry.attributes.position, fat = new Float32Array(p.count); m.updateMatrixWorld(true);
+        if (s.l === 'chambers') for (var i = 0; i < p.count; i++) {
+          tmp.fromBufferAttribute(p, i).applyMatrix4(m.matrixWorld); var bx = Math.floor(tmp.x / C), by = Math.floor(tmp.y / C), bz = Math.floor(tmp.z / C), best = 1e9;
+          for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++) for (var dz = -1; dz <= 1; dz++) { var L = G[(bx + dx) + ',' + (by + dy) + ',' + (bz + dz)]; if (!L) continue;
+            for (var j = 0; j < L.length; j += 3) { var ex = L[j] - tmp.x, ey = L[j + 1] - tmp.y, ez = L[j + 2] - tmp.z, d = ex * ex + ey * ey + ez * ez; if (d < best) best = d; } }
+          fat[i] = Math.max(0, 1 - Math.sqrt(best) * 1000 / 5);
+        }
+        m.geometry.setAttribute('aFat', new THREE.BufferAttribute(fat, 1));
+      });
+    });
+  }
   function patchBeat(m) {
     var terr = !!m.userData.terr;
     m.onBeforeCompile = function (sh) {
@@ -7287,8 +7357,9 @@ html:not(.can-install) [data-install]{display:none!important}
         sh.fragmentShader = '#define TERR\nvarying vec3 vTerP;\nuniform float uTerOn; uniform vec3 uTerSel; uniform float uTerDim; uniform float uSegHi;\n' + terGLSL(false) + '\n' +
           sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n' + TER_FRAG);
       }
+      surfPatch(sh, m);
     };
-    m.customProgramCacheKey = function () { return terr ? 'beat-terr' : 'beat'; };
+    m.customProgramCacheKey = function () { return (terr ? 'beat-terr' : 'beat') + (m.userData.detail ? '-d' : '') + (m.userData.cap ? '-c' : ''); };
     m.needsUpdate = true;
   }
   /* Template beat (857 ms, P-wave onset = 0) keypoints for every pressure, as fractions of the beat. */
@@ -9847,8 +9918,8 @@ html:not(.can-install) [data-install]{display:none!important}
     '    terMm = min(terMm, abs(terT - 0.48) * (terT < 0.5 ? terSph : terAx));',
     '    terMm = min(terMm, abs(terT - 0.73) * terAx);',
     '    float terLine = (1.0 - smoothstep(0.22, 0.4, terMm)) * step(0.02, terSel + uTerDim);',
-    '    diffuseColor.rgb = mix(diffuseColor.rgb, terCol, terAmt * (1.0 - smoothstep(1.06, 1.14, terT)));',
-    '    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.07, 0.09, 0.12), 0.72 * terLine * (1.0 - smoothstep(1.02, 1.1, terT)));',
+    '    diffuseColor.rgb = mix(diffuseColor.rgb, pow(terCol, vec3(2.2)), terAmt * (1.0 - smoothstep(1.06, 1.14, terT)));',
+    '    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.006, 0.005, 0.009), 0.72 * terLine * (1.0 - smoothstep(1.02, 1.1, terT)));',
     '  }',
     '}',
     '#endif'].join('\n');
