@@ -786,7 +786,7 @@ html:not(.can-install) [data-install]{display:none!important}
           <canvas id="dop" role="img" aria-label="Spectral Doppler derived from the pressure model"></canvas>
           <div class="dopread" id="dopRead"></div>
         </div>
-        <p class="echonote">For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>. A simulated B-mode image, formed from the beating 3D model's cross-section in standard display orientation: speckle that moves with the wall, lateral blur that grows with depth, bright echoes where an interface faces the beam, the pericardium, chest-wall or liver near field, and acoustic shadowing behind a calcified valve. Valve leaflets are drawn on the model's annulus and open and close from the pressure model (the mitral and tricuspid leaflets also follow inflow: wide open in the E wave, drifting closed in diastasis, reopening with the A wave); spectral Doppler comes from the same pressures with v = √(ΔP/4). Colour Doppler is a velocity field read along each beam line: flow converging on a regurgitant or stenotic orifice (its aliasing shell is the PISA), a jet that slows and widens downstream, aliasing past the Nyquist limit and a mosaic in fast jets; the orifice follows the severity setting. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement) and the calipers measure the cut at end-diastole. The model's appendage is a collapsed lobe and its septum a uniform band, so the left atrial appendage lumen (with pectinate muscles) and the fossa ovalis are drawn by the simulator. Click a label to select that structure.</p>
+        <p class="echonote">For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>. A simulated B-mode image, formed from the beating 3D model's cross-section in standard display orientation: fully developed speckle that moves with the wall, lateral blur that grows with depth, bright echoes where an interface faces the beam, fainter myocardium where the wall runs along the beam (the familiar lateral-wall and septal dropout), trabeculated endocardial borders, the pericardium, a layered chest wall or the liver near field, lung beside the heart, and acoustic shadowing behind a calcified valve. Valve leaflets are drawn on the model's annulus and open and close from the pressure model (the mitral and tricuspid leaflets also follow inflow: wide open in the E wave, drifting closed in diastasis, reopening with the A wave). The mitral and tricuspid leaflets are thin, slightly thicker at the hinge and the rough zone, meet over a short coaptation zone when shut, and show chordae to any papillary muscle in the plane; in the MR scenario the posterior mitral leaflet prolapses into the LA, and in the TR scenario the tricuspid leaflets leave a coaptation gap; spectral Doppler comes from the same pressures with v = √(ΔP/4). Colour Doppler is a velocity field read along each beam line: flow converging on a regurgitant or stenotic orifice (its aliasing shell is the PISA), a jet that slows and widens downstream, aliasing past the Nyquist limit and a mosaic in fast jets; the orifice follows the severity setting. The chambers remodel with each disease (LVH, dilation, atrial and RV enlargement) and the calipers measure the cut at end-diastole. The model's appendage is a collapsed lobe and its septum a uniform band, so the left atrial appendage lumen (with pectinate muscles) and the fossa ovalis are drawn by the simulator. Click a label to select that structure.</p>
       </div>
       <div class="cyclepanel" id="cyclepanel" hidden>
         <div class="cychead">
@@ -1027,7 +1027,7 @@ html:not(.can-install) [data-install]{display:none!important}
   </div>
 
   <footer>
-    <span><strong>Web edition</strong> · updated 24 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Web edition</strong> · updated 31 October 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <div class="appbox" id="appBox">
@@ -4195,7 +4195,7 @@ html:not(.can-install) [data-install]{display:none!important}
     var jet = F ? jetFor(curKey) : null;
     if (jet) {
       jet.visible = k > 0.02; var jleft = jet.visible ? vJetPlace(jet, F) : 1; if (jleft < 0.05) jet.visible = false;
-      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj) * jleft; var js = (X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1) * (0.55 + 0.45 * jleft); jet.userData.jp.SC.value.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js * (jet.userData.ls || 1)); }
+      if (jet.visible) { var kj = Math.min(1.4, k); jet.userData.k.value = Math.min(1, 0.55 + 0.45 * kj) * jleft * (PROCX.on && PROCX.jk != null ? PROCX.jk : 1); var js = (X.sev ? 0.45 + 0.55 * Math.sqrt(Math.min(1, X.sev.w)) : 1) * (0.55 + 0.45 * jleft); jet.userData.jp.SC.value.set((0.8 + 0.2 * kj) * js, (0.7 + 0.3 * kj) * js * (jet.userData.ls || 1)); }
     }
     var skip = CYC_SKIP[b.type] || {};
     Object.keys(CYC_WIN).forEach(function (id) {
@@ -4487,7 +4487,7 @@ html:not(.can-install) [data-install]{display:none!important}
     'precision mediump float;',
     '#endif',
     'varying vec2 vUv;',
-    'uniform sampler2D uMask, uIns; uniform vec2 uRes; uniform vec2 uO; uniform float uSc, uHalf, uDepth, uTime, uNear, uLiver, uGain, uCalc, uPeri, uTee, uSpark;',
+    'uniform sampler2D uMask, uIns, uSpk; uniform vec2 uRes; uniform vec2 uO; uniform float uSc, uHalf, uDepth, uTime, uNear, uLiver, uGain, uCalc, uPeri, uTee, uSpark;',
     'uniform vec3 uT, uR, uD;',
     'uniform vec4 uSh4[12], uFirst4[12], uHV[4]; uniform float uHVn;',   /* 48 angular bins, packed four to a vector to stay within mobile uniform limits */
     BEAT_GLSL,
@@ -4506,20 +4506,34 @@ html:not(.can-install) [data-install]{display:none!important}
     '  float pxmm = 1.0 / uSc, fq = 1.0 - 0.45 * uTee;',
     /* lateral point-spread widens with depth (fixed transmit aperture); intensity is blurred, not reflectivity */
     '  float lat = max((0.35 + r * 0.012) * fq, 0.9 * pxmm);',
-    '  float tis = 0.0, cal = 0.0, ws = 0.0;',
-    '  for (int i = -3; i <= 3; i++) { float fi = float(i), w = exp(-fi * fi / 4.5); vec4 m = M(rel + bl * fi * lat * 0.6); tis += Iof(m.r) * w; cal += m.b * w; ws += w; }',
-    '  tis /= ws; cal /= ws;',
-    /* specular echo: reflectivity gradient, strongest where the interface faces the beam (about cos^4) */
-    '  float st = max(0.7, 1.2 * pxmm), gr = 0.0;',
-    '  for (int i = -1; i <= 1; i++) { vec2 o = bl * float(i) * lat * 0.6; gr += M(rel + br * st + o).r - M(rel - br * st + o).r; }',
-    '  gr /= 3.0;',
-    '  float gq = M(rel + bl * st * 1.5).r - M(rel - bl * st * 1.5).r;',
-    '  float cs = abs(gr) / (sqrt(gr * gr + gq * gq) + 1e-4), spec = abs(gr) * cs * cs * cs;',
-    /* reference (undeformed) position of this pixel: speckle and the inside-the-heart map are looked up there, so both
-       move with the beating wall */
     '  vec3 p = uT + (uR * rel.x + uD * rel.y) * 0.001;',
     '  vec3 prf = p - beatField(p);',
     '  vec2 q = vec2(dot(prf - uT, uR), dot(prf - uT, uD)) * 1000.0;',
+    /* borders are not smooth contours: they wobble at the scale of a speckle grain (trabeculae, fibre bundles) */
+    '  float c0 = M(rel).r, cl1 = M(rel + bl * 1.2).r, cl2 = M(rel - bl * 1.2).r, ca1 = M(rel + br * 1.0).r, ca2 = M(rel - br * 1.0).r, nv = max(c0, max(cl1, cl2));',
+    '  float hx = min(0.0, cl1 + cl2 - 2.0 * c0), hy = min(0.0, ca1 + ca2 - 2.0 * c0), Pl = hx / (hx + hy - 1e-3);',
+    '  vec2 rw = rel + (texture2D(uSpk, q * 0.0065 + 0.37).gb - 0.5) * 1.6 * fq * (1.0 - smoothstep(0.72, 0.9, nv));',
+    /* wall direction from a ring of 8 mask samples (a structure tensor): Pan = how much the wall runs along the beam.
+       Myocardial backscatter is weaker along the fibres, so such walls are fainter (lateral-wall, septal dropout). */
+    '  float ta = 0.0, tb = 0.0, tc = 0.0, rho = max(6.5 * fq, 2.0 * pxmm);',
+    '  for (int k = 0; k < 8; k++) { float ph = float(k) * 0.785398, cp = cos(ph), spp = sin(ph); float tk = smoothstep(0.2, 0.4, M(rw + (bl * cp + br * spp) * rho).r); ta += tk * cp * cp; tb += tk * spp * spp; tc += tk * cp * spp; }',
+    '  float Pan = (sqrt((ta - tb) * (ta - tb) + 4.0 * tc * tc) - (ta - tb)) / (2.0 * (ta + tb) + 1e-3), ntf = (ta + tb) / 4.0;',
+    '  float tis = 0.0, cal = 0.0, ws = 0.0;',
+    '  for (int i = -3; i <= 3; i++) { float fi = float(i), w = exp(-fi * fi / 4.5); vec4 m = M(rw + bl * fi * lat * 0.6); tis += Iof(m.r) * w; cal += m.b * w; ws += w; }',
+    '  tis /= ws; cal /= ws;',
+    /* myocardium sits mid-grey; arterial walls and valves keep their full brightness */
+    '  float m0 = M(rw).r;',
+    /* specular echo: reflectivity gradient, strongest where the interface faces the beam (about cos^4) */
+    '  float st = max(0.7, 1.2 * pxmm), gr = 0.0;',
+    '  for (int i = -1; i <= 1; i++) { vec2 o = bl * float(i) * lat * 0.6; gr += M(rw + br * st + o).r - M(rw - br * st + o).r; }',
+    '  gr /= 3.0;',
+    '  float gq = M(rw + bl * st * 1.5).r - M(rw - bl * st * 1.5).r;',
+    '  float cs = abs(gr) / (sqrt(gr * gr + gq * gq) + 1e-4), spec = abs(gr) * pow(cs, 5.0);',
+    /* myocardium sits mid-grey, fainter where the wall or its border runs along the beam; arterial walls and valves keep their brightness */
+    '  float pe = 0.6 * (1.0 - cs * cs) * smoothstep(0.04, 0.16, sqrt(gr * gr + gq * gq));',
+    '  float gm = mix(0.42 * (1.0 - 0.8 * max(Pan, pe)), 1.0 - 0.5 * Pl, smoothstep(0.62, 0.85, m0));',
+    /* reference (undeformed) position of this pixel: speckle and the inside-the-heart map are looked up there, so both
+       move with the beating wall */
     '  vec2 uvI = (uO + q * uSc) / uRes; vec4 iv = texture2D(uIns, uvI);',
     '  float insR = iv.r, dmm = iv.g * 10.0;',
     /* pericardium: a bright band 1-4 mm outside the heart silhouette (thicker in constriction), brightest where it
@@ -4531,8 +4545,8 @@ html:not(.can-install) [data-install]{display:none!important}
     /* speckle: Rayleigh amplitude (two smooth noise fields as I and Q) gives exponentially distributed intensity */
     '  float sAx = max(0.85 * fq, 1.5 * pxmm), sLat = max((0.95 + r * 0.011) * fq, 2.3 * pxmm);',
     '  vec2 qs = vec2(atan(q.x, q.y) * r / sLat, length(q) / sAx);',
-    '  float n1 = 1.3 * vn(qs) + 0.7 * vn(qs * 2.03 + 7.3) - 1.0, n2 = 1.3 * vn(qs + 19.1) + 0.7 * vn(qs * 2.03 + 31.7) - 1.0;',
-    '  float sp = mix(1.0, (n1 * n1 + n2 * n2) * 5.0, 0.82);',
+    '  float sa = texture2D(uSpk, qs * (3.5 / 512.0)).r * 3.2;',
+    '  float sp = mix(mix(1.0, sa * sa, 0.86), 1.0, 0.75 * smoothstep(0.75, 0.95, m0));',
     '  float tex = 0.8 + 0.4 * vn(q * 0.15 + 3.0);',
     /* infiltrated myocardium (amyloid): brighter, with scattered bright granules */
     '  float spark = uSpark * smoothstep(0.006, 0.012, tis) * (1.0 - smoothstep(0.1, 0.2, tis)) * (0.5 + 14.0 * pow(vn(q * 1.1 + 41.0), 8.0));',
@@ -4540,10 +4554,12 @@ html:not(.can-install) [data-install]{display:none!important}
     '  float hv = 0.0;',
     '  if (uHVn > 0.5) { for (int i = 0; i < 3; i++) { vec2 a = uHV[i].xy, b = uHV[i + 1].xy, ab = b - a; float t = clamp(dot(rel - a, ab) / dot(ab, ab), 0.0, 1.0);',
     '    float rr = mix(uHV[i].z, uHV[i + 1].z, t); hv = max(hv, 1.0 - smoothstep(rr - 0.8, rr + 0.4, length(rel - a - ab * t))); } }',
-    '  float It = (tis * tex + spark * 0.02 + cal * 0.1 * (0.3 + 1.6 * vn(q * 0.45 + 13.0))) * (1.0 - 0.9 * hv);',
-    '  float Ib = out0 * (1.0 - peri) * 0.00025 * (0.4 + 1.2 * vn(q * 0.05 + 9.0));',
+    '  vec2 tq = texture2D(uSpk, q * 0.008 + 0.71).gb - 0.5;',
+    '  float trab = 0.0006 * ntf * ntf * (1.0 - smoothstep(0.05, 0.2, m0)) * smoothstep(0.5, 0.75, insR) * smoothstep(0.12, 0.28, dot(tq, tq));',
+    '  float It = (tis * tex * gm + trab + spark * 0.02 + cal * 0.1 * (0.3 + 1.6 * vn(q * 0.45 + 13.0))) * (1.0 - 0.9 * hv);',
+    '  float Ib = out0 * (1.0 - peri) * 0.00003 * (0.4 + 1.2 * vn(q * 0.05 + 9.0)) * (0.03 + 1.7 * smoothstep(0.42, 0.75, vn(q * 0.018 + 4.0)));',
     '  float Ip = peri * (0.14 + 0.45 * uPeri) * (0.35 + 0.65 * pc);',
-    '  float echo = (It + Ib + Ip) * sp + spec * 0.12 * (0.4 + 0.6 * sp);',
+    '  float echo = (It + Ib + Ip) * sp + spec * 0.07 * (0.4 + 0.6 * sp);',
     '  float smoke = insR * (1.0 - smoothstep(0.001, 0.008, tis)) * 0.00012 * sp * vn(vec2(qs.x * 0.3, qs.y * 0.1 + uTime * 2.0));',
     /* chest-wall layers and near-field clutter, reverberation from the near-field structures */
     '  float nfl = (1.0 - 0.97 * uTee) * exp(-r / 9.0) * (0.25 + vn(vec2(th * 60.0, r * 0.8 + uTime * 0.2)));',
@@ -4554,7 +4570,8 @@ html:not(.can-install) [data-install]{display:none!important}
     '      for (int i = 0; i < 12; i++) fr += dot(max(vec4(0.0), 1.0 - abs(fb2 - float(i) * 4.0 - vec4(0.0, 1.0, 2.0, 3.0))), uFirst4[i]);',
     '      inN = 1.0 - smoothstep(fr - 3.5, fr - 1.0, r + 2.0 * (vn(vec2(th * 20.0, 4.0)) - 0.5)); }',
     '    if (uLiver > 0.5) nearI = inN * 0.011 * (0.7 + 0.6 * vn(q * 0.08 + 2.0)) * (1.0 - 0.9 * smoothstep(0.66, 0.72, vn(q * 0.085 + 5.0)));',
-    '    else nearI = inN * 0.006 * (0.3 + 1.4 * vn(vec2(th * 4.0, r * 0.32))); }',
+    '    else { float s0 = r / max(edge, 1.0); nearI = inN * 0.004 * (1.1 * (1.0 - smoothstep(0.05, 0.11, s0)) + 0.18 * smoothstep(0.09, 0.15, s0) * (1.0 - smoothstep(0.36, 0.44, s0))',
+    '      + 0.7 * smoothstep(0.4, 0.48, s0) * (1.0 - smoothstep(0.8, 0.88, s0)) * (0.45 + 0.9 * vn(vec2(th * 26.0, r * 1.1))) + smoothstep(0.84, 0.95, s0)) * (0.7 + 0.6 * vn(vec2(th * 6.0, r * 0.25))); } }',
     '  float nf = (0.05 * nfl + nearI * (1.0 - 0.94 * hv)) * sp;',
     '  float rev = uNear > 0.0 && uLiver < 0.5 ? 0.0007 * exp(-pow((r - 2.0 * uNear) / 3.0, 2.0)) * (0.5 + vn(vec2(th * 9.0, 3.0))) * sp : 0.0;',
     /* acoustic shadow behind calcium: uSh4 holds the deepest calcium radius per angular bin */
@@ -4566,8 +4583,8 @@ html:not(.can-install) [data-install]{display:none!important}
     '  float v = (echo + smoke + nf + rev) * att * exp(-r * 0.003) * uGain * (1.0 - 0.92 * hv);',
     /* log compression to a 50 dB display range with a little reject */
     '  float dB = 4.3429 * log(v + 1e-7);',
-    '  float x = clamp((dB + 50.0) / 50.0, 0.0, 1.0);',
-    '  float d = pow(clamp((x - 0.2) / 0.8, 0.0, 1.0), 1.1);',
+    '  float x = clamp((dB + 55.0) / 55.0, 0.0, 1.0);',
+    '  float d = pow(clamp((x - 0.22) / (1.0 - 0.22), 0.0, 1.0), 1.15);',
     '  d *= smoothstep(uHalf + 0.002, uHalf - 0.05, abs(th)) * smoothstep(uDepth + 0.5, uDepth - 6.0, r);',
     '  d += 0.012 * h21(px + fract(uTime) * 91.0);',
     '  gl_FragColor = vec4(vec3(d) * vec3(1.0, 0.985, 0.95), 1.0);',
@@ -4581,6 +4598,26 @@ html:not(.can-install) [data-install]{display:none!important}
     var N = secCache.N, out = new Float32Array(16), ok = true;
     HEPV.pts.forEach(function (p, i) { var off = Math.abs(v3dot(v3sub(p, v.T), N)), q = projV(v, p); if (off > HEPV.r[i] * 0.8) ok = false; out[i * 4] = q[0]; out[i * 4 + 1] = q[1]; out[i * 4 + 2] = Math.sqrt(Math.max(1, HEPV.r[i] * HEPV.r[i] - off * off)); });
     return ok ? out : null;
+  }
+  function speckleTex(N) {
+    var n = N * N, I = new Float32Array(n), Q = new Float32Array(n), tmp = new Float32Array(n), s = 0x9E3779B9 | 0, i, x, y, k;
+    function rn() { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) + 0.5) / 4294967296; }
+    for (i = 0; i < n; i++) { var u = rn(), w = rn(), m = Math.sqrt(-2 * Math.log(u)); I[i] = m * Math.cos(6.283185 * w); Q[i] = m * Math.sin(6.283185 * w); }
+    var sg = 1.6, R = 5, kw = []; for (k = -R; k <= R; k++) kw.push(Math.exp(-k * k / (2 * sg * sg)));
+    function blur(a) {
+      for (y = 0; y < N; y++) for (x = 0; x < N; x++) { var t = 0; for (k = -R; k <= R; k++) t += a[y * N + ((x + k + N) % N)] * kw[k + R]; tmp[y * N + x] = t; }
+      for (y = 0; y < N; y++) for (x = 0; x < N; x++) { var t2 = 0; for (k = -R; k <= R; k++) t2 += tmp[((y + k + N) % N) * N + x] * kw[k + R]; a[y * N + x] = t2; }
+    }
+    blur(I); blur(Q);
+    var ms = 0; for (i = 0; i < n; i++) ms += I[i] * I[i] + Q[i] * Q[i];
+    var rms = Math.sqrt(ms / n), sd = rms / Math.SQRT2, out = new Uint8Array(n * 4);
+    for (i = 0; i < n; i++) {
+      out[i * 4] = Math.min(255, Math.round(Math.sqrt(I[i] * I[i] + Q[i] * Q[i]) / (3.2 * rms) * 255));
+      out[i * 4 + 1] = Math.max(0, Math.min(255, Math.round(127.5 + I[i] / (3 * sd) * 127.5)));
+      out[i * 4 + 2] = Math.max(0, Math.min(255, Math.round(127.5 + Q[i] / (3 * sd) * 127.5)));
+      out[i * 4 + 3] = 255;
+    }
+    return out;
   }
   var glCv = document.createElement('canvas'), tissueCv = document.createElement('canvas'), GLE = null, echoGain = 1;
   function echoGLInit() {
@@ -4600,8 +4637,12 @@ html:not(.can-install) [data-install]{display:none!important}
     var tex2 = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex2);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    var loc = {}; ['uMask', 'uIns', 'uRes', 'uO', 'uSc', 'uHalf', 'uDepth', 'uTime', 'uNear', 'uLiver', 'uFirst4', 'uHV', 'uHVn', 'uGain', 'uCalc', 'uPeri', 'uTee', 'uSpark', 'uSh4', 'uT', 'uR', 'uD', 'uCyc', 'uAtr', 'uWm', 'uWmRv'].forEach(function (n) { loc[n] = gl.getUniformLocation(pr, n); });
-    GLE = { gl: gl, pr: pr, buf: buf, tex: tex, tex2: tex2, insVer: -1, loc: loc, aP: gl.getAttribLocation(pr, 'aP') };
+    var tex3 = gl.createTexture(), SPN = 512; gl.bindTexture(gl.TEXTURE_2D, tex3);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, SPN, SPN, 0, gl.RGBA, gl.UNSIGNED_BYTE, speckleTex(SPN));
+    var loc = {}; ['uSpk', 'uMask', 'uIns', 'uRes', 'uO', 'uSc', 'uHalf', 'uDepth', 'uTime', 'uNear', 'uLiver', 'uFirst4', 'uHV', 'uHVn', 'uGain', 'uCalc', 'uPeri', 'uTee', 'uSpark', 'uSh4', 'uT', 'uR', 'uD', 'uCyc', 'uAtr', 'uWm', 'uWmRv'].forEach(function (n) { loc[n] = gl.getUniformLocation(pr, n); });
+    GLE = { gl: gl, pr: pr, buf: buf, tex: tex, tex2: tex2, tex3: tex3, insVer: -1, loc: loc, aP: gl.getAttribLocation(pr, 'aP') };
     return GLE;
   }
   function echoGLRender(W, H, ox, oy, sc, half, depth, v, cc, aa, calc, peri, shBins, spark) {
@@ -4614,7 +4655,7 @@ html:not(.can-install) [data-install]{display:none!important}
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, echoMask);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, E.tex2);
     if (E.insVer !== insVer) { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, insCv); E.insVer = insVer; }
-    gl.uniform1i(L.uIns, 1); gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1i(L.uIns, 1); gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, E.tex3); gl.uniform1i(L.uSpk, 2); gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(L.uMask, 0); gl.uniform2f(L.uRes, W, H); gl.uniform2f(L.uO, ox, oy); gl.uniform1f(L.uSc, sc);
     gl.uniform1f(L.uHalf, half); gl.uniform1f(L.uDepth, depth); gl.uniform1f(L.uTime, cyc.t % 1000); gl.uniform1f(L.uNear, echoNearR); gl.uniform1f(L.uLiver, v.near === 'Liver' ? 1 : 0); gl.uniform4fv(L.uFirst4, insFirst); var hv = hepVein(v); gl.uniform1f(L.uHVn, hv ? 1 : 0); if (hv) gl.uniform4fv(L.uHV, hv);
     gl.uniform1f(L.uGain, Math.pow(10, (echoGain - 1) * 1.2)); gl.uniform1f(L.uCalc, calc); gl.uniform1f(L.uPeri, peri); gl.uniform1f(L.uSpark, spark || 0); gl.uniform4fv(L.uSh4, shBins); gl.uniform1f(L.uTee, v.mod === 'tee' ? 1 : 0);
@@ -5558,11 +5599,11 @@ html:not(.can-install) [data-install]{display:none!important}
         /* relative leaflet lengths (anterior mitral leaflet longer than posterior, and so on) set where they coapt */
         var info = hs.map(function (h3) {
           var hd = v3unit(v3add(v3sub(h3, V.c), V.n, -v3dot(v3sub(h3, V.c), V.n))), ca = v3dot(hd, r1);
-          if (id === 'mv') return { w: ca > 0.42 ? 1.6 : ca > 0 ? 1 + 0.6 * ca / 0.42 : 1, front: ca > 0.42, cap: ca > 0.42 ? 20 : 15, sw: ca > 0.42 ? 46 : 40 };
-          if (id === 'tv') { var ant = !(ca > 0.5) && r2 && v3dot(hd, r2) > 0.35; return { w: ca > 0.5 ? 0.8 : ant ? 1.3 : 1, front: false, cap: ca > 0.5 ? 16 : ant ? 21 : 17, sw: ant ? 55 : 48 }; }
+          if (id === 'mv') return { w: ca > 0.42 ? 1.6 : ca > 0 ? 1 + 0.6 * ca / 0.42 : 1, front: ca > 0.42, cap: ca > 0.42 ? 24 : 15, sw: ca > 0.42 ? 46 : 40 };
+          if (id === 'tv') { var ant = !(ca > 0.5) && r2 && v3dot(hd, r2) > 0.35; return { w: ca > 0.5 ? 0.8 : ant ? 1.3 : 1, front: false, cap: ca > 0.5 ? 16 : ant ? 23 : 18, sw: ant ? 55 : 48 }; }
           return { w: 1, front: false, cap: 99, sw: 0 };
         });
-        var fr0 = info[0].w / (info[0].w + info[1].w), Pc0 = [H[0][0] + (H[1][0] - H[0][0]) * fr0 + n2[0] * V.coapt, H[0][1] + (H[1][1] - H[0][1]) * fr0 + n2[1] * V.coapt];
+        var leaves = [], fr0 = info[0].w / (info[0].w + info[1].w), Pc0 = [H[0][0] + (H[1][0] - H[0][0]) * fr0 + n2[0] * V.coapt, H[0][1] + (H[1][1] - H[0][1]) * fr0 + n2[1] * V.coapt];
         hs.forEach(function (h3, i) {
           var Hh = H[i], ov = u2(Hh[0] - M[0], Hh[1] - M[1]), front = info[i].front;
           /* long enough to reach the coaptation point with a few mm of overlap */
@@ -5571,7 +5612,7 @@ html:not(.can-install) [data-install]{display:none!important}
           var Pc = Pc0.slice();
           if (id === 'mv' && front && F && F.chip && (vb & 4)) { var sam = Math.min(1, Math.max(0, (vB(P.lv - P.ao) - 1.2) / 1.8)); Pc = [Pc[0] + (ov[0] * half * 0.9 + n2[0] * 6) * sam, Pc[1] + (ov[1] * half * 0.9 + n2[1] * 6) * sam]; }
           var vc = [Pc[0] - Hh[0], Pc[1] - Hh[1]], Lc = Math.hypot(vc[0], vc[1]);
-          var vo, Lo = Math.min(L, info[i].cap);   /* the open leaflet keeps an anatomical length */
+          var vo, Lo = V.kind === 'atrioventricular' && !sten ? info[i].cap : Math.min(L, info[i].cap);   /* the open leaflet keeps an anatomical length */
           if (sten) {   /* restricted tips, bowing body: doming */
             var D = V.kind === 'semilunar' ? 3.5 : 5, ax = Math.sqrt(Math.max(16, Lo * Lo - Math.pow(Math.max(0, half - D), 2)));
             vo = [M[0] + ov[0] * D + n2[0] * ax - Hh[0], M[1] + ov[1] * D + n2[1] * ax - Hh[1]];
@@ -5580,6 +5621,27 @@ html:not(.can-install) [data-install]{display:none!important}
             var swg = V.kind === 'semilunar' ? Math.abs(dd) - 0.07 : Math.min(Math.abs(dd) + 0.25, info[i].sw * Math.PI / 180), ao = ac + (dd < 0 ? -swg : swg);
             vo = [Lo * Math.cos(ao), Lo * Math.sin(ao)];
           }
+          if (V.kind === 'atrioventricular') {
+            /* shut: the body billows a little toward the atrium and the tip turns down into the ventricle beside the
+               other leaflet (the coaptation zone); open: the leaflet swings toward the wall, nearly straight */
+            var rg = F && F.valve === id && F.kind === 'regurg' && !F.chip ? (cur.X && cur.X.sev ? Math.min(1, cur.X.sev.w) : 1) : 0, prol = id === 'mv' && !front ? rg : 0, teth = id === 'tv' ? rg : 0;
+            var side = u2(Hh[0] - Pc[0], Hh[1] - Pc[1]), ztip = V.coapt * 0.75 * (1 - prol) - 6 * prol + 1.0 * teth, sgap = 0.45 + 1.6 * prol + 3 * teth;
+            var Ec = [Pc[0] + n2[0] * ztip + side[0] * sgap, Pc[1] + n2[1] * ztip + side[1] * sgap], vcc = [Ec[0] - Hh[0], Ec[1] - Hh[1]], Lcc = Math.hypot(vcc[0], vcc[1]);
+            var b0 = Math.atan2(vcc[1], vcc[0]), b1 = Math.atan2(vo[1], vo[0]), db = b1 - b0; while (db > Math.PI) db -= 2 * Math.PI; while (db < -Math.PI) db += 2 * Math.PI;
+            var angA = b0 + db * oo, lenA = Lcc + (Math.hypot(vo[0], vo[1]) - Lcc) * oo, EA = [Hh[0] + Math.cos(angA) * lenA, Hh[1] + Math.sin(angA) * lenA];
+            var dA = u2(EA[0] - Hh[0], EA[1] - Hh[1]), cl = 1 - oo;
+            var tC = [n2[0] * (1 - prol - teth) - side[0] * prol + dA[0] * teth, n2[1] * (1 - prol - teth) - side[1] * prol + dA[1] * teth];
+            var tEnd = u2(tC[0] * cl + dA[0] * (oo + 0.3), tC[1] * cl + dA[1] * (oo + 0.3));
+            var bw = u2(-n2[0] * cl + ov[0] * oo, -n2[1] * cl + ov[1] * oo), bulge = cl * (0.9 + 6 * prol) * (1 - 0.8 * teth) + oo * (sten ? 3.5 : 0.7);
+            var C1 = [Hh[0] + dA[0] * lenA * 0.36 + bw[0] * bulge, Hh[1] + dA[1] * lenA * 0.36 + bw[1] * bulge];
+            var C2 = [EA[0] - tEnd[0] * lenA * 0.32 + bw[0] * bulge * 0.4, EA[1] - tEnd[1] * lenA * 0.32 + bw[1] * bulge * 0.4];
+            var pts = [], NS = 14;
+            for (var k = 0; k <= NS; k++) { var t = k / NS, u = 1 - t, w0 = u * u * u, w1 = 3 * u * u * t, w2 = 3 * u * t * t, w3 = t * t * t; pts.push([w0 * Hh[0] + w1 * C1[0] + w2 * C2[0] + w3 * EA[0], w0 * Hh[1] + w1 * C1[1] + w2 * C2[1] + w3 * EA[1]]); }
+            /* thin body; thicker at the hinge and in the rough zone near the free edge */
+            for (var k2 = 0; k2 < NS; k2++) { var s = (k2 + 0.5) / NS, wf = s < 0.3 ? 1.2 - 0.5 * s / 0.3 : s < 0.72 ? 0.7 : 0.7 + 0.32 * (s - 0.72) / 0.28; stroke([pts[k2], pts[k2 + 1]], th * wf, s < 0.12 ? 0.9 : 1, cal); }
+            if (sten) stroke(pts.slice(-4), th * 1.4, 1, cal);   /* thickened tips */
+            leaves.push(pts);
+          } else {
           var a0 = Math.atan2(vc[1], vc[0]), a1 = Math.atan2(vo[1], vo[0]), da = a1 - a0; while (da > Math.PI) da -= 2 * Math.PI; while (da < -Math.PI) da += 2 * Math.PI;
           var ang = a0 + da * oo, len = Math.min(L, Lc) + (Math.hypot(vo[0], vo[1]) - Math.min(L, Lc)) * oo;
           var E = [Hh[0] + Math.cos(ang) * len, Hh[1] + Math.sin(ang) * len];
@@ -5592,6 +5654,7 @@ html:not(.can-install) [data-install]{display:none!important}
           if (tail > 0.3) pts.push([E[0] + n2[0] * tail, E[1] + n2[1] * tail]);
           stroke(pts, th, refl, cal);
           if (sten) stroke(pts.slice(-3), th * 1.4, 1, cal);   /* thickened tips */
+          }
           if (V.kind === 'atrioventricular') stroke([Hh, Hh], 2.8, 0.8, 0);   /* fibrous annulus */
           else {   /* root wall: sinus of Valsalva bulging beyond the annulus, narrowing to the sinotubular junction */
             var R0 = V.A, wall = [];
@@ -5602,6 +5665,17 @@ html:not(.can-install) [data-install]{display:none!important}
             stroke(wall, 2.4, REFL.arteries, 0);
           }
         });
+        if (V.kind === 'atrioventricular' && leaves.length === 2 && typeof EXTRAS !== 'undefined') {
+          var used = [0, 0];
+          (EXTRAS.structs[id === 'mv' ? 'chMV' : 'chTV'] || []).forEach(function (ch, ci) {
+            var p3 = deform3(remCur ? remPt(ch.p[0], remCur) : ch.p[0], c, a); if (Math.abs(v3dot(v3sub(p3, T), N)) > 5) return;
+            var P0 = proj(p3), best = -1, bd = 1e9, bk = 0;
+            leaves.forEach(function (lf, li) { for (var k = 8; k <= 13; k++) { var q = lf[k], d = Math.hypot(q[0] - P0[0], q[1] - P0[1]); if (d < bd) { bd = d; best = li; bk = k; } } });
+            if (best < 0 || bd > 40 || bd < 4 || used[best] >= 3) return; used[best]++;
+            var at = leaves[best][Math.max(8, Math.min(13, bk - (ci % 3)))], dl = u2(at[0] - P0[0], at[1] - P0[1]), sag = 2.2 * oo, mid = [(P0[0] + at[0]) / 2 - dl[1] * sag, (P0[1] + at[1]) / 2 + dl[0] * sag];
+            stroke(qcurve(P0, mid, at, 6), 0.7, 0.6, 0);
+          });
+        }
         drawn[id] = true;
       } else if (g.ratio <= 0.55) {
         /* en face: where does the valve axis cross the cut? */
@@ -5629,7 +5703,7 @@ html:not(.can-install) [data-install]{display:none!important}
           [1, -1].forEach(function (sg) {
             var pts = [];
             for (var i = 0; i <= 16; i++) { var x = -1 + i / 8, y = off + bend * (1 - x * x) + sg * aap * Math.sqrt(Math.max(0, 1 - x * x)); pts.push(proj(deform3(v3add(v3add(C0, rb, aic * x), ra, y), c, a))); }
-            stroke(pts, th + 0.4, refl, cal);
+            stroke(pts, th * 0.95, refl, cal);
           });
           drawn[id] = true;
         }
@@ -7164,13 +7238,13 @@ html:not(.can-install) [data-install]{display:none!important}
     M.leafLine = pMat('#B08A57', { metalness: 0, roughness: 0.7 });
     M.wire = pMat('#E5E7EB', { metalness: 0.8, roughness: 0.22 });
     M.cath = pMat('#64748B', { metalness: 0.1, roughness: 0.5 });
-    M.cath2 = pMat('#F8FAFC', { metalness: 0.05, roughness: 0.45 });
-    M.sheath = pMat('#7C9CC0', { metalness: 0.1, roughness: 0.45, transparent: true, opacity: 0.6, depthWrite: false });
+    M.cath2 = pMat('#B8C2D0', { metalness: 0.05, roughness: 0.45 });
+    M.sheath = pMat('#5F86B3', { metalness: 0.1, roughness: 0.45, transparent: true, opacity: 0.72, depthWrite: false });
     M.guide = pMat('#94A3B8', { metalness: 0.15, roughness: 0.45 });
     M.pace = pMat('#F59E0B', { metalness: 0.2, roughness: 0.4 });
     M.capsule = pMat('#475569', { metalness: 0.2, roughness: 0.4 });
-    M.balloon = pMat('#93C5FD', { metalness: 0, roughness: 0.2, transparent: true, opacity: 0.5, depthWrite: false });
-    M.balloon2 = pMat('#BFDBFE', { metalness: 0, roughness: 0.25, transparent: true, opacity: 0.62, side: THREE.DoubleSide, depthWrite: false });
+    M.balloon = pMat('#3B82F6', { metalness: 0, roughness: 0.25, transparent: true, opacity: 0.6, depthWrite: false, emissive: new THREE.Color('#1D4ED8'), emissiveIntensity: 0.25 });
+    M.balloon2 = pMat('#3B82F6', { metalness: 0, roughness: 0.25, transparent: true, opacity: 0.72, side: THREE.DoubleSide, depthWrite: false, emissive: new THREE.Color('#1D4ED8'), emissiveIntensity: 0.25 });
     M.clip = pMat('#CBD5E1', { metalness: 0.7, roughness: 0.3 });
     M.grip = pMat('#94A3B8', { metalness: 0.6, roughness: 0.35 });
     M.occ = pMat('#A9B4C2', { metalness: 0.55, roughness: 0.4, side: THREE.DoubleSide });
@@ -7303,7 +7377,7 @@ html:not(.can-install) [data-install]{display:none!important}
             'A temporary pacing wire goes to the RV apex from the femoral vein (or pacing is delivered through the LV wire) for rapid pacing and to cover heart block.'],
           g: ['Fluoroscopy: in the deployment view the pigtail marks the lowest point of the non-coronary cusp.'],
           p: 'Vascular complications are among the commonest serious problems: puncture the common femoral artery above its bifurcation and below the inferior epigastric artery.' },
-        { t: 'Cross the valve', scen: 'p_as', cam: camCop, labs: ['apex', 'ncc'], dur: 3800, a: function (f, V) { V.wire = pss(f, 0, 1); },
+        { jet: 0.7, t: 'Cross the valve', scen: 'p_as', cam: camCop, labs: ['apex', 'ncc'], dur: 3800, a: function (f, V) { V.wire = pss(f, 0, 1); },
           h: 'The stenotic valve is crossed retrogradely, then a stiff pre-shaped wire is curled in the LV apex.',
           b: ['A straight-tip wire through a shaped catheter probes the narrow orifice from the aorta.', 'Once across, it is exchanged for a stiff pre-shaped wire whose curl rests in the apex and supports the delivery system.', 'Watch for wire-induced ectopy and avoid pushing a stiff tip into the apex (perforation).'],
           g: ['Keep the wire curl in view on fluoroscopy for the whole procedure.'],
@@ -7313,13 +7387,13 @@ html:not(.can-install) [data-install]{display:none!important}
           b: ['The delivery system goes in through the large-bore femoral sheath and is advanced over the stiff wire: up the iliac artery and the descending aorta, round the arch and into the ascending aorta.', 'The nose cone leads and the stiff wire keeps the system coaxial. The arch is the tightest bend; tortuous or calcified iliacs and a horizontal aorta make tracking harder.', 'Balloon-expandable valves are crimped onto the catheter behind the balloon and moved onto it (valve alignment) in the straight descending aorta; self-expanding valves travel loaded in their capsule.'],
           g: ['Fluoroscopy follows the nose cone round the arch; keep the wire curl in the apex in view, since pushing the system forward pushes the wire tip.', 'Cerebral embolic protection, when used, goes in before the valve crosses the arch.'],
           p: 'Most vascular complications happen at access, but the arch is where debris is scraped off: advance smoothly, never against resistance.' },
-        { t: 'Position', scen: 'p_as', cam: camCopClose, labs: ['thv', 'ncc'], dur: 4200, a: function (f, V) { V.ring = 1; V.thv = 1; V.del = 1; V.path = 1 + pss(f, 0, 1); },
+        { jet: 0.3, t: 'Position', scen: 'p_as', cam: camCopClose, labs: ['thv', 'ncc'], dur: 4200, a: function (f, V) { V.ring = 1; V.thv = 1; V.del = 1; V.path = 1 + pss(f, 0, 1); },
           h: 'The crimped valve crosses the native valve and is lined up in the annulus.',
           vb: { be: ['In the coplanar (three-cusp) view the annulus is edge-on, with all three cusps in one line.', 'The balloon-expandable valve is centred so that roughly 80–90% of the frame sits on the aortic side.', 'Fine adjustments are made just before inflation.'],
             se: ['The cusp-overlap view (right and left cusps overlapped, non-coronary cusp isolated) elongates the LVOT and removes parallax for self-expanding valves.', 'Target depth about 3 mm below the non-coronary cusp: deeper raises the pacemaker rate, too shallow risks migration into the aorta.', 'Aligning the valve’s commissures with the native ones keeps the coronaries accessible for future PCI or a second valve.'] },
           g: ['An aortogram through the pigtail confirms the annular plane.'],
           p: 'A deep implant presses the frame on the membranous septum, where the left bundle emerges: new LBBB and heart block.' },
-        { t: 'Deploy', vscen: { be: 'rpace', se: 'p_as' }, cam: camCopClose, labs: ['thv'], dur: 5200,
+        { jet: 0.15, t: 'Deploy', vscen: { be: 'rpace', se: 'p_as' }, cam: camCopClose, labs: ['thv'], dur: 5200,
           a: function (f, V) { V.ring = 1; V.thv = 1; V.del = 1; V.path = 2; V.exp = pss(f, 0.1, 0.75); V.bal = PROCX.vr.tavi === 'se' ? 0 : Math.sin(Math.PI * pss(f, 0.08, 0.92)); V.pace = 1; },
           vh: { be: 'Rapid pacing at about 180 bpm stills the heart while the balloon expands the valve.', se: 'The capsule is withdrawn slowly: the valve opens from the inflow upward and can be recaptured.' },
           vb: { be: ['Pacing at 160–200 bpm drops systolic pressure below about 60 mmHg, so ejection cannot push the valve into the aorta.', 'The balloon expands the frame into the calcified annulus, pushing the native leaflets into the sinuses.', 'Pacing stops as soon as the balloon is deflated; pressure should recover within seconds.'],
@@ -7395,18 +7469,18 @@ html:not(.can-install) [data-install]{display:none!important}
           b: ['The clip delivery system is loaded into the steerable guide at the groin and advanced up the IVC, through the RA and across the septum inside the guide.', 'The clip stays closed and inside the guide until its tip reaches the LA, so it cannot catch on anything on the way.'],
           g: ['Fluoroscopy and TEE follow the clip to the guide tip before it is pushed out into the LA.'],
           p: 'Clip and guide move as one system: the guide is steered first, then the clip delivery catheter on its own.' },
-        { t: 'Align over the jet', scen: 'p_mr', cam: camTEERla, labs: ['cds', 'perp'], dur: 5600,
+        { jet: 0.5, t: 'Align over the jet', scen: 'p_mr', cam: camTEERla, labs: ['cds', 'perp'], dur: 5600,
           a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.path = 1 + pss(f, 0, 0.45); V.arm = 4 + 86 * pss(f, 0.45, 0.68); V.roll = 55 * (1 - pss(f, 0.68, 0.95)); },
           h: 'The clip is steered down, its arms opened and turned perpendicular to the coaptation line.',
           b: ['The clip delivery catheter comes out of the guide and is steered down (medial–lateral and anterior–posterior knobs) until the clip is coaxial with the valve, centred over the origin of the jet (here A2–P2).', 'The arms are opened to 180° and the clip is rotated until they are perpendicular to the line of coaptation.'],
           g: ['3D TEE en face (surgeon’s) view: orientation. Intercommissural view (about 60°): medial–lateral position. LVOT long-axis view (about 120°): anterior–posterior position.'],
           p: 'The 3D en face view is the anchor: aortic valve at 12 o’clock, appendage at 9.' },
-        { t: 'Enter the LV', scen: 'p_mr', cam: camTEERside, labs: ['lv'], dur: 4200, a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.arm = 90 - 30 * pss(f, 0, 0.3); V.z = 5 + 19 * pss(f, 0.3, 1); },
+        { jet: 0.3, t: 'Enter the LV', scen: 'p_mr', cam: camTEERside, labs: ['lv'], dur: 4200, a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.arm = 90 - 30 * pss(f, 0, 0.3); V.z = 5 + 19 * pss(f, 0.3, 1); },
           h: 'The open clip is advanced through the valve into the LV, below the leaflet edges.',
           b: ['The arms are closed to about 120° and the clip is advanced through the valve, below the leaflet tips, still perpendicular to coaptation.', 'Orientation is re-checked below the leaflets, where the chordae can rotate the clip.'],
           g: ['Intercommissural and LVOT views confirm the clip is below the leaflet tips and still perpendicular.'],
           p: 'Losing perpendicular orientation in the LV is common: correct it before grasping, not after.' },
-        { t: 'Grasp and close', vscen: null, scen: 'p_mr', endScen: 'teer', cam: camTEERgrasp, labs: ['grasp'], dur: 5600,
+        { jet: 0.3, t: 'Grasp and close', vscen: null, scen: 'p_mr', endScen: 'teer', cam: camTEERgrasp, labs: ['grasp'], dur: 5600,
           a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.z = 24 - 5 * pss(f, 0, 0.3) - pss(f, 0.55, 0.9); V.grip = pss(f, 0.3, 0.5); V.arm = 60 - 52 * pss(f, 0.55, 0.9); },
           h: 'Pulled back to capture both leaflets; the grippers drop, the arms close and MR falls.',
           b: ['The clip is pulled back until both leaflets rest on the arms; the grippers drop to pin them.', 'Before release: leaflet insertion, residual MR, the mean gradient (aim under 5 mmHg) and the LA pressure.', 'A second clip is added if significant MR remains next to the first.'],
@@ -7463,11 +7537,11 @@ html:not(.can-install) [data-install]{display:none!important}
           h: 'A stiff wire in the LV apex; the valve, crimped in its delivery capsule, comes up the IVC and across the septum.',
           b: ['After balloon dilation of the septum, a stiff pre-shaped wire is passed across the mitral valve and curled in the LV apex.', 'The delivery system, with the valve crimped inside its capsule, is advanced over the wire from the femoral vein: up the IVC, into the RA and across the septum.', 'Flexing the system turns it from the septum down toward the mitral annulus.'],
           g: ['Fluoroscopy and TEE follow the capsule across the septum; keep the wire curl in the apex in view.'], p: 'The septal crossing is the tightest turn: a lower, more posterior puncture gives the system room to come down coaxially.' },
-        { t: 'Cross and position', scen: 'p_mr', cam: camMVside, labs: ['v'], dur: 4600, a: function (f, V) { V.gd = 1; V.wire = 1; V.v = 1; V.path = 1 + pss(f, 0, 1); },
+        { jet: 0.35, t: 'Cross and position', scen: 'p_mr', cam: camMVside, labs: ['v'], dur: 4600, a: function (f, V) { V.gd = 1; V.wire = 1; V.v = 1; V.path = 1 + pss(f, 0, 1); },
           h: 'The capsule is centred in the mitral annulus, coaxial and at the right depth.',
           b: ['The delivery system is steered down from the septum until it is coaxial with the mitral annulus.', 'Some systems first place an anchor or dock around the native leaflets.'],
           g: ['TEE commissural and LVOT views and fluoroscopy confirm depth and coaxiality.'], p: 'Valve depth matters: too ventricular narrows the LVOT, too atrial risks embolization.' },
-        { t: 'Deploy', scen: 'rpace_m', cam: camMVside, labs: ['v', 'lvot'], dur: 4600, a: function (f, V) { V.gd = 1; V.wire = 1; V.del = 1; V.v = 1; V.path = 2; V.exp = pss(f, 0.1, 0.85); },
+        { jet: 0.2, t: 'Deploy', scen: 'rpace_m', cam: camMVside, labs: ['v', 'lvot'], dur: 4600, a: function (f, V) { V.gd = 1; V.wire = 1; V.del = 1; V.v = 1; V.path = 2; V.exp = pss(f, 0.1, 0.85); },
           h: 'The valve is expanded in the annulus (with rapid pacing for balloon-expandable systems).',
           b: ['The frame expands against the annulus; the atrial flange or anchors resist migration.', 'The native anterior leaflet is pushed toward the septum and becomes part of the new LVOT wall.'],
           g: ['Watch the LVOT gradient on echo and the LV–aortic pressures as the valve opens.'], p: 'Displaced anterior leaflet + valve frame = the neo-LVOT.' },
@@ -7516,15 +7590,15 @@ html:not(.can-install) [data-install]{display:none!important}
           h: 'The stretched balloon comes up from the femoral vein over a wire coiled in the LA.',
           b: ['After the septum is dilated, the balloon, stretched slender on its metal tube, is advanced over a coiled wire parked in the LA: up the IVC, through the RA and across the septum.', 'No sheath is used: the slender balloon itself crosses the septum.'],
           g: ['Fluoroscopy follows the balloon across the septum.'], p: 'Releasing the stretching tube inside the LA makes the balloon soft and steerable.' },
-        { t: 'Position the balloon', scen: 'p_ms', cam: camMVside, labs: ['bal'], dur: 4200, a: function (f, V) { V.b = 1; V.path = 1 + pss(f, 0, 1); },
+        { jet: 0.45, t: 'Position the balloon', scen: 'p_ms', cam: camMVside, labs: ['bal'], dur: 4200, a: function (f, V) { V.b = 1; V.path = 1 + pss(f, 0, 1); },
           h: 'The slender balloon is steered across the valve.',
           b: ['In the LA the balloon is steered toward the mitral orifice with a stylet and floated across into the LV.', 'Balloon size is chosen from height: height in cm ÷ 10 + 10 = reference diameter in mm.'],
           g: ['Fluoroscopy (RAO) and echo confirm the balloon is free in the LV, not caught in the chordae.'], p: 'Stepwise sizing starts 1–2 mm below the reference size.' },
-        { t: 'Inflate', scen: 'p_ms', endScen: 'bmv', cam: camMVside, labs: ['bal'], dur: 5600, a: function (f, V) { V.b = 1; V.path = 2; V.bD = pss(f, 0.05, 0.3); V.bP = pss(f, 0.35, 0.55); V.bW = pss(f, 0.6, 0.85); },
+        { jet: 0.2, t: 'Inflate', scen: 'p_ms', endScen: 'bmv', cam: camMVside, labs: ['bal'], dur: 5600, a: function (f, V) { V.b = 1; V.path = 2; V.bD = pss(f, 0.05, 0.3); V.bP = pss(f, 0.35, 0.55); V.bW = pss(f, 0.6, 0.85); },
           h: 'Distal half first, pulled back onto the valve, then the proximal half, then the waist splits the commissures.',
           b: ['The distal half inflates and is pulled back against the valve; then the proximal half inflates, centring the balloon.', 'The waist expands last and splits the fused commissures.', 'Inflation is repeated 1 mm larger at a time, checking the gradient, the area and MR after each.'],
           g: ['Stop when the valve area reaches about 1.5 cm² or more, both commissures are split, or MR increases by more than one grade.'], p: 'The hourglass shape is what makes the balloon self-positioning.' },
-        { t: 'Result', scen: 'bmv', cam: camSurgeon, labs: [], dur: 3000, a: function (f, V) { var dfl = 1 - pss(f, 0, 0.25); V.bD = dfl; V.bP = dfl; V.bW = dfl; V.b = f < 0.62 ? 1 : 0; V.path = 2 - pss(f, 0.25, 0.6); V.gd = 0; },
+        { t: 'Result', scen: 'bmv', cam: camSurgeon, labs: [], dur: 3000, a: function (f, V) { var dfl = 1 - pss(f, 0, 0.25); V.bD = dfl; V.bP = dfl; V.bW = dfl; V.b = 1; V.path = 2 - 1.15 * pss(f, 0.25, 0.95); V.gd = 0; },
           h: 'The valve area about doubles and LA pressure falls by about half.',
           b: ['Valve area about 2 cm²; the mean gradient falls to about 4–5 mmHg; PA pressure falls.', 'The opening snap persists (the leaflets are still mobile) and the rumble softens.', 'Restenosis develops over years; a repeat procedure is possible if morphology stays favourable.'],
           g: ['Echo: planimetry, gradient, commissural split and MR; check for an iatrogenic ASD.'], p: 'Good long-term results depend on favourable morphology at the start.' }
@@ -7571,12 +7645,12 @@ html:not(.can-install) [data-install]{display:none!important}
           h: 'From the femoral vein up the IVC into the RA — no transseptal puncture.',
           b: ['The steerable guide is advanced up the IVC into the RA.', 'The closed clip travels up inside the guide on its delivery catheter, then is pushed out and steered toward the tricuspid valve, coaxial with the annulus.'],
           g: ['TEE mid-esophageal RV inflow–outflow and transgastric short-axis views; intracardiac echo helps when TEE is poor.'], p: 'The IVC-to-tricuspid angle is the main steering challenge.' },
-        { t: 'Align and enter', scen: 'p_tr', cam: camTVclose, labs: ['as'], dur: 5600,
+        { jet: 0.4, t: 'Align and enter', scen: 'p_tr', cam: camTVclose, labs: ['as'], dur: 5600,
           a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.arm = 4 + 86 * pss(f, 0, 0.22) - 30 * pss(f, 0.45, 0.58); V.roll = 50 * (1 - pss(f, 0.2, 0.42)); V.z = 4 + 22 * pss(f, 0.55, 1); },
           h: 'Arms opened perpendicular to the coaptation line at the anteroseptal commissure, then into the RV.',
           b: ['The arms are oriented perpendicular to the coaptation line, usually starting at the anteroseptal commissure.', 'The clip is advanced into the RV below the leaflet tips.'],
           g: ['The transgastric short-axis view shows all three leaflets and the clip orientation en face.'], p: 'Septal and anterior leaflets are grasped first in most strategies.' },
-        { t: 'Grasp', scen: 'p_tr', endScen: 'tteer', cam: camTVsideClose, labs: [], dur: 5400, a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.z = 26 - 6 * pss(f, 0, 0.3) - 2 * pss(f, 0.55, 0.9); V.grip = pss(f, 0.3, 0.5); V.arm = 60 - 52 * pss(f, 0.55, 0.9); },
+        { jet: 0.3, t: 'Grasp', scen: 'p_tr', endScen: 'tteer', cam: camTVsideClose, labs: [], dur: 5400, a: function (f, V) { V.gd = 1; V.cdv = 1; V.clip = 1; V.z = 26 - 6 * pss(f, 0, 0.3) - 2 * pss(f, 0.55, 0.9); V.grip = pss(f, 0.3, 0.5); V.arm = 60 - 52 * pss(f, 0.55, 0.9); },
           h: 'Septal and anterior leaflets captured; often two or three clips are placed.',
           b: ['Pulled back to capture the septal and anterior leaflets, grippers down, arms closed.', 'Further clips are added from the commissure toward the centre ("zipping") until TR is moderate or less.'],
           g: ['RA pressure and the v wave fall as TR is reduced.'], p: 'Mean gradient should stay low (about 3 mmHg or less).' },
@@ -7624,11 +7698,11 @@ html:not(.can-install) [data-install]{display:none!important}
           h: 'The valve, crimped in its capsule, tracks the wire up the IVC into the RA.',
           b: ['The large delivery system goes in through the femoral vein and is advanced over the stiff wire up the IVC into the RA.', 'The IVC-to-tricuspid angle is steep: the system is flexed in the RA to point at the annulus.'],
           g: ['Fluoroscopy follows the capsule; TEE confirms the wire is still free of chordae.'], p: 'A short, steep IVC-to-annulus path is why depth and coaxiality need fine steering.' },
-        { t: 'Position', scen: 'p_tr', cam: camTVside, labs: ['v'], dur: 4200, a: function (f, V) { V.wire = 1; V.v = 1; V.path = 1 + pss(f, 0, 1); },
+        { jet: 0.35, t: 'Position', scen: 'p_tr', cam: camTVside, labs: ['v'], dur: 4200, a: function (f, V) { V.wire = 1; V.v = 1; V.path = 1 + pss(f, 0, 1); },
           h: 'The valve is brought coaxial with the annulus; anchors capture the native leaflets.',
           b: ['The delivery system is aligned with the annulus using the steering controls.', 'Ventricular anchors capture the native leaflets.'],
           g: ['Multiplane and 3D TEE with fluoroscopy.'], p: 'Coaxial alignment prevents paravalvular leak.' },
-        { t: 'Deploy', scen: 'p_tr', endScen: 'ttvr', cam: camTV, labs: ['v'], dur: 4600, a: function (f, V) { V.wire = 1; V.del = 1; V.v = 1; V.path = 2; V.exp = pss(f, 0.1, 0.9); },
+        { jet: 0.2, t: 'Deploy', scen: 'p_tr', endScen: 'ttvr', cam: camTV, labs: ['v'], dur: 4600, a: function (f, V) { V.wire = 1; V.del = 1; V.v = 1; V.path = 2; V.exp = pss(f, 0.1, 0.9); },
           h: 'The self-expanding frame opens; the atrial skirt seals on the RA side.',
           b: ['The frame expands in the annulus and the atrial skirt seals it from above.', 'The delivery system and wire are withdrawn.'],
           g: ['TEE: valve position, seal and the RV response.'], p: 'Watch RV function and systemic pressure as TR disappears.' },
@@ -7944,7 +8018,7 @@ html:not(.can-install) [data-install]{display:none!important}
     PROCX.t0 = performance.now(); PROCX.endDone = false;
     var key = procScen();
     if (key !== curKey) setScenario(key); else procCard();
-    var st = c.steps[PROCX.step], cm = st.cam && st.cam();
+    var st = c.steps[PROCX.step], cm = st.cam && st.cam(); PROCX.lead = cm ? 700 : 250;
     if (cm) { var tt = pMM(cm.t); flyTo(cm.d, new THREE.Vector3(tt[0] * 0.001, tt[1] * 0.001, tt[2] * 0.001), viewDistance() * cm.z, 900); }
     procUIstate();
   }
@@ -7960,16 +8034,17 @@ html:not(.can-install) [data-install]{display:none!important}
   function procTick(t) {
     if (!PX) return;
     PX.root.visible = PROCX.on && state.preset === 'struct' && cyc.on && !!PX.o; if (!PX.root.visible) { if (VALV.ovSig) valvesProc(null); return; }
-    var c = procCur(), st = c.steps[PROCX.step], dur = st.dur || 2400, now = performance.now(), f = PROCX.comp ? 1 : Math.min(1, (now - PROCX.t0) / dur);
+    var c = procCur(), st = c.steps[PROCX.step], dur = st.dur || 2400, now = performance.now(), f = PROCX.comp ? 1 : Math.min(1, Math.max(0, now - PROCX.t0 - (PROCX.lead || 0)) / dur);
     if (st.endScen && f >= 1 && !PROCX.comp && !PROCX.endDone) { PROCX.endDone = true; if (curKey !== st.endScen) setScenario(st.endScen); }
     var V = { comp: PROCX.comp };
+    var jt = PROCX.comp || st.jet == null ? 1 : st.jet; PROCX.jk = PROCX.jk == null ? jt : PROCX.jk + (jt - PROCX.jk) * 0.12;
     for (var j = 0; j < PROCX.step; j++) c.steps[j].a(1, V);
     st.a(f, V);
     c.P.render(PX.o, V, t);
     valvesProc(PX.o, V);
     var want = PROCX.comp ? (procComp(c, PROCX.comp).labs || []) : (st.labs || []);
     Object.keys(PX.o.L).forEach(function (k) { var s = PX.o.L[k]; s.visible = state.labels && want.indexOf(k) >= 0; if (s.visible) pFollow(s); });
-    if (PROCX.auto && f >= 1 && now - PROCX.t0 > dur + 4000) { if (PROCX.step < c.steps.length - 1) procGo(PROCX.step + 1); else { PROCX.auto = false; procUIstate(); } }
+    if (PROCX.auto && f >= 1 && now - PROCX.t0 > dur + (PROCX.lead || 0) + 4000) { if (PROCX.step < c.steps.length - 1) procGo(PROCX.step + 1); else { PROCX.auto = false; procUIstate(); } }
   }
   function procLi(t) { return '<li>' + t + '</li>'; }
   function procCard() {
