@@ -667,11 +667,62 @@ body.dpres .tip{font-size:14.5px}
 html:not(.can-install) [data-install]{display:none!important}
 .appbox{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--sunken);color:var(--fg);font-size:13.5px;line-height:1.5}
 .appbox .btn{min-height:36px}
+/* ---- navigation (v39): topic chips with Back/Next, and the Contents drawer ---- */
+.ncourse{display:flex;align-items:center;gap:10px;min-width:0;background:var(--surface)}
+.ncrumb{flex:none;display:flex;align-items:baseline;gap:7px;max-width:240px;font:600 13px/1.2 var(--sans);color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nnum{font:500 11px/1 var(--mono);font-style:normal;color:var(--muted);letter-spacing:.01em}
+.nchips{position:relative;flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.nchips::-webkit-scrollbar{display:none}
+.nchips .btn{flex:none;display:flex;align-items:center;gap:7px;min-height:32px;padding:0 12px;font-size:12.5px;white-space:nowrap}
+.nchips .btn[aria-pressed="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
+.nchips .btn[aria-pressed="true"] .nnum{color:inherit;opacity:.8}
+.npn{flex:none;display:flex;gap:6px}
+.npn .btn{min-height:32px;padding:0 12px;font-size:12.5px}
+.npn .btn:disabled{opacity:.4;cursor:default}
+.ncourse .btn:focus-visible,.ndraw button:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+/* desktop: a row under the top bar, across the view and the side panel */
+#dshell{grid-template-rows:var(--dbarh) auto minmax(0,1fr)}
+#dshell .dwork,#dshell .dside{grid-row:3}
+.dcourse{grid-column:1/-1;grid-row:2;padding:7px 12px 7px 16px;border-bottom:1px solid var(--line)}
+#dshell.dpres .dcourse{display:none}
+.dbar .dcont{margin-right:10px}
+/* phone: a second row in the top bar */
+.mbar{flex-wrap:wrap;row-gap:4px}
+.mbar .mcont{margin-left:-8px}
+.mcourse{flex:0 0 100%;gap:6px;margin:0 -8px 0 -14px;padding:2px 8px 0 14px}
+.mcourse .ncrumb{display:none}
+.mcourse .nchips .btn{min-height:30px;padding:0 10px;font-size:12px}
+.mcourse .npn .btn{width:34px;min-height:30px;padding:0;font-size:15px}
+/* the page layout between phone and desktop: a bar that stays at the top while the page scrolls */
+.ccourse{position:sticky;top:0;z-index:25;padding:8px 10px;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 14px rgba(23,33,44,.08)}
+body.dsk .ccourse,body.mob .ccourse{display:none}
+/* the drawer */
+.ndraw{position:fixed;inset:0;z-index:90}
+.ndraw[hidden]{display:none}
+.nback{position:absolute;inset:0;background:rgba(10,16,24,.34)}
+.npanel{position:absolute;left:0;top:0;bottom:0;width:min(380px,90vw);display:flex;flex-direction:column;background:var(--surface);color:var(--fg);border-right:1px solid var(--line);box-shadow:8px 0 30px rgba(10,16,24,.22)}
+.nhead{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 10px 18px;border-bottom:1px solid var(--line)}
+.nhead h2{margin:0;font:600 19px/1.2 var(--serif)}
+.nhead .btn{min-height:34px}
+.nlist{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 24px)}
+.nch{margin:14px 0 4px}
+.nch h3{display:flex;align-items:baseline;gap:9px;margin:0 8px 6px;font:600 16px/1.3 var(--sans);color:var(--fg)}
+.nch h3 .nnum{font-size:12px}
+.nsec{display:flex;align-items:baseline;gap:9px;width:100%;padding:8px 8px;border:0;border-radius:9px;background:none;color:var(--fg);font:600 14px/1.3 var(--sans);text-align:left;cursor:pointer}
+.nsec .nnum{flex:none;min-width:2.4em}
+.nsec small{display:block;margin-top:2px;font:400 12px/1.35 var(--sans);color:var(--muted)}
+.nsec:hover{background:var(--sunken)}
+.nsec[aria-current="true"]{background:var(--sunken);background:color-mix(in srgb,var(--ven) 11%,transparent);color:var(--ven)}
+.nitems{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 6px;padding-left:calc(2.4em + 17px)}
+.nitem{min-height:26px;padding:0 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:500 12px/1 var(--sans);cursor:pointer}
+.nitem:hover{border-color:var(--ven)}
+.nitem[aria-current="true"]{background:var(--ven);border-color:var(--ven);color:var(--on-ven)}
 </style>
 
 </head>
 <body>
 <div class="wrap">
+  <nav class="ncourse ccourse" aria-label="Topics"></nav>
   <header class="mast">
     <svg class="logo" viewBox="0 0 48 44" aria-hidden="true"><defs><clipPath id="lgL"><rect x="0" y="0" width="24" height="44"/></clipPath><clipPath id="lgR"><rect x="24" y="0" width="24" height="44"/></clipPath></defs><path d="M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z" fill="var(--ven)" clip-path="url(#lgL)"/><path d="M24 41 L6.5 23.5 C1.5 18.5 2.5 9.5 9.5 6.5 C15 4 20.5 6.5 24 11 C27.5 6.5 33 4 38.5 6.5 C45.5 9.5 46.5 18.5 41.5 23.5 Z" fill="var(--art)" clip-path="url(#lgR)"/><polyline points="3,23 14,23 17,17.5 20.5,29 24.5,9.5 28,31 31,23 45,23" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/></svg>
     <div class="mastxt">
@@ -1018,7 +1069,7 @@ html:not(.can-install) [data-install]{display:none!important}
   </div>
 
   <footer>
-    <span><strong>Offline edition</strong> · updated 31 October 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Offline edition</strong> · updated 1 November 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <span><strong>Further learning.</strong> For ultrasound physics and in-depth echocardiography, see <a href="https://intro2echo.com/" target="_blank" rel="noopener">The Heart by Ultrasound (intro2echo.com)</a>.</span>
@@ -6674,6 +6725,7 @@ html:not(.can-install) [data-install]{display:none!important}
     updateLabelSet(); terDisplay();
     if (MOB && MOB.on) mSync();
     if (DSK && DSK.on) dSync();
+    navSync();
   }
 
   /* ---------- Labels ---------- */
@@ -13648,10 +13700,10 @@ html:not(.can-install) [data-install]{display:none!important}
     var sh = document.createElement('div'); sh.id = 'mshell'; MOB.el.shell = sh;
     var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'mlgL').replace(/lgR/g, 'mlgR');
     sh.innerHTML =
-      '<header class="mbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
+      '<header class="mbar"><button class="mico mcont" type="button" data-ncontents aria-haspopup="dialog" aria-label="Contents">' + mIcon('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M9 4.5v15M12.5 9h4.5M12.5 12h4.5M12.5 15h3"/>') + '</button>' + logo + '<h1>LubDubAPP Guide</h1>' +
         '<button class="mico" type="button" data-install aria-label="Install as an app">' + mIcon('<path d="M12 4v10.5M7.5 10L12 14.5 16.5 10"/><path d="M5 15.5V19h14v-3.5"/>') + '</button>' +
         '<button class="mico" type="button" id="mAboutBtn" aria-label="About this guide">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '</button>' +
-        '<button class="mico" type="button" id="mSetBtn" aria-label="Display and layers">' + mIcon('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>') + '</button></header>' +
+        '<button class="mico" type="button" id="mSetBtn" aria-label="Display and layers">' + mIcon('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>') + '</button><nav class="ncourse mcourse" aria-label="Topics"></nav></header>' +
       '<div id="mstagewrap"></div>' +
       '<section class="msheet" id="msheet" aria-label="Scene panel"><div class="mhead" id="mhead"><div class="mgrip" aria-hidden="true"></div>' +
         '<div class="mchips" id="mchips" hidden></div>' +
@@ -13692,7 +13744,7 @@ html:not(.can-install) [data-install]{display:none!important}
     sh.querySelectorAll('[data-mclose]').forEach(function (b) { b.addEventListener('click', function () { b.closest('.mov').hidden = true; }); });
     mDrag();
     ['#scTitle', '#scSub', '#echoTitle'].forEach(function (q) { var n = $(q); if (n && window.MutationObserver) new MutationObserver(mHead).observe(n, { childList: true, characterData: true, subtree: true }); });
-    MOB.scene = ''; mSync(); mLayout();
+    MOB.scene = ''; mSync(); mLayout(); navSync();
     if (ready) resize();
   }
   function mTeardown() {
@@ -13791,6 +13843,179 @@ html:not(.can-install) [data-install]{display:none!important}
   function mCheck() { if (MOB_MQ && MOB_MQ.matches) mBuild(); else mTeardown(); }
   if (MOB_MQ) { if (MOB_MQ.addEventListener) MOB_MQ.addEventListener('change', mCheck); else if (MOB_MQ.addListener) MOB_MQ.addListener(mCheck); }
   window.addEventListener('resize', function () { if (MOB.on) mLayout(); });
+  /* ---------- Contents, topic chips and Back/Next ----------
+     The guide as one numbered outline. Chapters are the scenes of the top bar; sections are the groups inside them;
+     items are single topics. The chips show the current section (or, where a scene has no smaller topics, the
+     scenes of the chapter); Back and Next walk the outline from the first anatomy scene to the last angiogram. */
+  var NAV = { raf: 0, open: false, from: null, sig: {} };
+  function navTree() {
+    function groups(sel) {
+      var out = [], box = $(sel); if (!box) return out;
+      box.querySelectorAll('.gname').forEach(function (g) {
+        var seg = g.nextElementSibling; while (seg && !seg.classList.contains('seg')) seg = seg.nextElementSibling;
+        if (!seg) return;
+        out.push({ t: g.textContent.trim(), items: [].map.call(seg.querySelectorAll('[data-scen]'), function (b) { var t = b.textContent.trim(); return { t: t, f: b.title || t, scen: b.dataset.scen }; }) });
+      });
+      return out;
+    }
+    function scene(id) { var p = PRESETS.filter(function (x) { return x.id === id; })[0]; return { t: p ? p.name : id, pre: id }; }
+    function steps(k) { var P = PROCS[k], vr = PROCX.vr[k] || (P.vars ? P.vars[0][0] : null); return P.vsteps ? P.vsteps[vr] : P.steps; }
+    var echo = [];
+    ['tte', 'tee'].forEach(function (m) { EORDER[m].forEach(function (g) { echo.push({ t: g[0] + ' (' + m.toUpperCase() + ')', items: g[1].map(function (k) { return { t: EINFO[k].s, f: EINFO[k].n, ev: k }; }) }); }); });
+    return [
+      { n: 'Anatomy', tab: 'anat', secs: MTABS[0].presets.map(scene) },
+      { n: 'Cardiac cycle', tab: 'cycle', pre: 'cycle', secs: groups('#scenStd') },
+      { n: 'Rhythm and pacing', tab: 'rhythm', pre: 'rhythm', secs: groups('#scenRhy') },
+      { n: 'Structural interventions', tab: 'struct', pre: 'struct', secs: PROC_ORDER.map(function (k) { return { t: PROCS[k].name, f: PROCS[k].full, proc: k, steps: true, items: steps(k).map(function (s, i) { return { t: s.t, step: i }; }) }; }) },
+      { n: 'Echocardiography', tab: 'echo', pre: 'echo', secs: echo },
+      { n: 'Coronary circulation', tab: 'cor', secs: MTABS[5].presets.map(scene) }
+    ];
+  }
+  function navNum(c, s, i) { return (c + 1) + (s >= 0 ? '.' + (s + 1) : '') + (i >= 0 ? '.' + (i + 1) : ''); }
+  function navLeaves(T) {
+    var L = [];
+    T.forEach(function (C, c) { C.secs.forEach(function (S_, s) { if (S_.items) S_.items.forEach(function (it, i) { L.push([c, s, i]); }); else L.push([c, s, -1]); }); });
+    return L;
+  }
+  function navCur(T) {
+    var tab = mTabOf(state.preset).id, c = -1, s = -1, i = -1;
+    T.forEach(function (C, k) { if (C.tab === tab) c = k; });
+    var C = T[c]; if (!C) return { c: 0, s: 0, i: -1 };
+    function find(f) { C.secs.forEach(function (S_, a) { (S_.items || []).forEach(function (it, b) { if (s < 0 && f(it)) { s = a; i = b; } }); }); }
+    if (tab === 'anat' || tab === 'cor') C.secs.forEach(function (S_, a) { if (S_.pre === state.preset) s = a; });
+    else if (tab === 'cycle' || tab === 'rhythm') { var k = (SCX[curKey] && SCX[curKey].variantOf) || curKey; find(function (it) { return it.scen === k; }); }
+    else if (tab === 'struct') { C.secs.forEach(function (S_, a) { if (S_.proc === PROCX.key) { s = a; i = Math.min(PROCX.step, S_.items.length - 1); } }); }
+    else if (tab === 'echo') { var v = state.echo && state.echo.view; find(function (it) { return it.ev === v; }); }
+    return { c: c, s: s, i: i };
+  }
+  function navGo(c, s, i) {
+    var T = navTree(), C = T[c], S_ = C && C.secs[s]; if (!S_) return;
+    var it = S_.items ? S_.items[Math.max(0, Math.min(S_.items.length - 1, i))] : null;
+    if (C.tab === 'anat' || C.tab === 'cor') { if (state.preset !== S_.pre) applyPreset(S_.pre, true); }
+    else if (C.tab === 'cycle' || C.tab === 'rhythm') {
+      if (state.preset !== C.pre) applyPreset(C.pre, true);
+      var now = (SCX[curKey] && SCX[curKey].variantOf) || curKey, b = document.querySelector((C.tab === 'cycle' ? '#scenStd' : '#scenRhy') + ' [data-scen="' + it.scen + '"]');
+      if (b && now !== it.scen) b.click();
+    } else if (C.tab === 'struct') {
+      if (state.preset !== 'struct') applyPreset('struct', true);
+      if (PROCX.key !== S_.proc) procSelect(S_.proc);
+      PROCX.auto = false;
+      if (PROCX.comp || PROCX.step !== it.step) { PROCX.comp = null; procGo(it.step); }
+    } else if (C.tab === 'echo') {
+      if (state.preset !== 'echo') applyPreset('echo', true);
+      if (state.echo && state.echo.view !== it.ev) setEchoView(it.ev, true);
+    }
+    navSync();
+  }
+  function navStep(d) {
+    var T = navTree(), L = navLeaves(T), cu = navCur(T), k = -1;
+    L.forEach(function (q, j) { if (q[0] === cu.c && q[1] === cu.s && q[2] === cu.i) k = j; });
+    if (k < 0) {   /* not on a listed topic (a variant, a complication): start from the first topic of this chapter */
+      L.forEach(function (q, j) { if (k < 0 && q[0] === cu.c) k = j; }); if (k < 0) k = 0; if (d < 0) { navGo(L[k][0], L[k][1], L[k][2]); return; } k -= 1;
+    }
+    var q = L[k + d]; if (q) navGo(q[0], q[1], q[2]);
+  }
+  function navSync() { if (!NAV.raf) NAV.raf = requestAnimationFrame(navRender); }
+  function navEsc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function navRender() {
+    NAV.raf = 0;
+    var bars = document.querySelectorAll('.ncourse'); if (!bars.length) return;
+    var T = navTree(), L = navLeaves(T), cu = navCur(T), C = T[cu.c], S_ = C.secs[cu.s];
+    var items = S_ && S_.items, list, crumb, sig;
+    if (items) { list = items.map(function (it, i) { return [navNum(cu.c, cu.s, i), it.t, it.f, cu.c + '.' + cu.s + '.' + i, i === cu.i]; }); crumb = [navNum(cu.c, cu.s), S_.t]; }
+    else { list = C.secs.map(function (x, s) { return [navNum(cu.c, s), x.t, x.f || x.t, cu.c + '.' + s + '.-1', s === cu.s]; }); crumb = [String(cu.c + 1), C.n]; }
+    sig = cu.c + '/' + (items ? cu.s : '') + '/' + list.map(function (x) { return x[1]; }).join('|');
+    var k = -1; L.forEach(function (q, j) { if (q[0] === cu.c && q[1] === cu.s && q[2] === cu.i) k = j; });
+    var prev = k > 0 ? L[k - 1] : null, next = k >= 0 ? L[k + 1] : L[0];
+    function lab(q) { if (!q) return ''; var C2 = T[q[0]], S2 = C2.secs[q[1]], t = q[2] >= 0 ? S2.items[q[2]].t : S2.t; return navNum(q[0], q[1], q[2]) + ' ' + t; }
+    bars.forEach(function (bar) {
+      if (!bar.dataset.built) {
+        bar.dataset.built = '1'; var ph = bar.classList.contains('mcourse');
+        bar.innerHTML = (bar.classList.contains('ccourse') ? '<button class="btn" type="button" data-ncontents aria-haspopup="dialog">Contents</button>' : '') +
+          '<span class="ncrumb"></span><div class="nchips" role="group" aria-label="Topics in this section"></div>' +
+          '<div class="npn"><button class="btn" type="button" data-nstep="-1">' + (ph ? '‹' : '‹ Back') + '</button><button class="btn" type="button" data-nstep="1">' + (ph ? '›' : 'Next ›') + '</button></div>';
+      }
+      bar.querySelector('.ncrumb').innerHTML = '<i class="nnum">' + crumb[0] + '</i><span>' + navEsc(crumb[1]) + '</span>';
+      var box = bar.querySelector('.nchips');
+      if (bar.dataset.sig !== sig) {
+        bar.dataset.sig = sig;
+        box.innerHTML = list.map(function (x) { return '<button class="btn" type="button" data-ngo="' + x[3] + '" aria-pressed="false" title="' + navEsc(x[0] + ' ' + x[2]) + '"><i class="nnum">' + x[0] + '</i>' + navEsc(x[1]) + '</button>'; }).join('');
+        box.scrollLeft = 0;
+      }
+      var act = null;
+      box.querySelectorAll('[data-ngo]').forEach(function (b, j) { var on = !!list[j][4]; b.setAttribute('aria-pressed', String(on)); if (on) { act = b; b.setAttribute('aria-current', 'true'); } else b.removeAttribute('aria-current'); });
+      if (act && box.clientWidth) {   /* bring the current topic to the middle of the row if it is out of view */
+        var l = act.offsetLeft, r = l + act.offsetWidth;
+        if (l < box.scrollLeft + 8 || r > box.scrollLeft + box.clientWidth - 8) box.scrollLeft = Math.max(0, l - (box.clientWidth - act.offsetWidth) / 2);
+      }
+      var pb = bar.querySelector('[data-nstep="-1"]'), nb = bar.querySelector('[data-nstep="1"]');
+      pb.disabled = !prev; nb.disabled = !next;
+      pb.title = prev ? 'Back: ' + lab(prev) : ''; nb.title = next ? 'Next: ' + lab(next) : '';
+      pb.setAttribute('aria-label', prev ? 'Back to ' + lab(prev) : 'Back'); nb.setAttribute('aria-label', next ? 'Next: ' + lab(next) : 'Next');
+    });
+    if (NAV.open) navMark(cu);
+    if (MOB && MOB.on) mLayout();   /* the phone's top bar grew a row: the view and sheet are placed under it */
+  }
+  function navDrawer() {
+    var d = $('#nDraw'); if (d) return d;
+    d = document.createElement('div'); d.className = 'ndraw'; d.id = 'nDraw'; d.hidden = true;
+    d.innerHTML = '<div class="nback" data-nclose></div><div class="npanel" role="dialog" aria-modal="true" aria-labelledby="nDrawH"><div class="nhead"><h2 id="nDrawH">Contents</h2><button class="btn" type="button" data-nclose>Close</button></div><div class="nlist" id="nList"></div></div>';
+    document.body.appendChild(d); return d;
+  }
+  function navMark(cu) {
+    var d = $('#nDraw'); if (!d) return;
+    d.querySelectorAll('[data-ngo]').forEach(function (b) {
+      var p = b.dataset.ngo.split('.').map(Number), on = p[0] === cu.c && p[1] === cu.s && (p[2] < 0 || b.classList.contains('nsec') || p[2] === cu.i);
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+  }
+  function navOpen(on) {
+    var d = navDrawer();
+    if (on) {
+      var T = navTree(), cu = navCur(T);
+      $('#nList').innerHTML = T.map(function (C, c) {
+        return '<section class="nch"><h3><i class="nnum">' + (c + 1) + '</i><span>' + navEsc(C.n) + '</span></h3>' + C.secs.map(function (S_, s) {
+          var first = S_.items ? 0 : -1;
+          return '<button class="nsec" type="button" data-ngo="' + c + '.' + s + '.' + first + '"><i class="nnum">' + navNum(c, s) + '</i><span>' + navEsc(S_.t) + (S_.steps && S_.f ? '<small>' + navEsc(S_.f) + '</small>' : '') + '</span></button>' +
+            (S_.items && !S_.steps ? '<div class="nitems">' + S_.items.map(function (it, i) { return '<button class="nitem" type="button" data-ngo="' + c + '.' + s + '.' + i + '" title="' + navEsc(navNum(c, s, i) + ' ' + it.f) + '">' + navEsc(it.t) + '</button>'; }).join('') + '</div>' : '');
+        }).join('') + '</section>';
+      }).join('');
+      NAV.open = true; NAV.from = document.activeElement; d.hidden = false; navMark(cu);
+      var a = d.querySelector('.nsec[aria-current="true"]') || d.querySelector('.nsec');
+      if (a) { a.focus(); var lst = $('#nList'); lst.scrollTop = Math.max(0, a.offsetTop - lst.clientHeight / 3); }
+    } else {
+      if (!NAV.open) return; NAV.open = false; d.hidden = true;
+      if (NAV.from && NAV.from.focus && document.contains(NAV.from)) NAV.from.focus();
+    }
+    document.querySelectorAll('[data-ncontents]').forEach(function (b) { b.setAttribute('aria-expanded', String(NAV.open)); });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-ngo],[data-nstep],[data-ncontents],[data-nclose]') : null; if (!t) return;
+    if (t.hasAttribute('data-ncontents')) { navOpen(!NAV.open); return; }
+    if (t.hasAttribute('data-nclose')) { navOpen(false); return; }
+    if (t.hasAttribute('data-nstep')) { navStep(+t.dataset.nstep); return; }
+    var p = t.dataset.ngo.split('.').map(Number); if (NAV.open) navOpen(false); navGo(p[0], p[1], p[2]);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (NAV.open) {
+      if (e.key === 'Escape') { navOpen(false); e.preventDefault(); e.stopPropagation(); return; }
+      if (e.key === 'Tab') {   /* keep the focus inside the drawer */
+        var f = [].slice.call($('#nDraw').querySelectorAll('button')).filter(function (b) { return b.offsetParent; }); if (!f.length) return;
+        if (e.shiftKey && document.activeElement === f[0]) { f[f.length - 1].focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { f[0].focus(); e.preventDefault(); }
+      }
+      return;
+    }
+    var t = e.target, typing = t && (t.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName));
+    if (!typing && !e.metaKey && !e.ctrlKey && !e.altKey && (e.key === 'c' || e.key === 'C') && !document.querySelector('.dov:not([hidden]),.mov:not([hidden])')) { navOpen(true); e.preventDefault(); }
+  }, true);
+  /* the chips follow every change made elsewhere: a scene, a scenario button, a procedure step, an echo view */
+  applyPreset = (function (f) { return function () { var r = f.apply(this, arguments); navSync(); return r; }; })(applyPreset);
+  setScenario = (function (f) { return function () { var r = f.apply(this, arguments); navSync(); return r; }; })(setScenario);
+  procGo = (function (f) { return function () { var r = f.apply(this, arguments); navSync(); return r; }; })(procGo);
+  setEchoView = (function (f) { return function () { var r = f.apply(this, arguments); navSync(); return r; }; })(setEchoView);
+  window.addEventListener('resize', function () { var bars = document.querySelectorAll('.ncourse'); bars.forEach(function (b) { b.dataset.sig = ''; }); navSync(); });
+
   mCheck();
   /* ---------- Desktop workspace ----------
      On a wide screen (at least 1024 × 600) the page becomes one window with nothing to scroll: a top bar with the
@@ -13821,11 +14046,11 @@ html:not(.can-install) [data-install]{display:none!important}
     var sh = dEl('div'); sh.id = 'dshell';
     var logo = document.querySelector('.mast .logo').outerHTML.replace(/lgL/g, 'dlgL').replace(/lgR/g, 'dlgR');
     sh.innerHTML =
-      '<header class="dbar">' + logo + '<h1>LubDubAPP Guide</h1>' +
+      '<header class="dbar"><button class="dico dcont" type="button" data-ncontents aria-haspopup="dialog" title="Contents: every scene, scenario, procedure and echo view (C)">' + mIcon('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M9 4.5v15M12.5 9h4.5M12.5 12h4.5M12.5 15h3"/>') + '<span>Contents</span></button>' + logo + '<h1>LubDubAPP Guide</h1>' +
         '<nav class="dtabs" id="dtabs" aria-label="Scenes">' + MTABS.map(function (t) { return '<button type="button" data-dtab="' + t.id + '" aria-pressed="false">' + mIcon(t.icon) + '<span>' + t.name + '</span></button>'; }).join('') + '</nav>' +
         '<div class="dact"><button class="dico" type="button" data-install title="Install LubDubAPP Guide on this device as an app">' + mIcon('<path d="M12 4v10.5M7.5 10L12 14.5 16.5 10"/><path d="M5 15.5V19h14v-3.5"/>') + '<span>Install</span></button>' +
         '<button class="dico" type="button" id="dPresBtn" aria-pressed="false" title="Presentation mode: full screen, no side panel, larger labels (P)">' + mIcon('<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5v3M8.5 19.5h7"/>') + '<span>Present</span></button>' +
-        '<button class="dico" type="button" id="dAboutBtn" title="About this guide, credits and references">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '<span>About</span></button></div></header>' +
+        '<button class="dico" type="button" id="dAboutBtn" title="About this guide, credits and references">' + mIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/>') + '<span>About</span></button></div></header><nav class="ncourse dcourse" aria-label="Topics"></nav>' +
       '<main class="dwork" id="dwork"><div class="dstage" id="dstage"><div class="dpcap" id="dpcap"><div class="dptt"><b id="dpTitle"></b><span id="dpSub"></span></div><div class="dpnav" id="dpNav"><button class="btn" type="button" id="dpPrev" aria-label="Previous step">‹</button><button class="btn" type="button" id="dpNext" aria-label="Next step">›</button></div></div></div>' +
         '<div class="dsplit" id="dsplit" role="separator" aria-orientation="horizontal" aria-label="Resize the traces" tabindex="0" title="Drag to resize the traces; double-click to reset"></div><div class="ddock" id="ddock"></div><div class="decho" id="decho"></div></main>' +
       '<aside class="dside" id="dside" aria-label="Scene panel"><div class="dhead" id="dhead"><h2 class="dtitle" id="dtitle"></h2><div class="dtrow"><p class="dsub" id="dsub"></p><div class="dnav" id="dnav"></div></div>' +
@@ -13878,7 +14103,7 @@ html:not(.can-install) [data-install]{display:none!important}
     dSplitter();
     ['#scTitle', '#scSub', '#echoTitle'].forEach(function (q) { var n = $(q); if (n && window.MutationObserver) { var o = new MutationObserver(dHead); o.observe(n, { childList: true, characterData: true, subtree: true }); DSK.obs = (DSK.obs || []).concat(o); } });
     if (window.MutationObserver) { var o2 = new MutationObserver(dLayout); [cp, $('#echopanel'), $('#scNav')].forEach(function (n) { o2.observe(n, { attributes: true, attributeFilter: ['hidden', 'class'] }); }); DSK.obs = (DSK.obs || []).concat(o2); }
-    DSK.scene = ''; dSync();
+    DSK.scene = ''; dSync(); navSync();
     if (ready) resize();
   }
   function dTeardown() {
@@ -13920,8 +14145,8 @@ html:not(.can-install) [data-install]{display:none!important}
     if (e.key === 'Escape') { if (ab && !ab.hidden) { dAbout(false); e.preventDefault(); } else if (DSK.pres) { dPresent(false); e.preventDefault(); } return; }
     if (typing || (ab && !ab.hidden)) return;
     if ((e.key === 'p' || e.key === 'P') && !e.shiftKey) { dPresent(!DSK.pres); e.preventDefault(); return; }
-    if ((e.key === 'PageDown' || e.key === 'PageUp') && !$('#scNav').hidden) {   /* a presenter's clicker steps the procedure */
-      var b = $(e.key === 'PageDown' ? '#scNext' : '#scPrev'); if (b && !b.disabled) b.click(); e.preventDefault();
+    if (e.key === 'PageDown' || e.key === 'PageUp') {   /* a presenter's clicker walks the guide: the procedure's steps, then the next topic */
+      navStep(e.key === 'PageDown' ? 1 : -1); e.preventDefault();
     }
   });
   /* the splitter between the view and the traces */
