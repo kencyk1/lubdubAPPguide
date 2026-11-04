@@ -1078,7 +1078,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   </div>
 
   <footer>
-    <span><strong>Web edition</strong> · updated 1 November 2026 · simulated teaching model, not for clinical decisions.</span>
+    <span><strong>Web edition</strong> · updated 3 November 2026 · simulated teaching model, not for clinical decisions.</span>
     <span><strong>Created by</strong> Ken Chan, ACNPC-AG, CCK, RCIS, AACC. Built with the help of AI (Claude, Anthropic).</span>
     <span><strong>Terms of use.</strong> Free for non-commercial education; commercial use is not permitted (the patient heart-sound recordings are licensed for non-commercial use only). This is a simulated teaching model: pressures, velocities and measurements are typical adult values produced by the model, not patient data, and nothing here is medical advice or a substitute for clinical judgment, current guidelines or supervised training. This is an independent educational project, not an official UTHealth Houston publication.</span>
     <div class="appbox" id="appBox">
@@ -1736,6 +1736,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
     var pal = COLORS[state.scheme], pr = PRESETS.filter(function (x) { return x.id === state.preset; })[0], ghost = {};
     var anat = state.scheme === 'natural'; DETU.fat.value = anat ? 1 : 0; DETU.bump.value = anat ? 1 : 0.5; DETU.capC.value.w = anat ? 0.85 : 0;
     var cutOn = !!(pr && pr.cut) && !clipOn; if (cutOn) CUT.constant = heartCenter.z + 0.002;
+    XRAY.value = pr && pr.xray && state.preset === 'struct' ? 1 : 0; var opMap = (pr && state.preset === 'struct' && pr.op) || {};
     ((pr && pr.ghost) || []).forEach(function (g) { ghost[g] = true; }); var semi = {}; ((pr && pr.semi) || []).forEach(function (g) { semi[g] = true; });
     Object.keys(S).forEach(function (id) {
       var s = S[id]; if (!s.meshes) return;
@@ -1743,11 +1744,12 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
       if (s.graft) vis = vis && ANG.on && !!ANG_CABG[ANG.side];   /* bypass grafts: only in the angiogram of the patient after CABG */
       if (s.l === 'device' && state.preset === 'rhythm' && id !== state.sel) vis = vis && cyc.on && !!(cur && cur.X.dev && cur.X.dev.indexOf(id) >= 0);   /* only this scenario's hardware */
       var op = s.l === 'chambers' ? state.wall : 1;
-      if (ghost[id]) op = Math.min(op, 0.13); else if (semi[id]) op = Math.min(op, 0.55);
+      /* the map gives way for the chambers once the wall slider is moved */
+      if (opMap[id] != null && (s.l !== 'chambers' || Math.abs(state.wall - (pr.wall0 || 0)) < 0.005)) op = Math.min(op, opMap[id]); else if (ghost[id]) op = Math.min(op, 0.13); else if (semi[id]) op = Math.min(op, 0.55);
       if (state.isolate && state.sel && id !== state.sel) op = Math.min(op, 0.08);
       s.meshes.forEach(function (m) {
         var mat = m.material;
-        m.visible = vis;
+        m.visible = vis && !(m.userData.root && op < 0.06);
         mat.color.set(pal[s.c]);
         mat.transparent = op < 0.999; mat.opacity = op; mat.depthWrite = op >= 0.999;
         if (!clipOn && s.l === 'chambers' && !m.userData.dyn) mat.clippingPlanes = cutOn ? [CUT] : null;
@@ -2401,11 +2403,21 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
     'gl_Position = projectionMatrix * mvPosition;'].join('\n');
   /* surface relief (fine 3D noise, slightly stretched like fibre bundles) and epicardial fat (per-vertex weight near the
      coronary vessels, aFat) for the myocardium; solid cut faces where a clipping plane opens a wall (back faces show) */
+  var XRAY = { value: 0 };
   var DETU = { fat: { value: 1 }, bump: { value: 1 }, capC: { value: new THREE.Vector4(0.69, 0.26, 0.19, 0.85) } };
   var NOISE3 = 'float dHh(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }\n' +
     'float dVn(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(mix(dHh(i), dHh(i + vec3(1,0,0)), f.x), mix(dHh(i + vec3(0,1,0)), dHh(i + vec3(1,1,0)), f.x), f.y), mix(mix(dHh(i + vec3(0,0,1)), dHh(i + vec3(1,0,1)), f.x), mix(dHh(i + vec3(0,1,1)), dHh(i + vec3(1,1,1)), f.x), f.y), f.z); }\n';
   function surfPatch(sh, m) {
     var ud = m.userData || {};
+    /* x-ray glass for see-through surfaces (procedures that ask for it): thinner fill, stronger edge-on outline */
+    sh.uniforms.uXray = XRAY;
+    sh.fragmentShader = 'uniform float uXray;\n' + sh.fragmentShader.replace('#include <output_fragment>',
+      '  if (uXray > 0.0 && diffuseColor.a < 0.999) {\n' +
+      '    float xf = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition))); xf = xf * xf;\n' +
+      '    float xa = diffuseColor.a;\n' +
+      '    diffuseColor.a = clamp(mix(xa, xa * 0.45 + xf * min(0.8, 0.06 + 1.9 * xa), uXray), 0.0, 1.0);\n' +
+      '    outgoingLight = mix(outgoingLight, outgoingLight * (1.0 + 0.35 * xf), uXray);\n' +
+      '  }\n#include <output_fragment>');
     if (ud.detail) {
       sh.uniforms.uDetFat = DETU.fat; sh.uniforms.uDetBump = DETU.bump;
       sh.vertexShader = 'attribute float aFat;\nvarying float vFat;\nvarying vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vFat = aFat; vWp = (modelMatrix * vec4(position, 1.0)).xyz * 1000.0;');
@@ -7449,7 +7461,8 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   /* ---------- the nine procedures ---------- */
   var PROCS = {
     tavi: { name: 'TAVI', full: 'Transcatheter aortic valve implantation (TAVI), transfemoral', pre: 'p_as', met: ['avg', 'lvedp', 'ari', 'pa'],
-      layers: ['chambers', 'valves', 'arteries', 'coronary', 'cond'], wall: 0.15, hide: ['pv', 'tv', 'mv'], ghost: ['av', 'aoAsc', 'aoArch', 'aoDesc', 'bca', 'lcca', 'lsa', 'pt', 'rpa', 'lpa'], ghostL: ['coronary', 'cond'], vars: [['be', 'Balloon-expandable'], ['se', 'Self-expanding']],
+      layers: ['chambers', 'valves', 'arteries', 'coronary', 'cond'], wall: 0.15, hide: ['pv', 'tv', 'mv'], ghost: ['av', 'aoAsc', 'aoArch', 'aoDesc', 'bca', 'lcca', 'lsa', 'pt', 'rpa', 'lpa'], ghostL: ['coronary', 'cond'],
+      xray: true, op: { aoAsc: 0.34, aoArch: 0.34, aoDesc: 0.2, bca: 0.2, lcca: 0.2, lsa: 0.2, av: 0.45, lv: 0.12, ivs: 0.12, ra: 0.05, rv: 0.05, la: 0.04, pt: 0.04, rpa: 0.03, lpa: 0.03 }, vars: [['be', 'Balloon-expandable'], ['se', 'Self-expanding']],
       build: function (vr) {
         var o = { L: {} }, A = VL.av, n = A.n, se = vr === 'se';
         o.pig = pTube(SG.pigtail, 0.75, PX.M.cath2); o.rvw = pTube(SG.rvWire, 0.65, PX.M.pace); o.wire = pTube(pCoax(SG.aoWire, A, 34, 52), 0.42, PX.M.wire);
@@ -8119,7 +8132,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   function procGhost() {
     var P = PROCS[PROCX.key], c = procCur(), cp = PROCX.comp && procComp(c, PROCX.comp), show = (cp && cp.show) || [], g = (P.ghost || []).slice(); PGH = {};
     if (P.ghostL) Object.keys(S).forEach(function (id) { if (P.ghostL.indexOf(S[id].l) >= 0 && show.indexOf(S[id].l) < 0) { g.push(id); PGH[id] = 1; } });
-    var pr = PRESETS.filter(function (x) { return x.id === 'struct'; })[0]; pr.ghost = g; pr.semi = P.semi || [];
+    var pr = PRESETS.filter(function (x) { return x.id === 'struct'; })[0]; pr.ghost = g; pr.semi = P.semi || []; pr.op = P.op || null; pr.xray = !!P.xray; pr.wall0 = P.wall;
   }
   function procLayers() {
     var P = PROCS[PROCX.key];
@@ -8484,7 +8497,8 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   }
   /* the sinus walls are as see-through as the heart walls (never below 0.4, so the root still reads as a wall) */
   function rootsRefresh() {
-    var aS = Math.max(0.4, Math.min(1, state.wall));
+    var prR = PRESETS.filter(function (x) { return x.id === state.preset; })[0], aS = Math.max(0.4, Math.min(1, state.wall));
+    if (prR && prR.op && state.preset === 'struct' && prR.op.aoAsc != null) aS = Math.max(prR.op.aoAsc, 0.3);
     ROOT.list.forEach(function (Rt) {
       if (!Rt.wt) return;
       if (Rt.aS !== aS) { Rt.aS = aS; var col = Rt.g.attributes.color.array, n = col.length / 4; for (var i = 0; i < n; i++) col[i * 4 + 3] = Rt.wt[i * 2 + 1] * (aS + (1 - aS) * Rt.wt[i * 2]); Rt.g.attributes.color.needsUpdate = true; }
