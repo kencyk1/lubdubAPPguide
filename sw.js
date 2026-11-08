@@ -3,7 +3,7 @@
    goes to the network first, so a new version shows up on the next load exactly as it would without this file; the
    saved copy is used only when the network fails, and is refreshed from each successful response. Each deploy
    changes VERSION, which saves a fresh copy of every file and removes the old one. */
-var VERSION = '17d72373e67a', CACHE = 'lubdub-site', FONTS = 'lubdub-fonts';
+var VERSION = '3b682f9eed2b', CACHE = 'lubdub-site', FONTS = 'lubdub-fonts';
 var ASSETS = ["./", "heart.json", "heart-sounds.json", "vendor/three/three.min.js", "vendor/three/GLTFLoader.js", "vendor/three/OrbitControls.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 var PAGE = new URL('./', self.registration.scope).href;
 
