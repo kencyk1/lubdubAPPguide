@@ -851,6 +851,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
             <button class="btn" type="button" id="cycPlay" aria-pressed="false">Pause</button>
             <button class="btn" type="button" id="sndBtn" aria-pressed="false" title="Synthesized heart sounds in sync with the traces">Sound off</button>
             <button class="btn" type="button" id="capBtn" aria-pressed="true" title="Show the cardiac phase over the 3D view">Phase caption</button>
+            <button class="btn" type="button" id="focBtn" aria-pressed="true" title="Frame the valve or wall the lesion involves, with see-through chambers, as in the structural procedures">Lesion view</button>
             <button class="btn" type="button" id="pvcBtn" title="The next beat becomes a premature ventricular contraction">Insert PVC</button>
             <button class="btn" type="button" id="ablBtn" aria-pressed="false" hidden>Ablate</button>
           </div>
@@ -1735,7 +1736,8 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
     var pal = COLORS[state.scheme], pr = PRESETS.filter(function (x) { return x.id === state.preset; })[0], ghost = {};
     var anat = state.scheme === 'natural'; DETU.fat.value = anat ? 1 : 0; DETU.bump.value = anat ? 1 : 0.5; DETU.capC.value.w = anat ? 0.85 : 0;
     var cutOn = !!(pr && pr.cut) && !clipOn; if (cutOn) CUT.constant = heartCenter.z + 0.002;
-    XRAY.value = pr && pr.xray && state.preset === 'struct' ? 1 : 0; var opMap = (pr && state.preset === 'struct' && pr.op) || {};
+    var foc = state.preset === 'struct' || (state.preset === 'cycle' && cyc.on);   /* the structural procedures and the cycle's lesion views */
+    XRAY.value = pr && pr.xray && foc ? 1 : 0; var opMap = (pr && foc && pr.op) || {};
     ((pr && pr.ghost) || []).forEach(function (g) { ghost[g] = true; }); var semi = {}; ((pr && pr.semi) || []).forEach(function (g) { semi[g] = true; });
     Object.keys(S).forEach(function (id) {
       var s = S[id]; if (!s.meshes) return;
@@ -1959,6 +1961,79 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   }
 
   /* ---------- Presets & selection ---------- */
+  /* ---------- Lesion views in the cardiac cycle ----------
+     As in the structural procedures: the chambers become see-through glass (the x-ray look), the structures a lesion
+     involves stay clear while the rest fades, and the camera frames the valve or wall concerned. Aortic, mitral and
+     LVOT lesions are seen in the long-axis plane through the aortic and mitral valves (as in a parasternal long-axis
+     view), tricuspid lesions in the four-chamber plane through both AV valves, and ischaemia on an opaque heart facing
+     the territory. "Lesion view" turns it off. */
+  var CYCF = { on: true };
+  function cvPlax() {   /* normal to the plane through the aortic axis and the mitral centre, from the patient's left front */
+    var A = VLV.av, n = v3unit(A.n), m = v3sub(VLV.mv.c, A.c); m = v3unit(v3add(m, n, -v3dot(m, n)));
+    var d = v3unit(v3cross(n, m)); return d[2] + 0.4 * d[0] < 0 ? [-d[0], -d[1], -d[2]] : d;
+  }
+  function cv4ch() {   /* normal to the four-chamber plane through both atrioventricular valves and toward the apex, from the front */
+    var a = v3unit(v3sub(VLV.mv.c, VLV.tv.c)), b = v3add(v3unit(VLV.mv.n), v3unit(VLV.tv.n), 1); b = v3unit(v3add(b, a, -v3dot(b, a)));
+    var d = v3unit(v3cross(a, b)); return 0.2 * d[0] + 0.3 * d[1] + d[2] < 0 ? [-d[0], -d[1], -d[2]] : d;
+  }
+  function cvMid(ids) { var c = [0, 0, 0]; ids.forEach(function (id) { c = v3add(c, VLV[id].c, 1 / ids.length); }); return c; }
+  function cvHC() { return [heartCenter.x * 1000, heartCenter.y * 1000, heartCenter.z * 1000]; }
+  /* what stays clear: everything not listed fades to glass */
+  var CV_GLASS = { svc: 0.06, ivc: 0.06, rbcv: 0.04, lbcv: 0.04, pvRS: 0.07, pvRI: 0.07, pvLS: 0.07, pvLI: 0.07, bca: 0.12, lcca: 0.12, lsa: 0.12,
+    aoDesc: 0.12, aoArch: 0.16, aoAsc: 0.18, pt: 0.12, rpa: 0.06, lpa: 0.06 };
+  var CV_AO = { lv: 0.13, ivs: 0.13, la: 0.07, ra: 0.04, rv: 0.04, aoAsc: 0.34, aoArch: 0.3, aoDesc: 0.18, tv: 0.3, pv: 0.3, mv: 0.55 };
+  var CV_MV = { la: 0.15, lv: 0.12, ivs: 0.1, ra: 0.04, rv: 0.04, aoAsc: 0.22, pvRS: 0.2, pvRI: 0.2, pvLS: 0.2, pvLI: 0.2, tv: 0.3, pv: 0.3, av: 0.55 };
+  var CV_TV = { ra: 0.15, rv: 0.12, ivs: 0.1, la: 0.04, lv: 0.05, svc: 0.22, ivc: 0.22, pt: 0.18, aoAsc: 0.06, aoArch: 0.06, mv: 0.3, av: 0.3, pv: 0.55 };
+  var CV_L = ['chambers', 'valves', 'pap', 'chordae', 'arteries', 'veins'], CV_LA = ['chambers', 'valves', 'arteries', 'veins'];
+  var CV_NOTE = { plax: 'Lesion view: the long-axis plane through the aortic and mitral valves, seen from the patient’s left front, as in a parasternal long-axis view. ',
+    four: 'Lesion view: the four-chamber plane through both atrioventricular valves, seen from the front. ',
+    tail: 'The chambers are see-through; drag to look around, and Reset view comes back here.' };
+  var CYCV = {
+    normal: { layers: CV_L.concat(['cond']), op: { lv: 0.14, ivs: 0.14, rv: 0.12, la: 0.1, ra: 0.1, aoAsc: 0.26, aoArch: 0.22, pt: 0.22 },
+      cam: function () { return { d: carmDir(20, 15), t: cvMid(['mv', 'tv', 'av', 'pv']), z: 0.6 }; }, note: 'Cycle view: all four valves through see-through chambers, from LAO 20° cranial 15°. ' },
+    mr: { layers: CV_L, op: CV_MV, cam: function () { return { d: cvPlax(), t: v3add(VLV.mv.c, v3unit(VLV.mv.n), -8), z: 0.6 }; }, note: CV_NOTE.plax + 'In systole the regurgitant jet runs back into the left atrium. ' },
+    ms: { layers: CV_L, op: CV_MV, cam: function () { return { d: cvPlax(), t: VLV.mv.c, z: 0.58 }; }, note: CV_NOTE.plax + 'In diastole the leaflets dome into the LV and the inflow jet is narrow. ' },
+    as: { layers: CV_LA, op: CV_AO, cam: function () { return { d: cvPlax(), t: v3add(VLV.av.c, v3unit(VLV.av.n), 6), z: 0.58 }; }, note: CV_NOTE.plax + 'In systole the thickened cusps open only partway and the jet runs up the ascending aorta. ' },
+    ar: { layers: CV_L, op: CV_AO, cam: function () { return { d: cvPlax(), t: v3add(VLV.av.c, v3unit(VLV.av.n), -6), z: 0.58 }; }, note: CV_NOTE.plax + 'In diastole the regurgitant jet runs back into the LV outflow tract. ' },
+    tr: { layers: CV_L, op: CV_TV, cam: function () { return { d: cv4ch(), t: v3add(VLV.tv.c, v3unit(VLV.tv.n), -6), z: 0.58 }; }, note: CV_NOTE.four + 'In systole the regurgitant jet runs back into the right atrium. ' },
+    ts: { layers: CV_L, op: CV_TV, cam: function () { return { d: cv4ch(), t: VLV.tv.c, z: 0.58 }; }, note: CV_NOTE.four + 'In diastole the tricuspid leaflets dome into the RV and the inflow jet is narrow. ' },
+    hocm: { layers: CV_L, op: { lv: 0.15, ivs: 0.3, la: 0.08, ra: 0.04, rv: 0.05, aoAsc: 0.34, aoArch: 0.28, tv: 0.3, pv: 0.3 },
+      cam: function () { return { d: cvPlax(), t: cvMid(['av', 'mv']), z: 0.58 }; }, note: CV_NOTE.plax + 'Watch the thick septum and the anterior mitral leaflet swing into the outflow tract in systole. ' },
+    res: { layers: CV_L, op: { lv: 0.2, rv: 0.2, ivs: 0.2, la: 0.14, ra: 0.14, aoAsc: 0.2, pt: 0.18 }, cam: function () { return { d: carmDir(35, 10), t: cvHC(), z: 0.68 }; }, note: 'Both ventricles and atria through see-through walls, to watch them fill. ' },
+    lad: { layers: ['chambers', 'valves', 'coronary', 'arteries', 'veins'], xray: false, cam: function () { return { d: carmDir(15, 25), t: cvHC(), z: 0.78 }; }, note: 'The anterior wall and apex, opaque, with the coronary arteries: watch the segments that stop moving. ' },
+    lcx: { layers: ['chambers', 'valves', 'coronary', 'arteries', 'veins'], xray: false, cam: function () { return { d: v3unit([0.95, 0.05, -0.3]), t: cvHC(), z: 0.78 }; }, note: 'The lateral wall, opaque, seen from the patient’s left, with the coronary arteries: watch the segments that stop moving. ' },
+    rca: { layers: ['chambers', 'valves', 'coronary', 'arteries', 'veins'], xray: false, cam: function () { return { d: v3unit([0.3, -0.8, 0.52]), t: cvHC(), z: 0.78 }; }, note: 'The inferior wall from below and in front, opaque, with the coronary arteries: watch the segments that stop moving. ' }
+  };
+  CYCV.msaf = CYCV.ms; CYCV.ara = CYCV.ar; CYCV.con = CYCV.res;
+  function cvOp(o) { var r = {}; Object.keys(CV_GLASS).forEach(function (k) { r[k] = CV_GLASS[k]; }); Object.keys(o || {}).forEach(function (k) { r[k] = o[k]; }); return r; }
+  function cycFocus(key, animate) {
+    var pr = PRESETS.filter(function (x) { return x.id === 'cycle'; })[0], V = CYCF.on && CYCV[key];
+    if (!V || !VLV || !VLV.av) { pr.op = null; pr.xray = false; return false; }
+    LAYERS.forEach(function (L) { state.layers[L.id] = V.layers.indexOf(L.id) >= 0; }); state.hide = {}; state.isolate = false;
+    var x = V.xray !== false; state.wall = x ? 0.16 : 1; pr.wall0 = state.wall; pr.xray = x; pr.op = x ? cvOp(V.op) : null;
+    if (state.sel && !(state.layers[S[state.sel].l])) state.sel = null;
+    refresh();
+    var c = V.cam(); state.zoom = c.z;
+    if (Math.abs(camera.up.x) + Math.abs(camera.up.y - 1) + Math.abs(camera.up.z) > 1e-3) { camera.up.set(0, 1, 0); makeControls(); }
+    flyTo(c.d, new THREE.Vector3(c.t[0] * 0.001, c.t[1] * 0.001, c.t[2] * 0.001), viewDistance() * c.z, animate ? 900 : 0);
+    liveAng = false; document.querySelectorAll('[data-view],[data-sview]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    $('#viewnote').textContent = V.note + CV_NOTE.tail;
+    return true;
+  }
+  function cycUnfocus(animate) {
+    var p = PRESETS.filter(function (x) { return x.id === 'cycle'; })[0];
+    p.op = null; p.xray = false; state.wall = p.wall / 100; state.zoom = 1; state.hide = {};
+    LAYERS.forEach(function (L) { state.layers[L.id] = p.layers.indexOf(L.id) >= 0; });
+    refresh(); setView(p.view, animate);
+  }
+  (function () {
+    var fb = document.getElementById('focBtn'); if (!fb) return;
+    fb.addEventListener('click', function () {
+      CYCF.on = !CYCF.on; fb.setAttribute('aria-pressed', String(CYCF.on));
+      if (state.preset !== 'cycle' || !cyc.on) return;
+      if (CYCF.on) cycFocus(curKey, true); else cycUnfocus(true);
+    });
+  })();
   function applyPreset(id, animate) {
     var p = PRESETS.filter(function (x) { return x.id === id; })[0];
     if (ANG.on && id !== 'angio') angExit();
@@ -1983,7 +2058,8 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
     if (id === 'angio') { if (state.echo) exitEcho(); renderInfo(); refresh(); angEnter(animate); return; }
     if (id === 'echo') { renderInfo(); refresh(); enterEcho(animate); return; }
     if (state.echo) exitEcho();
-    renderInfo(); refresh(); setView(p.view, animate);
+    var fbt = $('#focBtn'); if (fbt) fbt.hidden = id !== 'cycle';
+    renderInfo(); refresh(); if (!(id === 'cycle' && cycFocus(curKey, animate))) setView(p.view, animate);
     if (id === 'struct') procGo(PROCX.step);
   }
   function select(id, fromList) {
@@ -2049,7 +2125,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
   $('#wall').addEventListener('input', function (e) { state.wall = Number(e.target.value) / 100; refresh(); });
   $('#showLabels').addEventListener('change', function (e) { state.labels = e.target.checked; updateLabelSet(); });
   $('#spin').addEventListener('click', function () { state.spin = !state.spin; controls.autoRotate = state.spin; this.setAttribute('aria-pressed', String(state.spin)); });
-  $('#reset').addEventListener('click', function () { if (ANG.on) { angSetView(ANG.view[ANG.side], true); return; } setView(state.view === 'base' ? 'base' : PRESETS.filter(function (x) { return x.id === state.preset; })[0].view, true); });
+  $('#reset').addEventListener('click', function () { if (ANG.on) { angSetView(ANG.view[ANG.side], true); return; } if (state.preset === 'cycle' && cyc.on && cycFocus(curKey, true)) return; setView(state.view === 'base' ? 'base' : PRESETS.filter(function (x) { return x.id === state.preset; })[0].view, true); });
   function zoom(f) { var off = camera.position.clone().sub(controls.target); var d = THREE.MathUtils.clamp(off.length() * f, controls.minDistance, controls.maxDistance); camera.position.copy(controls.target).addScaledVector(off.normalize(), d); }
   $('#zin').addEventListener('click', function () { zoom(0.8); });
   $('#zout').addEventListener('click', function () { zoom(1.25); });
@@ -4288,6 +4364,7 @@ body.dsk .ccourse,body.mob .ccourse{display:none}
     ecgCv.setAttribute('aria-label', X.rg ? 'Leads II and V1, ' + X.full + ', in time with the 3D heart' : 'Lead II ECG sweeping in time with the 3D heart');
     if (X.rg || state.preset === 'rhythm') { refresh(); rhyScene(); }
     if (PROCX.on) procCard();
+    else if (state.preset === 'cycle' && cyc.on && !X.rg && ready) { if (!cycFocus(key, true) && CYCF.on) cycUnfocus(true); }
   }
   document.querySelectorAll('[data-scen]').forEach(function (b) { b.addEventListener('click', function () { var k = b.dataset.scen; rAbl = null; setScenario(lastVar[k] || k); }); });
   $('#ablBtn').addEventListener('click', function () { if (!rAbl) { rAblate(); return; } var f = rAbl.from; rAbl = null; setScenario(f); });
